@@ -1,0 +1,31 @@
+{
+  "node": "v22.20.0",
+  "platform": "win32",
+  "arch": "x64",
+  "runs": 2000,
+  "scenarios": 3,
+  "forecast_months": 60,
+  "seed": 42,
+  "seconds": 1436.5009268000001,
+  "peak_process_rss_mb": 530.2109375,
+  "memory_at_completion": {
+    "rss": 555589632,
+    "heapTotal": 491769856,
+    "heapUsed": 310908832,
+    "external": 8802275,
+    "arrayBuffers": 24815
+  },
+  "config_fingerprint": "0167e9006b8a7d1a95cc2d6fed52cd7ef3c4162bbf9a292d4ad9c162ea447d2d",
+  "input_fingerprint": "a03dfa0477925a20009d6756b2c449c1288fdaa910742158a35c34b13ef49e6f",
+  "failures": 0,
+  "internal_baseline_recomputed_for_each_alternative": true,
+  "cpu": "Intel(R) Core(TM) i3-1005G1 CPU @ 1.20GHz",
+  "logical_cpus": 4,
+  "total_ram_gib": 11.810516357421875,
+  "measurement_note": "Single workstation wall-clock run; early execution overlapped local regression checks. Not an isolated throughput guarantee.",
+  "saved_artifact_checks": {
+    "probabilities": 195,
+    "quantiles": 2753,
+    "context_validated": true
+  }
+}
