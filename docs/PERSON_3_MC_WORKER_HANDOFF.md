@@ -45,3 +45,12 @@ exact propagation of a progress consumer exception. These tests do not run a ful
 
 Async 202/status/result/cancel direction is approved by P1 in issue #2; API schemas and
 resource limits have not yet been accepted or exposed. A/B accepted; C/D/E pending.
+
+## Follow-up after completed benchmark
+
+P2 delivered completed evidence at `dde4e2d`. The internal source-only packaging
+limitation and missing job API described above are addressed by the later
+`docs/PERSON_3_MC_JOB_API_HANDOFF.md` candidate: explicit built Node worker,
+opt-in local review routes and bounded lifecycle. Hosted deployment and product
+readiness still require their separate acceptance. This section preserves the
+original delivery's scope rather than claiming it included the later work.

@@ -50,7 +50,8 @@ export async function normalizeApiError(response: Response): Promise<Response> {
   if (response.status < 400) return response;
   try {
     const existing = ApiErrorSchema.safeParse(await response.clone().json());
-    if (existing.success && response.status < 500) return response;
+    if (existing.success && (response.status < 500 || (response.status === 503 &&
+      ['MC_NOT_READY', 'WORKER_UNAVAILABLE'].includes(existing.data.error.code)))) return response;
   } catch { /* Framework errors may use HTML; never forward their details into API bodies. */ }
   const status = response.status;
   const code = status >= 500 ? 'INTERNAL_ERROR' : status === 404 ? 'NOT_FOUND' : status === 405 ? 'METHOD_NOT_ALLOWED' : 'HTTP_ERROR';

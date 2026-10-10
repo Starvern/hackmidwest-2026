@@ -4,19 +4,23 @@
 	"version": "0.0.1",
 	"type": "module",
 	"scripts": {
-		"test": "npm run contracts:check && npm run contracts:types && npm run test:reference && node --test tests/*.test.ts",
+		"test": "npm run contracts:check && npm run contracts:types && npm run test:reference && npm run build:mc-worker && node --test tests/*.test.ts",
 		"dev": "vite dev",
-		"build": "vite build",
+		"build": "vite build && npm run build:mc-worker",
 		"preview": "vite preview",
 		"prepare": "svelte-kit sync || echo ''",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
-		"contracts:generate": "node scripts/contracts.ts && node scripts/example_request.ts && node scripts/monte_carlo_contracts.ts",
-		"contracts:check": "node scripts/contracts.ts --check && node scripts/example_request.ts --check && node scripts/monte_carlo_contracts.ts --check",
+		"contracts:generate": "node scripts/contracts.ts && node scripts/example_request.ts && node scripts/monte_carlo_contracts.ts && node scripts/mc_job_contracts.ts",
+		"contracts:check": "node scripts/contracts.ts --check && node scripts/example_request.ts --check && node scripts/monte_carlo_contracts.ts --check && node scripts/mc_job_contracts.ts --check",
 		"fixture:contract": "node scripts/validate_contract_fixture.ts",
 		"contracts:types": "tsc -p tsconfig.contracts.json",
 		"test:api:live": "node scripts/check_api.ts",
-		"test:reference": "node scripts/generate_reference_result.ts --check"
+		"test:reference": "node scripts/generate_reference_result.ts --check",
+		"build:mc-worker": "node scripts/build_mc_worker.ts",
+		"test:mc-worker": "npm run build:mc-worker && node scripts/check_mc_worker.ts",
+		"test:mc:artifact": "node scripts/check_monte_carlo_result.ts",
+		"test:mc:api:live": "node scripts/check_mc_jobs_api.ts"
 	},
 	"devDependencies": {
 		"@sveltejs/adapter-auto": "^8.0.0",

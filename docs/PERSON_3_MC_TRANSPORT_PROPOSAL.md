@@ -58,3 +58,11 @@ real result/context equality, failure/timeout/cancellation cleanup, expired jobs
 and UI pending/error/retry/stale behavior. Gate C independent review covers the integrated
 real engine and transport evidence before MC readiness/risk UI is enabled. Gate D/E remain
 separate. Deterministic UI error/retry work can continue in parallel.
+
+## Direction resolved for local candidate
+
+P1 approved async jobs in issue #2; P2's completed `dde4e2d` benchmark measured
+23.94 minutes / 530.21 MiB peak process RSS for 2,000 runs. The implementation and
+exact additive candidate contracts are now documented in
+`docs/PERSON_3_MC_JOB_API_HANDOFF.md`. Product MC readiness remains false. The
+original direct-response alternative is no longer pursued for this workload.

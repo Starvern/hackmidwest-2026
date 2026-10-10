@@ -20,6 +20,9 @@
     "tests/**/*.ts",
     "scripts/example_request.ts",
     "scripts/check_api.ts",
-    "scripts/monte_carlo_contracts.ts"
+    "scripts/monte_carlo_contracts.ts",
+    "scripts/mc_job_contracts.ts",
+    "scripts/check_mc_worker.ts",
+    "scripts/check_mc_jobs_api.ts"
   ]
 }

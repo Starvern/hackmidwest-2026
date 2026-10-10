@@ -9,6 +9,7 @@ export type WorkerOptions = {
   signal?: AbortSignal;
   onProgress?: (completed: number) => void;
   runId?: string;
+  workerUrl?: URL;
 };
 
 /** Internal source-runtime adapter; no endpoint/readiness change or production packaging claim. */
@@ -21,7 +22,7 @@ export async function runMonteCarloWorker(companyValue: unknown, requestValue: u
   if (company.id !== request.company_id) throw new Error('Unknown company ID');
   if (options.signal?.aborted) throw new Error('Monte Carlo job cancelled');
   const runId = options.runId ?? randomUUID();
-  const worker = new Worker(new URL('./worker-entry.ts', import.meta.url), {
+  const worker = new Worker(options.workerUrl ?? new URL('./worker-entry.ts', import.meta.url), {
     workerData: { company, request, config, runId },
   });
   return new Promise<ReturnType<typeof validateMonteCarloResult>>((resolve, reject) => {
