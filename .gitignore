@@ -1,5 +1,13 @@
 node_modules
 
+# Local artifacts left from the retired Python setup
+.venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+
 # Output
 .output
 .vercel
