@@ -87,3 +87,25 @@ The isolated Person 1 accounting case excludes new maintenance depreciation; the
 first month must include an additional `100000 / 12 / 60` depreciation under the accepted policy.
 Exact operational types, cost-factor resolution and asset ownership proposals are in
 [Person 2 checkpoint](PERSON_2_CHECKPOINT.md), awaiting Persons 1/3 review.
+
+## Confirmed interface clarifications
+
+Person 2 confirms Persons 1/3's issue #2 design clarifications:
+- Scheduler asset additions are growth/truck only and reconcile to growth CapEx.
+  Financials exclusively creates maintenance assets, once per spend month, with
+  deterministic IDs distinct from existing/truck assets and spend-month depreciation.
+- Pending trucks do not depreciate or consume remaining depreciation life before service.
+  In-service depreciation is capped at remaining book value; exhausted assets stop.
+  New debt first interest/principal is purchase month + 1, regardless of service date.
+- Investment outlay uses actual incremental costs: growth CapEx, recruitment, marketing
+  and full employed incremental-hire payroll during ramp, excluding initial workforce.
+  Zero-effect actions contribute zero outlay. Recovery uses cumulative scenario-minus-
+  baseline UFCF; same-month recovery requires inclusion of all real current-month outlays.
+- Fingerprints exclude scoped presentation names and corresponding provenance entries,
+  retain IDs/other provenance, and operate on copies. No arbitrary nested name removal.
+- Decisions start in months 1–60; derived service/employment/demand dates may exceed 60
+  and must not be clipped/rejected. Initial cohorts may start at 0; engine steps are 1–60.
+
+Person 3's design agreement is recorded in
+[issue #2](https://github.com/Starvern/hackmidwest-2026/issues/2#issuecomment-6101674113).
+Executable schema validation and joint checkpoint acceptance remain pending.
