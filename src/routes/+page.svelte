@@ -1,5 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte';
+  import { requestJson as get } from '../lib/dashboard/api.ts';
   import type { CompanyInput, DeterministicRequest, MetricKey, ModelMetadata, SimulationResult } from '../../contracts/contracts.ts';
   import example from '../../contracts/example-request.json';
   import Timeline from '../lib/dashboard/Timeline.svelte';
@@ -22,13 +23,6 @@
   let selectedRow = $derived(selectedPath?.months[month]);
   let comparison = $derived(result?.comparisons[scenarioId]);
   let metricInfo = $derived(metrics.find(item => item.key === metric)!);
-  async function get<T>(url: string, init?: RequestInit): Promise<T> {
-    const response = await fetch(url, init);
-    const payload = await response.json();
-    if (!response.ok) throw new Error([payload.error?.message ?? `Request failed (${response.status})`,
-      ...(payload.error?.details ?? []).map((detail: {path: string; message: string}) => `${detail.path}: ${detail.message}`)].join(' '));
-    return payload as T;
-  }
   async function run() {
     if (editorForm && !editorForm.reportValidity()) return;
     pending = true; error = '';
