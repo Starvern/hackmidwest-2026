@@ -11,6 +11,7 @@ import { schedule_month } from './event_scheduler.ts';
 import { calculate_operations } from './operations.ts';
 import { calculate_financials } from './financials.ts';
 import { calculate_valuation } from './valuation.ts';
+import { MCValuationMultiplesSchema } from '../monte-carlo/contracts.ts';
 
 /** Undiscounted recovery after actual investment; later reversal is reported separately. */
 export function calculate_payback(incrementalUfcf: readonly number[], investmentOutlays: readonly number[]): Payback {
@@ -99,6 +100,8 @@ export function compare_paths(baselineValue: ScenarioPath, scenarioValue: Scenar
 export interface ResolvedPathInputs {
   scenario: { id: string; name: string };
   monthly_market_factors: readonly MarketFactors[];
+  /** MC execution extension; omission preserves the accepted deterministic context. */
+  monthly_valuation_multiples?: readonly number[];
   path_risks: PathRisks;
   input_fingerprint: string;
   seed: number | null;
@@ -109,6 +112,8 @@ function runPath(company: CompanyInput, decisions: Decision[], inputs: ResolvedP
   requireModel(scenario.id !== 'baseline' || decisions.length === 0, 'Baseline cannot contain decisions');
   requireModel(inputs.monthly_market_factors.length === 60, 'Runner needs 60 explicit monthly market factors');
   const factors = inputs.monthly_market_factors.map(value => MarketFactorsSchema.parse(value));
+  const multiples = MCValuationMultiplesSchema.parse(inputs.monthly_valuation_multiples
+    ?? Array.from({ length: 60 }, () => company.global_assumptions.valuation_multiple));
   const risks = validatePathRisks(inputs.path_risks, decisions);
   let state = create_initial_state(company);
   const initial = state.financial;
@@ -128,7 +133,9 @@ function runPath(company: CompanyInput, decisions: Decision[], inputs: ResolvedP
     history.push(step.financials);
     outlays.push(events.financial_inputs.incremental_investment_outlay);
     months.push({ month, is_opening_state: false, operations, financials: step.financials,
-      valuation: calculate_valuation(company, history, state), events: events.events });
+      valuation: calculate_valuation({ ...company, global_assumptions: {
+        ...company.global_assumptions, valuation_multiple: multiples[month - 1],
+      } }, history, state), events: events.events });
   }
   const path = ScenarioPathSchema.parse({ metadata: { scenario_id: scenario.id, name: scenario.name,
     model_version: company.model_version, input_fingerprint: inputs.input_fingerprint, seed: inputs.seed },
@@ -185,6 +192,7 @@ export function simulate_deterministic(companyValue: CompanyInput, requestValue:
   const sorted = [...request.scenarios].sort((a, b) => a.id < b.id ? -1 : a.id > b.id ? 1 : 0);
   for (const scenario of sorted) raw.set(scenario.id, runPath(company, scenario.decisions, {
     scenario: { id: scenario.id, name: scenario.name }, monthly_market_factors: Array.from({ length: 60 }, () => NEUTRAL_MARKET_FACTORS),
+    monthly_valuation_multiples: Array.from({ length: 60 }, () => request.exit_multiple),
     path_risks: { by_stable_investment_key: {} }, seed: null,
     input_fingerprint: fingerprintScenario(original, request, APPROVED_POLICIES, scenario.id),
   }));
