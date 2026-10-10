@@ -98,3 +98,39 @@ test('framework API errors normalize to the shared shape without leaking HTML or
   const existing = await apiResponse(() => readApiInput(bodyRequest('{"quantity":-1}'), inputSchema));
   assert.equal(await normalizeApiError(existing), existing);
 });
+
+// Compare transport output against the independently reviewed generated engine artifact.
+test('deterministic API returns the real complete reference response with unique run identity', async () => {
+  const { POST } = await import('../src/routes/api/v1/simulate/deterministic/+server.ts');
+  const { readFileSync } = await import('node:fs');
+  const { SimulationResultSchema } = await import('../src/lib/server/schemas.ts');
+  const input = JSON.parse(readFileSync(new URL('../contracts/example-request.json', import.meta.url), 'utf8'));
+  const expected = JSON.parse(readFileSync(new URL('../contracts/example-result.json', import.meta.url), 'utf8'));
+  const run = async () => {
+    const response = await POST({ request: bodyRequest(JSON.stringify(input)) });
+    assert.equal(response.status, 200);
+    assert.equal(response.headers.get('cache-control'), 'no-store');
+    return SimulationResultSchema.parse(await response.json());
+  };
+  const first = await run(); const second = await run();
+  assert.notEqual(first.run_id, second.run_id);
+  assert.deepEqual({ ...first, run_id: expected.run_id }, expected);
+  assert.deepEqual({ ...second, run_id: expected.run_id }, expected);
+});
+
+test('deterministic API rejects malformed, invalid, unknown-company and MC requests as user errors', async () => {
+  const { POST } = await import('../src/routes/api/v1/simulate/deterministic/+server.ts');
+  const { readFileSync } = await import('node:fs');
+  const input = JSON.parse(readFileSync(new URL('../contracts/example-request.json', import.meta.url), 'utf8'));
+  for (const [body, status, pointer] of [
+    ['{', 400, undefined],
+    [JSON.stringify({ ...input, company_id: 'missing' }), 422, '/company_id'],
+    [JSON.stringify({ ...input, horizon_months: 12 }), 422, '/horizon_months'],
+    [JSON.stringify({ ...input, monte_carlo: { enabled: true } }), 422, undefined],
+  ] as const) {
+    const response = await POST({ request: bodyRequest(body) });
+    assert.equal(response.status, status);
+    const payload = ApiErrorSchema.parse(await response.json());
+    if (pointer) assert.ok(payload.error.details.some(detail => detail.path === pointer));
+  }
+});
