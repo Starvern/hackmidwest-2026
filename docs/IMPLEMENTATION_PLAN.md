@@ -92,4 +92,6 @@ The default local Node `22.16.0` cannot execute the repository's TypeScript scri
 
 Next: Person 1 implements financials/valuation/invariants and Person 2 implements scheduler/operations against the accepted dependency, then jointly reconciles one real month. Person 3 supports contract/boundary integration. Dashboard and Monte Carlo remain deferred until their specified gates. [Independent arithmetic cases](../backend/tests/financial_acceptance_cases.json) are preparation targets, not forecasts; the real first month must include spend-month maintenance depreciation.
 
+Person 1's [financial module handoff](PERSON_1_ENGINE_HANDOFF.md) now supplies accounting, valuation, invariants and comparison/metric helpers with typed tests. Real scheduler/operations integration and complete orchestration/reference output remain pending; the helpers are not a claim that Gates A/B pass.
+
 Repository files and all specification sections/appendices were inspected. No financial module or dashboard has been implemented and no forecast has been fabricated. Contract checks are recorded with the delivery; engine, fixture and UI acceptance tests remain future gates, not claimed passes.
