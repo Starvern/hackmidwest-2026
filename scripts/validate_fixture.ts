@@ -57,4 +57,4 @@ for (const entry of Object.values(company.provenance)) {
   assert.ok(['assumed', 'derived', 'synthetic_historical'].includes(entry.kind) && entry.source && entry.unit);
 }
 console.log('PASS: 12 matching CSV/JSON months, annual P&L, capacity, opening balances, finite inputs and provenance.');
-console.log('Pending: joint interface acceptance and Person 3 authoritative Zod validation. Gates A/B remain incomplete.');
+console.log('Reconciliation only: run npm run fixture:contract for authoritative Zod validation. Joint acceptance/Gates A/B are separate.');
