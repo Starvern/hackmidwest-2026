@@ -80,3 +80,31 @@ P1 independently reviews this implementation, sampled invariants, pairing/identi
 and measured evidence, then coordinates an exact integrated Gate C acceptance.
 P3 owns worker/API integration and the separately documented response placement.
 Preserve deterministic readiness and leave MC readiness false until shared acceptance.
+
+## Completed measurement and review
+
+The actual seed-42 benchmark completed on Windows x64 / Node 22.20.0 / Intel
+i3-1005G1 (four logical CPUs, 11.81 GiB RAM): **1,436.50 seconds (23.94 minutes)**,
+**530.21 MiB peak process RSS**, **zero failures**. This is one workstation wall-clock
+measurement; early execution overlapped local regression checks, and it is not an
+isolated throughput guarantee. All 2,000 runs completed; no path failures were
+discarded. The three output scenarios required 10,000 physical engine paths.
+
+`node scripts/check_monte_carlo_result.ts` independently revalidates saved output
+against the exact request/company/config and checks 195 probability objects and
+2,753 quantile objects, including 2,000-path denominators. The actual combined scenario
+has 19 unavailable exit valuations: eligible exit-risk denominator 1,981, not 2,000.
+Both alternatives have zero reached-payback paths in this illustrative realization;
+conditional payback medians remain null. Full-horizon cash-reserve risk is 2.15%
+baseline, 5.20% trucks, 18.10% combined at the requested $150,000 reserve. These are
+synthetic-assumption simulation results, not calibrated business probabilities.
+
+The full P2 suite passed 94 tests; after integrating Gavin's review `824a413`, four
+new orchestration/client tests also pass locally (98 verified total). Svelte check
+reported zero errors/warnings. P1 independently approved the implementation design
+and corrected the inferred UUID-only runId type to string; no sampled calculation
+changed. His completed-artifact review and P3 worker/API evidence remain Gate C work.
+
+The measured duration requires asynchronous job execution on this workstation.
+P3 owns bounded queue/concurrency, worker cancellation/timeouts and job/result
+retention. No 5,000-run offering or request-thread execution is justified here.

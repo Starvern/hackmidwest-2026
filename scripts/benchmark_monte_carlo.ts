@@ -1,5 +1,6 @@
 import { readFileSync, writeFileSync } from 'node:fs';
 import { performance } from 'node:perf_hooks';
+import { cpus, totalmem } from 'node:os';
 import { simulate_monte_carlo } from '../src/lib/server/engine/monte_carlo.ts';
 const company = JSON.parse(readFileSync('data/synthetic_hvac_company.json', 'utf8'));
 const base = JSON.parse(readFileSync('contracts/example-request.json', 'utf8'));
@@ -9,6 +10,7 @@ const result = simulate_monte_carlo(company, request, undefined, 'mc-benchmark-s
   if (completed % 100 === 0) console.log(JSON.stringify({ completed, seconds: (performance.now() - started) / 1000, rss_mb: process.memoryUsage().rss / 1048576 }));
 });
 const evidence = { node: process.version, platform: process.platform, arch: process.arch, runs: 2000,
+  cpu: cpus()[0].model, logical_cpus: cpus().length, total_ram_gib: totalmem() / 1073741824,
   scenarios: 3, forecast_months: 60, seed: 42, seconds: (performance.now() - started) / 1000,
   peak_process_rss_mb: process.resourceUsage().maxRSS / 1024, memory_at_completion: process.memoryUsage(),
   config_fingerprint: result.config_fingerprint, input_fingerprint: result.input_fingerprint,
