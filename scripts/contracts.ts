@@ -7,7 +7,7 @@ const entries = Object.entries(runtime).filter(([name, value]) => name.endsWith(
   .sort(([a], [b]) => a < b ? -1 : a > b ? 1 : 0);
 function artifact(path: string, contents: string) {
   if (check) {
-    if (readFileSync(path, 'utf8') !== contents) throw new Error(`Contract drift: regenerate ${path} with npm run contracts:generate`);
+    if (readFileSync(path, 'utf8').replaceAll('\r\n', '\n') !== contents) throw new Error(`Contract drift: regenerate ${path} with npm run contracts:generate`);
   } else writeFileSync(path, contents);
 }
 const aliases = entries.map(([name]) => `export type ${name.slice(0, -6)} = z.infer<typeof Runtime.${name}>;`).join('\n');

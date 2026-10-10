@@ -24,5 +24,5 @@ const request = DeterministicRequestSchema.parse({ schema_version: '1.0', compan
 const path = 'contracts/example-request.json';
 const contents = JSON.stringify(request, null, 2) + '\n';
 if (process.argv.includes('--check')) {
-  if (readFileSync(path, 'utf8') !== contents) throw new Error('Example request drift; run npm run contracts:generate');
+  if (readFileSync(path, 'utf8').replaceAll('\r\n', '\n') !== contents) throw new Error('Example request drift; run npm run contracts:generate');
 } else writeFileSync(path, contents);
