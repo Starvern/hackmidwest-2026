@@ -8,6 +8,8 @@ export const MC_CONFIG_VERSION = 'mc-config-1-proposed' as const;
 export const MC_SAMPLER_VERSION = 'sha256-mulberry32-boxmuller-1' as const;
 export const MC_EXECUTION_VERSION = 'mc-execution-1-proposed' as const;
 export const MC_RESULT_VERSION = 'mc-result-1-proposed' as const;
+/** Absolute tolerance for reported probability/count reconciliation. */
+export const MC_PROBABILITY_TOLERANCE = 1e-12;
 const finite = z.number();
 const count = z.number().int().nonnegative();
 const positive = finite.positive();
@@ -101,6 +103,30 @@ export const MCResultExtensionSchema = z.strictObject({
       ctx.addIssue({ code: 'custom', path: ['payback_counts', id], message: 'Payback counts/median must reconcile to runs and scenario summary' });
     }
     if (id === 'baseline' && scenario.payback.not_applicable_count !== v.runs) ctx.addIssue({ code: 'custom', path: ['payback_counts', id], message: 'Baseline payback must be not applicable' });
+    const eligible = counts.reached_count + scenario.payback.not_reached_count;
+    const probability = scenario.payback.probability_within_horizon;
+    if (probability.valid_path_count !== eligible || probability.unavailable_path_count !== scenario.payback.not_applicable_count ||
+      (eligible === 0 ? probability.value !== null || probability.unavailable_reason !== 'not_applicable'
+        : probability.value === null || probability.unavailable_reason !== null ||
+          Math.abs(probability.value - counts.reached_count / eligible) > MC_PROBABILITY_TOLERANCE)) {
+      ctx.addIssue({ code: 'custom', path: ['scenarios', id, 'payback', 'probability_within_horizon'], message: 'Payback probability must match reached/eligible counts (absolute tolerance 1e-12)' });
+    }
+    const duplicate = scenario.path_risks.probability_payback_by_month_60;
+    if (duplicate.value !== probability.value || duplicate.valid_path_count !== probability.valid_path_count ||
+      duplicate.unavailable_path_count !== probability.unavailable_path_count || duplicate.unavailable_reason !== probability.unavailable_reason) {
+      ctx.addIssue({ code: 'custom', path: ['scenarios', id, 'path_risks', 'probability_payback_by_month_60'], message: 'Duplicate payback probability objects must agree exactly' });
+    }
+    if (id === 'baseline') {
+      const risk = scenario.path_risks.probability_negative_exit_equity_delta;
+      if (risk.value !== null || risk.valid_path_count !== 0 || risk.unavailable_path_count !== v.runs || risk.unavailable_reason !== 'not_applicable') {
+        ctx.addIssue({ code: 'custom', path: ['scenarios', id, 'path_risks', 'probability_negative_exit_equity_delta'], message: 'Baseline incremental exit risk must be unavailable/not applicable' });
+      }
+      const terminal = scenario.terminal_distributions.incremental_exit_equity_value;
+      if (terminal.valid_path_count !== 0 || terminal.unavailable_path_count !== v.runs ||
+        [terminal.p10, terminal.p50, terminal.p90, terminal.mean].some(value => value !== null)) {
+        ctx.addIssue({ code: 'custom', path: ['scenarios', id, 'terminal_distributions', 'incremental_exit_equity_value'], message: 'Baseline incremental terminal distribution must be entirely unavailable' });
+      }
+    }
   }
   const inspect = (value: unknown, path: (string | number)[]) => {
     if (!value || typeof value !== 'object') return;

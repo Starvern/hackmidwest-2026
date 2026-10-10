@@ -104,3 +104,41 @@ test('MC result context rejects wrong seeds/configuration/fingerprints rather th
     assert.throws(() => validateMonteCarloResult(changed,company,mcRequest,APPROVED_POLICIES,config));
   }
 });
+
+test('MC boundary rejects contradictory payback probabilities even when all denominator totals equal runs', () => {
+  // Synthetic transport case: 500 reached, 1000 not reached, 500 inapplicable.
+  const valid = structuredClone(extension);
+  valid.payback_counts.trucks_only.reached_count = 500;
+  const scenario = valid.scenarios.trucks_only;
+  scenario.payback.not_reached_count = 1000;
+  scenario.payback.not_applicable_count = 500;
+  scenario.payback.median_month_conditional_on_payback_or_null = 20;
+  const probability = {value:1 / 3,valid_path_count:1500,unavailable_path_count:500,unavailable_reason:null};
+  scenario.payback.probability_within_horizon = {...probability};
+  scenario.path_risks.probability_payback_by_month_60 = {...probability};
+  MCResultExtensionSchema.parse(valid);
+  const mutations: ((value: typeof valid) => void)[] = [
+    value => { value.scenarios.trucks_only.payback.probability_within_horizon.value = 0.5; value.scenarios.trucks_only.path_risks.probability_payback_by_month_60.value = 0.5; },
+    value => { for (const p of [value.scenarios.trucks_only.payback.probability_within_horizon, value.scenarios.trucks_only.path_risks.probability_payback_by_month_60]) { p.valid_path_count = 2000; p.unavailable_path_count = 0; } },
+    value => { value.scenarios.trucks_only.path_risks.probability_payback_by_month_60.value = 0.25; },
+  ];
+  for (const mutate of mutations) { const broken = structuredClone(valid); mutate(broken); assert.equal(MCResultExtensionSchema.safeParse(broken).success,false); }
+  const within = structuredClone(valid);
+  within.scenarios.trucks_only.payback.probability_within_horizon.value! += 5e-13;
+  within.scenarios.trucks_only.path_risks.probability_payback_by_month_60.value! += 5e-13;
+  MCResultExtensionSchema.parse(within);
+  const outside = structuredClone(valid);
+  outside.scenarios.trucks_only.payback.probability_within_horizon.value! += 5e-11;
+  outside.scenarios.trucks_only.path_risks.probability_payback_by_month_60.value! += 5e-11;
+  assert.equal(MCResultExtensionSchema.safeParse(outside).success,false);
+});
+
+test('MC baseline incremental results and zero-eligibility payback must be explicitly unavailable', () => {
+  const mutations: ((value: typeof extension) => void)[] = [
+    value => { const p = value.scenarios.baseline.payback.probability_within_horizon; p.unavailable_reason = 'unavailable_valuation'; value.scenarios.baseline.path_risks.probability_payback_by_month_60 = {...p}; },
+    value => { value.scenarios.baseline.path_risks.probability_negative_exit_equity_delta = {value:0, valid_path_count:2000, unavailable_path_count:0, unavailable_reason:null}; },
+    value => { value.scenarios.baseline.terminal_distributions.incremental_exit_equity_value = {p10:0,p50:0,p90:0,mean:0,valid_path_count:2000,unavailable_path_count:0}; },
+  ];
+  for (const mutate of mutations) { const broken = structuredClone(extension); mutate(broken); assert.equal(MCResultExtensionSchema.safeParse(broken).success,false); }
+  MCResultExtensionSchema.parse(extension);
+});

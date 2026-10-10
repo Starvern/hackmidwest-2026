@@ -96,3 +96,18 @@ this loader/config/vector validation in its actual sampled runner after represen
 review. P3 connects background execution/API only against the measured accepted runner.
 No MC endpoint, worker, stochastic reference, risk bands/probabilities, benchmark or
 Gate C completion is introduced. Deterministic dashboard/readiness stays available.
+
+## P1/P2 boundary-review follow-up
+
+Following issue comments 6102608819 and 6102616679, the result validator also binds
+payback eligibility to reached + not-reached counts, unavailable paths to the
+not-applicable count, and probability to reached / eligible using absolute tolerance
+1e-12. Zero eligible paths require null/not_applicable. The duplicate by-month-60
+probability object must agree exactly, including reason and denominator counts.
+Baseline incremental exit-risk probability is null/not_applicable with no eligible
+paths; baseline incremental terminal quantiles/mean are all null and all paths
+unavailable. Regression cases deliberately preserve total path counts while corrupting
+probability values, eligibility, duplicate fields, unavailable reasons or baseline
+incremental results. A valid mixed-eligibility case and tolerance boundaries are tested.
+No schema fields/version literals, assumptions or engine formulas changed; generated
+JSON schemas remain identical because these are Zod cross-field refinements.
