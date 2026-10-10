@@ -25,6 +25,10 @@ export const calculate_financials: CalculateFinancials = (company, prior, operat
     'Duplicate AP-eligible cost category');
 
   const ending = structuredClone(state.financial);
+  assertClose(events.purchases.reduce((sum, purchase) => sum + purchase.quantity * purchase.cost_per_unit, 0),
+    input.growth_capex, 'Purchase events versus growth CapEx');
+  assertClose(events.purchases.reduce((sum, purchase) => sum + purchase.quantity * purchase.cost_per_unit * purchase.funding.debt_fraction, 0),
+    input.new_debt_tranches.reduce((sum, tranche) => sum + tranche.principal, 0), 'Purchase funding versus borrowing');
   const debtBegin = ending.debt_tranches.reduce((sum, t) => sum + t.principal, 0);
   const debtIds = new Set(ending.debt_tranches.map(t => t.id));
   const newIds = new Set<string>();

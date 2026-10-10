@@ -48,7 +48,7 @@ test('FIN-03/10: fully financed purchase has no purchase-month debt cost or fals
     principal_repayment: 0, principal_end: 60000,
   });
   x.prior = { ...x.prior, month: 1, financial: result.ending_financial_state };
-  x.events.month = 2; x.events.financial_inputs.new_debt_tranches = [];
+  x.events.month = 2; x.events.purchases = []; x.events.financial_inputs.new_debt_tranches = [];
   x.events.financial_inputs.asset_additions = []; x.events.financial_inputs.growth_capex = 0;
   const second = calculate(x.company, x.prior, x.operations, x.events);
   const movement = second.financials.debt_movements.find(m => m.tranche_id === 'truck-debt')!;

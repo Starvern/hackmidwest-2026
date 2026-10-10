@@ -1,5 +1,7 @@
 # Person 1 — Financial engine and integration lead
 
+Current stack: SvelteKit/TypeScript/Zod per [the stack amendment](STACK_DECISION.md). Checkpoint 1 accepted dependency `5725edf`, interface `checkpoint-1-candidate-1`. See [current engine handoff](PERSON_1_ENGINE_HANDOFF.md) for implemented signatures, generated response, verification and pending shared Gate A/B review. Historical Python paths below are superseded by the ownership list here.
+
 ## Your responsibility
 
 Own the deterministic accounting, valuation, scenario comparisons and integration decisions. Your first shared milestone is **one validated month from decisions through operations, accounting, cash and valuation**. Extend this to 60 months before Monte Carlo, AI or dashboard development.
@@ -17,9 +19,10 @@ The specification takes precedence. The current types are a review baseline, not
 
 Primary ownership:
 
-- `backend/app/financials.py`, `valuation.py`, `scenarios.py` and financial invariant helpers.
-- `backend/tests/test_accounting.py`, `test_valuation.py`, `test_scenarios.py` and engine integration tests.
+- `src/lib/server/engine/financials.ts`, `valuation.ts`, `scenarios.ts`, `invariants.ts`.
+- `tests/financials.test.ts`, `valuation.test.ts`, `scenarios.test.ts`, `engine-integration.test.ts` and financial test helpers.
 - `contracts/example-result.json`: generated from the tested deterministic engine, never hand-written forecast numbers.
+- `scripts/generate_reference_result.ts` and `docs/PERSON_1_ENGINE_HANDOFF.md`.
 - `docs/model-limitations.md` and the integration status section in `docs/IMPLEMENTATION_PLAN.md`.
 
 Person 2 owns fixture/scheduler/operations and later Monte Carlo. Person 3 owns schemas, schema generation, dependency configuration, API and frontend. Request changes to their files through their owner. Person 3 implements contract changes; you approve the integrated contract after both engine owners review it.
