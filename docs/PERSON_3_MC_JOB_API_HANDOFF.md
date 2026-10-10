@@ -103,3 +103,13 @@ overrides it). This is compiled local-route/worker evidence, not a selected host
 adapter or a second complete 2,000-run computation. Intentional 503 MC_NOT_READY and
 WORKER_UNAVAILABLE codes survive framework normalization; unexpected server details
 remain generic.
+
+## Gate C acceptance and dashboard follow-up
+
+P1 accepted this exact local engine/transport dependency at `fdacd21` (see
+`docs/PERSON_1_GATE_C_ACCEPTANCE.md`). The later risk dashboard candidate in
+`docs/PERSON_3_RISK_DASHBOARD_HANDOFF.md` consistently publishes local MC readiness
+true only for explicit local opt-in with a built worker; default/remote scope stays
+false. It also adds an explicitly labeled recorded benchmark view. The original
+MC=false statements above describe the reviewed transport delivery before that
+follow-up. Gate D/E and hosted deployment acceptance remain separate.

@@ -8,7 +8,7 @@ assert.equal(companyResponse.status, 200);
 assert.equal(CompanyInputSchema.parse(await companyResponse.json()).id, 'synthetic-hvac-001');
 const metadataResponse = await fetch(`${base}/api/v1/model/metadata`);
 assert.equal(metadataResponse.status, 200);
-assert.deepEqual(ModelMetadataSchema.parse(await metadataResponse.json()).readiness, { deterministic: true, monte_carlo: false });
+assert.deepEqual(ModelMetadataSchema.parse(await metadataResponse.json()).readiness, { deterministic: true, monte_carlo: process.env.OPERATOROS_EXPECT_MC_READY === '1' });
 const health = await fetch(`${base}/api/v1/health`);
 assert.equal(health.status, 200);
 assert.deepEqual(await health.json(), { status: 'ok', simulation_ready: true });

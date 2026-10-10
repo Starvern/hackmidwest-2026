@@ -1,7 +1,7 @@
 import { INTERFACE_REVISION, ModelMetadataSchema } from '../schemas.ts';
 
 /** Discovery only. Readiness changes require accepted real engine integration. */
-export function loadModelMetadata() {
+export function loadModelMetadata(localMCReady = false) {
   return ModelMetadataSchema.parse({
     schema_version: '1.0', model_version: 'mvp-1.0', contract_revision: 1,
     interface_revision: INTERFACE_REVISION, horizon_months: 60, currency: 'USD',
@@ -26,7 +26,7 @@ export function loadModelMetadata() {
       { key: 'unlevered_fcf', label: 'Monthly unlevered free cash flow', unit: 'USD/month', kind: 'monthly_flow', available_at_opening: false,
         description: 'Monthly free cash flow excluding borrowing, debt repayment and financing interest effects; used for paired project payback.' },
     ],
-    readiness: { deterministic: true, monte_carlo: false },
+    readiness: { deterministic: true, monte_carlo: localMCReady },
     data_notice: 'Synthetic illustrative HVAC company inputs; no measured industry data or calibrated forecasts.',
     limitations: [
       'A reconciled operating P&L/cash/debt schedule, not full GAAP financial statements.',

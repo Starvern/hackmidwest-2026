@@ -30,7 +30,7 @@ test('fixture loading returns independent objects across requests', () => {
 });
 
 test('metadata exposes approved versions, all decisions/metrics and accepted deterministic and unavailable MC readiness', async () => {
-  const response = await metadataGET();
+  const response = await metadataGET({ url: new URL('http://127.0.0.1:4173/api/v1/model/metadata') });
   assert.equal(response.status, 200);
   const metadata = ModelMetadataSchema.parse(await response.json());
   assert.equal(metadata.interface_revision, INTERFACE_REVISION);

@@ -5,6 +5,7 @@ import { json } from '@sveltejs/kit';
 import { loadDemoCompany } from '../api/company.ts';
 import { apiError, apiResponse, readApiInput } from '../api/http.ts';
 import { MonteCarloRequestSchema } from '../schemas.ts';
+import { localMonteCarloAvailable } from './availability.ts';
 import { loadMonteCarloConfig } from './config.ts';
 import { JobError, LOCAL_MC_LIMITS, MonteCarloJobs } from './jobs.ts';
 
@@ -21,7 +22,7 @@ const headers = { 'cache-control': 'no-store' };
 
 /** Explicit local review only. Product readiness remains false until shared Gate C. */
 function guard(url: URL) {
-  if (process.env.OPERATOROS_MC_REVIEW !== '1' || !['localhost', '127.0.0.1', '[::1]'].includes(url.hostname)) {
+  if (!localMonteCarloAvailable(url)) {
     throw new JobError(503, 'MC_NOT_READY', 'Monte Carlo is awaiting shared acceptance.');
   }
   if (!existsSync(workerPath)) throw new JobError(503, 'WORKER_UNAVAILABLE', 'Build the background worker before local review.');

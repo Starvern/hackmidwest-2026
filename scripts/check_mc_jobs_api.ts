@@ -27,7 +27,7 @@ try {
   }
   assert.ok(completed >= 1, 'actual aggregated run reported through built HTTP route');
   const metadata = await (await fetch(new URL('/api/v1/model/metadata', base))).json();
-  assert.equal(metadata.readiness.monte_carlo, false);
+  assert.equal(metadata.readiness.monte_carlo, true);
   assert.equal((await fetch(new URL('/api/v1/health', base))).status, 200);
 } finally {
   const cancelled = await call(receipt.status_url, { method: 'DELETE', headers: { ...headers, origin: base } });
@@ -35,4 +35,4 @@ try {
   assert.equal((await cancelled.json()).state, 'cancelled');
 }
 assert.equal((await call(receipt.result_url, { headers })).status, 409);
-console.log('PASS: built HTTP submission, token isolation, pending result, real aggregated progress, responsive health, cancellation and no-store; MC readiness remains false.');
+console.log('PASS: built HTTP submission, token isolation, pending result, real aggregated progress, responsive health, cancellation and no-store; accepted local MC readiness is true.');

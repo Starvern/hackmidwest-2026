@@ -3,6 +3,7 @@
   import { requestJson as get } from '../lib/dashboard/api.ts';
   import type { CompanyInput, DeterministicRequest, MetricKey, ModelMetadata, SimulationResult } from '../../contracts/contracts.ts';
   import example from '../../contracts/example-request.json';
+  import RiskPanel from '../lib/dashboard/RiskPanel.svelte';
   import Timeline from '../lib/dashboard/Timeline.svelte';
   import { metrics, metricValue, formatValue, paybackLabel, decisionFields, fieldValue, editDecision } from '../lib/dashboard/model.ts';
   let request = $state<DeterministicRequest>(structuredClone(example) as unknown as DeterministicRequest);
@@ -57,7 +58,7 @@
   <main>
     <header><div class="wordmark">Operator<span>OS</span><span class="divider">/</span><span class="workspace-name">Investment workspace</span></div><span class="synthetic">● Synthetic company</span></header>
     <section class="intro"><div><p class="eyebrow">OPERATING DECISIONS, OVER TIME</p><h1>Plan the next move.</h1><p class="subtitle">See what your investments change—and when they matter.</p></div><div class="company-tag"><span class="company-icon">⌁</span><div><strong>{company?.name ?? 'Loading company…'}</strong><small>HVAC services · USD · 60-month horizon</small></div></div></section>
-    <div class="notice"><span>↗</span><p>Deterministic workspace <span>One set of disclosed assumptions. Monte Carlo has not run.</span></p><span class="status">{pending ? 'Computing…' : stale ? 'Results need updating' : result ? 'Results current' : 'Ready to load'}</span></div>
+    <div class="notice"><span>↗</span><p>Deterministic workspace <span>One set of disclosed assumptions. Risk simulations are shown separately below.</span></p><span class="status">{pending ? 'Computing…' : stale ? 'Results need updating' : result ? 'Results current' : 'Ready to load'}</span></div>
     {#if error}<div class="error" role="alert"><strong>We couldn’t complete that request.</strong><p>{error}</p><button onclick={() => company ? run() : initialize()} disabled={pending}>Retry</button></div>{/if}
     <div class="main-grid">
       <section class="panel editor" aria-labelledby="editor-title">
@@ -98,6 +99,7 @@
         {#if result?.warnings.length}<section class="panel warnings"><h2>Model warnings</h2><ul>{#each result.warnings as warning}<li>{warning.message}</li>{/each}</ul></section>{/if}
       </div>
     </div>
+    <RiskPanel {request} enabled={metadata?.readiness.monte_carlo ?? false} {month} {scenarioId} {metric} />
     <section class="panel assumptions" id="assumptions"><details><summary><div><p class="eyebrow">CONTEXT MATTERS</p><h2>Assumptions & model notes</h2></div><span>View details +</span></summary><p>{metadata?.data_notice}</p><ul>{#each metadata?.limitations ?? [] as limitation}<li>{limitation}</li>{/each}</ul><p>Month 0 contains opening balances only. Null valuation means unavailable. Project payback uses paired incremental unlevered cash flow and may reverse. Utilization differences are percentage-point differences.</p><details><summary>Resolved run assumptions and company input provenance</summary><pre>{JSON.stringify({ assumptions: result?.assumptions ?? company?.global_assumptions, provenance: company?.provenance }, null, 2)}</pre></details><p class="muted">Schema {metadata?.schema_version ?? '—'} · Model {metadata?.model_version ?? '—'} · Revision {metadata?.contract_revision ?? '—'} · Run {result?.run_id ?? 'not run'}</p><p class="fingerprint">Input fingerprint: {result?.input_fingerprint ?? 'not run'}</p></details></section>
     <footer><span>OperatorOS / A clearer view of what comes next.</span><span>Synthetic inputs. Modeled outcomes.</span></footer>
     <div class="sr-only" aria-live="polite">{pending ? 'Simulation running' : error ? 'Request failed' : stale ? 'Inputs changed; results are stale' : result ? 'Simulation complete' : ''}</div>
