@@ -1,6 +1,8 @@
 # Person 1 kickoff and integration checkpoint
 
-Status: preparation complete; shared interface checkpoint pending. No engine or release gate is accepted by this document.
+Status: **Checkpoint 1 accepted October 10, 2026** against dependency `5725edf1e8e979c9c9bcb3b0673acb308a96385f`, interface `checkpoint-1-candidate-1`. See [the current integration record](IMPLEMENTATION_PLAN.md#person-1-kickoff-status) for independent verification and next work. No financial engine or release gate is accepted yet.
+
+The sections below preserve the original kickoff proposals and pending-state record for history; they are superseded by the accepted issue #2 decisions, `docs/assumptions.md`, `docs/STACK_DECISION.md` and the authoritative TypeScript/Zod contracts at the dependency commit. In particular: maintenance depreciation starts in the spend month; scheduler asset additions are growth-only; financials creates maintenance assets; scheduler takes a sixth market-factor argument; implementation uses TypeScript, not Python/Pydantic. All original pending labels below refer to kickoff, not current status.
 
 Authority: `OperatorOS_Implementation_Spec.md`, `IMPLEMENTATION_PLAN.md`, and the three role guides. Current `contracts/contracts.ts` is a review baseline. Python runtime schemas, company fixture, and internal event/state contracts are not present at kickoff.
 

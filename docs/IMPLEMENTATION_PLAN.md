@@ -67,6 +67,29 @@ The following are disclosed implementation choices allowed by the specification,
 
 ### Person 1 kickoff status
 
-Person 1 has prepared [the shared checkpoint proposal](PERSON_1_CHECKPOINT.md) and [independent financial acceptance cases](../backend/tests/financial_acceptance_cases.json). These cases are test-only arithmetic targets, not a validated company fixture or generated simulation response. Runtime schemas, internal event/state interfaces and shared policy review remain prerequisites for independent engine implementation. No checkpoint or Gate A/B/C/D/E is marked passed. Person 2 must review fixture/operational timing; Person 3 must implement agreed runtime contracts and setup. The next integration milestone remains one reconciled real month.
+**Checkpoint 1 accepted by Person 1 on October 10, 2026**, following Persons 2/3 design review and fixture-validation evidence in [issue #2](https://github.com/Starvern/hackmidwest-2026/issues/2). Accepted dependency commit: `5725edf1e8e979c9c9bcb3b0673acb308a96385f`; interface identifier `checkpoint-1-candidate-1` (retain this literal identifier to avoid changing fingerprints); schema `1.0`, model `mvp-1.0`, public contract revision `1`. This is the initial implementation interface acceptance, not the full deterministic contract freeze or any completed Gate A/B/C/D/E.
+
+The accepted stack is SvelteKit/TypeScript/Zod per [the stack amendment](STACK_DECISION.md). Authoritative runtime/internal schemas, inferred types, explicit approved policies, growth-only scheduler asset additions, the sixth scheduler market-factor argument, ending-financial-state wrapper, scoped fingerprint projection and actual fixture validation have been reviewed. Person 2's executable review covers `0177c63`; `5725edf` adds only the reviewed Windows line-ending fix. Person 1 independently verified the final commit on Windows with bundled Node `24.19.0` and the committed lockfile, without regenerating contracts: artifact/example drift checks, TypeScript boundaries, 11/11 API/contract tests, authoritative fixture validation, independent fixture reconciliation, Svelte check (0 errors/warnings), and production build all pass. Deployment adapter selection remains later hosting work.
+
+Exact Person 1 reproduction commands (PowerShell; `$checkpointNode` points to Node 24):
+
+```powershell
+$checkpointNode = 'C:/Users/gdgrant/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node.exe'
+$env:NODE_OPTIONS = '--use-system-ca'
+& $checkpointNode 'C:/Program Files/nodejs/node_modules/npm/bin/npm-cli.js' ci --ignore-scripts
+& $checkpointNode scripts/contracts.ts --check
+& $checkpointNode scripts/example_request.ts --check
+& $checkpointNode node_modules/typescript/bin/tsc -p tsconfig.contracts.json
+& $checkpointNode --test tests/*.test.ts
+& $checkpointNode scripts/validate_contract_fixture.ts
+& $checkpointNode scripts/validate_fixture.ts
+& $checkpointNode node_modules/@sveltejs/kit/svelte-kit.js sync
+& $checkpointNode node_modules/svelte-check/bin/svelte-check --tsconfig ./tsconfig.json
+& $checkpointNode node_modules/vite/bin/vite.js build
+```
+
+The default local Node `22.16.0` cannot execute the repository's TypeScript scripts and is below the documented runtime requirement; the passing results above use explicit Node 24, not that default launcher. Installation excluded lifecycle scripts; Svelte synchronization was executed explicitly afterward. Standard npm commands remain documented in README for a correctly configured Node 24/npm environment.
+
+Next: Person 1 implements financials/valuation/invariants and Person 2 implements scheduler/operations against the accepted dependency, then jointly reconciles one real month. Person 3 supports contract/boundary integration. Dashboard and Monte Carlo remain deferred until their specified gates. [Independent arithmetic cases](../backend/tests/financial_acceptance_cases.json) are preparation targets, not forecasts; the real first month must include spend-month maintenance depreciation.
 
 Repository files and all specification sections/appendices were inspected. No financial module or dashboard has been implemented and no forecast has been fabricated. Contract checks are recorded with the delivery; engine, fixture and UI acceptance tests remain future gates, not claimed passes.
