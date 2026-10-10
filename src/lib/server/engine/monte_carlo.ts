@@ -67,7 +67,7 @@ export function sample_action_risks(config: MCConfig, seed: number, run: number,
 }
 
 /** Compact streaming aggregation; expanded paths are released after each run. No HTTP readiness change. */
-export function simulate_monte_carlo(companyValue: unknown, requestValue: unknown, configValue: unknown = loadMonteCarloConfig(), runId = randomUUID(), onProgress?: (completed: number) => void) {
+export function simulate_monte_carlo(companyValue: unknown, requestValue: unknown, configValue: unknown = loadMonteCarloConfig(), runId: string = randomUUID(), onProgress?: (completed: number) => void) {
   const original = CompanyInputSchema.parse(companyValue);
   const request = MonteCarloRequestSchema.parse(requestValue);
   const config = MCConfigSchema.parse(configValue);
