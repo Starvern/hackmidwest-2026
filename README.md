@@ -26,10 +26,10 @@ UI and API share the SvelteKit server, normally `http://localhost:5173`.
 GET `/api/v1/health` returns:
 
 ```json
-{"status":"ok","simulation_ready":false}
+{"status":"ok","simulation_ready":true}
 ```
 
-Health reports HTTP availability separately from shared acceptance. Company, metadata and the real deterministic simulation endpoint are available. Readiness remains false pending P1’s explicit shared Gate A/B acceptance; Monte Carlo remains unavailable. API routes
+Health reports HTTP availability separately from shared acceptance. Company, metadata and the real deterministic simulation endpoint are available. Shared Gates A/B are accepted; deterministic readiness is true. Monte Carlo remains unavailable. API routes
 live under `src/routes/api/v1/`; runtime schemas use Zod; the engine interface was accepted at Checkpoint 1.
 There is no separate Python API to install or run.
 
@@ -67,3 +67,10 @@ POST `/api/v1/simulate/deterministic` runs the accepted-shape request through th
 
 With a local server on port 4173 (`npm run dev -- --host 127.0.0.1 --port 4173`),
 run `npm run test:api:live`. Set `OPERATOROS_API_BASE_URL` for a different port.
+
+## Dashboard
+
+The Svelte dashboard at `/` runs the real deterministic API and provides editable
+truck/hire/marketing templates, six timeline metrics, month inspection, comparisons
+and disclosed assumptions. See [dashboard handoff](docs/PERSON_3_DASHBOARD_HANDOFF.md)
+for verified behavior and remaining design/Gate D review. Monte Carlo is not run.

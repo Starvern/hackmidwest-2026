@@ -26,7 +26,7 @@ export function loadModelMetadata() {
       { key: 'unlevered_fcf', label: 'Monthly unlevered free cash flow', unit: 'USD/month', kind: 'monthly_flow', available_at_opening: false,
         description: 'Monthly free cash flow excluding borrowing, debt repayment and financing interest effects; used for paired project payback.' },
     ],
-    readiness: { deterministic: false, monte_carlo: false },
+    readiness: { deterministic: true, monte_carlo: false },
     data_notice: 'Synthetic illustrative HVAC company inputs; no measured industry data or calibrated forecasts.',
     limitations: [
       'A reconciled operating P&L/cash/debt schedule, not full GAAP financial statements.',

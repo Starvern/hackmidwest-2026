@@ -29,12 +29,12 @@ test('fixture loading returns independent objects across requests', () => {
   assert.equal(next.provenance['/id'].unit, 'label');
 });
 
-test('metadata exposes approved versions, all decisions/metrics and explicit unavailable engines', async () => {
+test('metadata exposes approved versions, all decisions/metrics and accepted deterministic and unavailable MC readiness', async () => {
   const response = await metadataGET();
   assert.equal(response.status, 200);
   const metadata = ModelMetadataSchema.parse(await response.json());
   assert.equal(metadata.interface_revision, INTERFACE_REVISION);
-  assert.deepEqual(metadata.readiness, { deterministic: false, monte_carlo: false });
+  assert.deepEqual(metadata.readiness, { deterministic: true, monte_carlo: false });
   assert.deepEqual(metadata.decision_types, ['purchase_trucks', 'hire_technicians', 'increase_marketing']);
   const byKey = Object.fromEntries(metadata.metrics.map(metric => [metric.key, metric]));
   assert.equal(Object.keys(byKey).length, 9);

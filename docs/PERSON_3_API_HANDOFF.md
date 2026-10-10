@@ -1,3 +1,5 @@
+> Current status: shared Gates A/B accepted at f16523e. Deterministic readiness is now true; the real simulation API and dashboard are documented in [dashboard handoff](PERSON_3_DASHBOARD_HANDOFF.md). The original adapter handoff below describes its earlier publication.
+
 # Person 3 — Read-only API adapters after Checkpoint 1
 
 Starting dependency: accepted `5725edf`, interface `checkpoint-1-candidate-1`.

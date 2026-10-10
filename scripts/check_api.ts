@@ -8,10 +8,10 @@ assert.equal(companyResponse.status, 200);
 assert.equal(CompanyInputSchema.parse(await companyResponse.json()).id, 'synthetic-hvac-001');
 const metadataResponse = await fetch(`${base}/api/v1/model/metadata`);
 assert.equal(metadataResponse.status, 200);
-assert.deepEqual(ModelMetadataSchema.parse(await metadataResponse.json()).readiness, { deterministic: false, monte_carlo: false });
+assert.deepEqual(ModelMetadataSchema.parse(await metadataResponse.json()).readiness, { deterministic: true, monte_carlo: false });
 const health = await fetch(`${base}/api/v1/health`);
 assert.equal(health.status, 200);
-assert.deepEqual(await health.json(), { status: 'ok', simulation_ready: false });
+assert.deepEqual(await health.json(), { status: 'ok', simulation_ready: true });
 for (const [path, method, status, code] of [
   ['/api/v1/company/demo', 'POST', 405, 'METHOD_NOT_ALLOWED'],
   ['/api/v1/missing', 'GET', 404, 'NOT_FOUND'],

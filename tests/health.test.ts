@@ -6,5 +6,5 @@ test('health reports HTTP availability separately from simulation readiness', as
 	const response = GET();
 	assert.equal(response.status, 200);
 	assert.match(response.headers.get('content-type') ?? '', /application\/json/);
-	assert.deepEqual(await response.json(), { status: 'ok', simulation_ready: false });
+	assert.deepEqual(await response.json(), { status: 'ok', simulation_ready: true });
 });
