@@ -1,0 +1,64 @@
+{
+  "purpose": "Independent hand-calculated accounting targets, not product forecasts or runtime schemas",
+  "currency": "USD",
+  "reference_month": {
+    "conditions": "Flat neutral month, zero DeltaNWC, zero growth CapEx, existing debt principal 20000; existing principal schedule is a test-only assumption",
+    "inputs": {
+      "completed_jobs": 540,
+      "ticket": 650,
+      "other_revenue": "788000/12",
+      "tech_direct_labor": 95000,
+      "vehicle_direct_opex": 15000,
+      "service_variable_cost": "1100000/12",
+      "other_direct_cost": 27500,
+      "operating_overhead": 125000,
+      "depreciation": 12500,
+      "amortization": 0,
+      "cash_interest": 8000,
+      "tax_rate": "1/4",
+      "delta_nwc": 0,
+      "maintenance_capex": "100000/12",
+      "growth_capex": 0,
+      "borrowing": 0,
+      "principal": 20000,
+      "distributions": 0,
+      "cash_begin": 400000,
+      "debt_begin": 1200000
+    },
+    "expected": {
+      "service_revenue": 351000,
+      "revenue": "1250000/3",
+      "cogs": "687500/3",
+      "gross_profit": 187500,
+      "ebitda": 62500,
+      "ebit": 50000,
+      "pretax_income": 42000,
+      "cash_taxes": 10500,
+      "operating_cash_flow": 44000,
+      "cash_change": "47000/3",
+      "cash_end": "1247000/3",
+      "debt_end": 1180000,
+      "unlevered_tax": 12500,
+      "unlevered_fcf": "125000/3"
+    }
+  },
+  "variations_relative_to_reference": [
+    {"id": "FIN-02", "change": "Cash truck purchase 60000, not yet in service", "expected": {"ebitda_delta": 0, "cash_end_delta": -60000, "unlevered_fcf_delta": -60000}},
+    {"id": "FIN-03", "change": "Fully financed truck purchase 60000, no same-month interest/principal, not yet in service", "expected": {"revenue_delta": 0, "ebitda_delta": 0, "cash_end_delta": 0, "debt_end_delta": 60000, "unlevered_fcf_delta": -60000}},
+    {"id": "FIN-04", "change": "Additional principal repayment 10000", "expected": {"ebitda_delta": 0, "ebit_delta": 0, "cash_end_delta": -10000, "debt_end_delta": -10000, "unlevered_fcf_delta": 0}},
+    {"id": "FIN-05", "change": "Additional interest 1000, taxable income stays positive", "expected": {"ebit_delta": 0, "pretax_income_delta": -1000, "cash_taxes_delta": -250, "cash_end_delta": -750, "unlevered_fcf_delta": 0}},
+    {"id": "FIN-06", "change": "Ending AR increases 10000 with no other changes", "expected": {"ebitda_delta": 0, "delta_nwc_delta": 10000, "cash_end_delta": -10000, "unlevered_fcf_delta": -10000}},
+    {"id": "negative_cash", "change": "Beginning cash 0, cash truck purchase 60000, not yet in service", "expected": {"cash_end": "-133000/3", "debt_end": 1180000}}
+  ],
+  "valuation": [
+    {"id": "historical_bridge_month_1", "historical_ebitda_oldest_to_newest": [1000,2000,3000,4000,5000,6000,7000,8000,9000,10000,11000,12000], "forecast_ebitda": [20000], "cash_end": 40000, "debt_end": 100000, "multiple": 6, "expected": {"ttm_ebitda": 97000, "enterprise_value": 582000, "equity_value": 522000, "status": "meaningful"}},
+    {"id": "month_12_uses_only_forecast", "forecast_ebitda": [10000,10000,10000,10000,10000,10000,10000,10000,10000,10000,10000,10000], "cash_end": 40000, "debt_end": 100000, "multiple": 6, "expected": {"ttm_ebitda": 120000, "enterprise_value": 720000, "equity_value": 660000, "status": "meaningful"}},
+    {"id": "FIN-11_zero", "ttm_ebitda": 0, "expected": {"enterprise_value": null, "equity_value": null, "status": "nonpositive_ttm_ebitda"}},
+    {"id": "FIN-11_negative", "ttm_ebitda": -1000, "expected": {"enterprise_value": null, "equity_value": null, "status": "nonpositive_ttm_ebitda"}}
+  ],
+  "payback": [
+    {"id": "preinvestment_and_reversal", "monthly_incremental_ufcf": [0,0,-100,60,50,-20], "first_investment_month": 3, "expected": {"status": "reached", "month": 5, "subsequent_reversal_month": 6}},
+    {"id": "not_reached", "monthly_incremental_ufcf": [-100,40,40], "first_investment_month": 1, "expected": {"status": "not_reached", "month": null}},
+    {"id": "empty_scenario", "monthly_incremental_ufcf": [0,0,0], "first_investment_month": null, "expected": {"status": "not_applicable", "month": null}}
+  ]
+}
