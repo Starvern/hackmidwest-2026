@@ -4,19 +4,24 @@
 	"version": "0.0.1",
 	"type": "module",
 	"scripts": {
-		"test": "node --test tests/*.test.ts",
+		"test": "npm run contracts:check && npm run contracts:types && node --test tests/*.test.ts",
 		"dev": "vite dev",
 		"build": "vite build",
 		"preview": "vite preview",
 		"prepare": "svelte-kit sync || echo ''",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
-		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch"
+		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
+		"contracts:generate": "node scripts/contracts.ts && node scripts/example_request.ts",
+		"contracts:check": "node scripts/contracts.ts --check && node scripts/example_request.ts --check",
+		"fixture:contract": "node scripts/validate_contract_fixture.ts",
+		"contracts:types": "tsc -p tsconfig.contracts.json"
 	},
 	"devDependencies": {
 		"@sveltejs/adapter-auto": "^8.0.0",
 		"@sveltejs/kit": "^3.0.0",
 		"@sveltejs/vite-plugin-svelte": "^7.2.0",
 		"@tailwindcss/vite": "^4.3.0",
+		"@types/node": "^24.19.2",
 		"svelte": "^5.57.1",
 		"svelte-check": "^4.6.0",
 		"tailwindcss": "^4.3.0",

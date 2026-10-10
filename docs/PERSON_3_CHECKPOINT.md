@@ -3,20 +3,20 @@
 Status: pending joint review by Persons 1 and 2. This document does not freeze
 contracts, approve financial policies, or establish Gates A/B/C/D.
 
-Working branch: `codex/contracts-api`; review baseline: Gavin commit `8c7acc7`.
+Working branch: `codex/contracts-api`; executable candidate `checkpoint-1-candidate-1`.
+See [schema handoff](PERSON_3_SCHEMA_HANDOFF.md) and issue #2 for the exact published commit.
 
 ## Ready for review
 
 The existing `contracts/contracts.ts` and contract README remain the proposed
-public vocabulary. Person 3 will encode the agreed version in Zod and
-generate/check its JSON Schema and TypeScript artifacts. No financial defaults
+public vocabulary. Person 3 has encoded the reviewed candidate in Zod and added reproducible JSON Schema and inferred TypeScript artifacts. No financial defaults
 will be introduced by schema defaults.
 
 Backend setup now supports npm dependency installation, Node tests, SvelteKit and a health
 endpoint. Health reports HTTP service availability separately from simulation
 readiness. No simulation endpoint exists until a real engine can be connected.
 
-## Decisions needed at the checkpoint
+## Reviewed design areas (executable acceptance pending)
 
 | Topic | Decision needed | Review owner |
 | --- | --- | --- |
@@ -33,8 +33,7 @@ readiness. No simulation endpoint exists until a real engine can be connected.
 | Versioning | Accepted initial interface commit, contract revision and migration policy | Person 1 with both reviewers |
 
 After review, record the accepted choices in Person 2's assumptions manifest and
-the exact interface commit in the implementation plan. Then implement schemas,
-boundary validation and reproducible artifact/drift checks. Full deterministic
+the exact interface commit in the implementation plan. Candidate schemas, boundary validation and reproducible artifact/drift checks are now implemented; Persons 1/2 must review the executable commit. Full deterministic
 freeze additionally requires the reconciled fixture, engine tests and complete
 61-state engine-generated result.
 
@@ -44,10 +43,11 @@ freeze additionally requires the reconciled fixture, engine tests and complete
   documentation and this checkpoint agenda.
 - Public interface: GET `/api/v1/health` returns `status` and `simulation_ready`.
 - Contract revision: unchanged; existing revision 1 is still a review baseline.
-- Financial assumptions added: none. Breaking contract changes: none.
-- Pending: runtime schemas, fixture validation, engine adapters, four remaining
+- Financial assumptions added: none. Coordinated internal changes: sixth scheduler argument and FinancialStepResult wrapper; see the schema handoff.
+- Delivered candidate: runtime schemas, internal types, fingerprint utility, drift checks and actual fixture validation.
+- Pending: P2/P1 executable candidate review and acceptance, engine adapters, four remaining
   specified endpoints and SvelteKit dashboard. Gates A/B/C/D remain pending.
-- Verification: `npm test` passed the health-route test; `npm run check`
+- Verification: `npm test` passed 11 contract/API tests plus artifact/type checks; `npm run check`
   reported zero errors/warnings; `npm run build` passed.
 - Example: GET `/api/v1/health` → HTTP 200,
   `{"status":"ok","simulation_ready":false}`.

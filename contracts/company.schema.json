@@ -1,0 +1,556 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "industry": {
+      "type": "string",
+      "const": "HVAC"
+    },
+    "currency": {
+      "type": "string",
+      "const": "USD"
+    },
+    "model_version": {
+      "type": "string",
+      "const": "mvp-1.0"
+    },
+    "valuation_month": {
+      "type": "number",
+      "const": 60
+    },
+    "horizon_months": {
+      "type": "number",
+      "const": 60
+    },
+    "forecast_start_month_of_year": {
+      "type": "number",
+      "const": 1
+    },
+    "historical_months": {
+      "minItems": 12,
+      "maxItems": 12,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "month_of_year": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 12
+          },
+          "service_jobs": {
+            "type": "number",
+            "minimum": 0
+          },
+          "service_revenue": {
+            "type": "number",
+            "minimum": 0
+          },
+          "other_revenue": {
+            "type": "number",
+            "minimum": 0
+          },
+          "revenue": {
+            "type": "number",
+            "minimum": 0
+          },
+          "tech_direct_labor": {
+            "type": "number",
+            "minimum": 0
+          },
+          "vehicle_direct_opex": {
+            "type": "number",
+            "minimum": 0
+          },
+          "service_variable_cost": {
+            "type": "number",
+            "minimum": 0
+          },
+          "other_direct_cost": {
+            "type": "number",
+            "minimum": 0
+          },
+          "cogs": {
+            "type": "number",
+            "minimum": 0
+          },
+          "operating_overhead": {
+            "type": "number",
+            "minimum": 0
+          },
+          "ebitda": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "month_of_year",
+          "service_jobs",
+          "service_revenue",
+          "other_revenue",
+          "revenue",
+          "tech_direct_labor",
+          "vehicle_direct_opex",
+          "service_variable_cost",
+          "other_direct_cost",
+          "cogs",
+          "operating_overhead",
+          "ebitda"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "opening_financial_state": {
+      "type": "object",
+      "properties": {
+        "cash": {
+          "type": "number"
+        },
+        "accounts_receivable": {
+          "type": "number",
+          "minimum": 0
+        },
+        "inventory": {
+          "type": "number",
+          "minimum": 0
+        },
+        "accounts_payable": {
+          "type": "number",
+          "minimum": 0
+        },
+        "debt_tranches": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "principal": {
+                "type": "number",
+                "minimum": 0
+              },
+              "annual_interest_rate": {
+                "type": "number",
+                "minimum": 0
+              },
+              "remaining_term_months": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              },
+              "monthly_principal": {
+                "type": "number",
+                "minimum": 0
+              },
+              "first_repayment_month": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              },
+              "amortization_policy": {
+                "type": "string",
+                "const": "level_principal"
+              }
+            },
+            "required": [
+              "id",
+              "principal",
+              "annual_interest_rate",
+              "remaining_term_months",
+              "monthly_principal",
+              "first_repayment_month",
+              "amortization_policy"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "depreciable_assets": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "cost_basis": {
+                "type": "number",
+                "minimum": 0
+              },
+              "accumulated_depreciation": {
+                "type": "number",
+                "minimum": 0
+              },
+              "monthly_depreciation": {
+                "type": "number",
+                "minimum": 0
+              },
+              "remaining_life_months": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              },
+              "in_service_month": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              }
+            },
+            "required": [
+              "id",
+              "cost_basis",
+              "accumulated_depreciation",
+              "monthly_depreciation",
+              "remaining_life_months",
+              "in_service_month"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "cash",
+        "accounts_receivable",
+        "inventory",
+        "accounts_payable",
+        "debt_tranches",
+        "depreciable_assets"
+      ],
+      "additionalProperties": false
+    },
+    "operations": {
+      "type": "object",
+      "properties": {
+        "technicians": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "vehicles": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "working_days_per_month": {
+          "type": "number",
+          "minimum": 0
+        },
+        "max_jobs_per_tech_per_day": {
+          "type": "number",
+          "minimum": 0
+        },
+        "max_jobs_per_vehicle_per_day": {
+          "type": "number",
+          "minimum": 0
+        },
+        "base_monthly_job_demand": {
+          "type": "number",
+          "minimum": 0
+        },
+        "average_ticket": {
+          "type": "number",
+          "minimum": 0
+        },
+        "non_service_revenue_per_month": {
+          "type": "number",
+          "minimum": 0
+        },
+        "technician_loaded_cost_per_year": {
+          "type": "number",
+          "minimum": 0
+        },
+        "vehicle_opex_per_year": {
+          "type": "number",
+          "minimum": 0
+        },
+        "service_variable_cost_rate": {
+          "type": "number",
+          "minimum": 0
+        },
+        "non_service_direct_cost_per_month": {
+          "type": "number",
+          "minimum": 0
+        },
+        "fixed_overhead_per_month": {
+          "type": "number",
+          "minimum": 0
+        },
+        "baseline_marketing_in_overhead": {
+          "type": "number",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "technicians",
+        "vehicles",
+        "working_days_per_month",
+        "max_jobs_per_tech_per_day",
+        "max_jobs_per_vehicle_per_day",
+        "base_monthly_job_demand",
+        "average_ticket",
+        "non_service_revenue_per_month",
+        "technician_loaded_cost_per_year",
+        "vehicle_opex_per_year",
+        "service_variable_cost_rate",
+        "non_service_direct_cost_per_month",
+        "fixed_overhead_per_month",
+        "baseline_marketing_in_overhead"
+      ],
+      "additionalProperties": false
+    },
+    "global_assumptions": {
+      "type": "object",
+      "properties": {
+        "organic_demand_growth": {
+          "type": "number",
+          "exclusiveMinimum": -1
+        },
+        "wage_inflation": {
+          "type": "number",
+          "exclusiveMinimum": -1
+        },
+        "overhead_inflation": {
+          "type": "number",
+          "exclusiveMinimum": -1
+        },
+        "ticket_growth": {
+          "type": "number",
+          "exclusiveMinimum": -1
+        },
+        "other_revenue_growth": {
+          "type": "number",
+          "exclusiveMinimum": -1
+        },
+        "other_direct_cost_growth": {
+          "type": "number",
+          "exclusiveMinimum": -1
+        },
+        "collection_delay_months": {
+          "type": "number",
+          "minimum": 0
+        },
+        "payment_delay_months": {
+          "type": "number",
+          "minimum": 0
+        },
+        "ap_eligible_cost_categories": {
+          "type": "array",
+          "items": {
+            "anyOf": [
+              {
+                "type": "string",
+                "const": "service_variable_cost"
+              },
+              {
+                "type": "string",
+                "const": "other_direct_cost"
+              },
+              {
+                "type": "string",
+                "const": "tech_direct_labor"
+              },
+              {
+                "type": "string",
+                "const": "vehicle_direct_opex"
+              }
+            ]
+          }
+        },
+        "constant_inventory": {
+          "type": "number",
+          "minimum": 0
+        },
+        "existing_depreciation_per_year": {
+          "type": "number",
+          "minimum": 0
+        },
+        "maintenance_capex_per_year": {
+          "type": "number",
+          "minimum": 0
+        },
+        "truck_useful_life_months": {
+          "type": "number",
+          "const": 60
+        },
+        "tax_rate": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "liquidity_floor": {
+          "type": "number",
+          "minimum": 0
+        },
+        "valuation_multiple": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "seasonality": {
+          "minItems": 12,
+          "maxItems": 12,
+          "type": "array",
+          "items": {
+            "type": "number",
+            "minimum": 0
+          }
+        },
+        "distribution_parameters": {
+          "type": "object",
+          "propertyNames": {
+            "type": "string"
+          },
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "family": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "const": "fixed"
+                  },
+                  {
+                    "type": "string",
+                    "const": "bounded_normal"
+                  },
+                  {
+                    "type": "string",
+                    "const": "triangular"
+                  },
+                  {
+                    "type": "string",
+                    "const": "discrete"
+                  },
+                  {
+                    "type": "string",
+                    "const": "latent_ar1"
+                  }
+                ]
+              },
+              "parameters": {
+                "type": "object",
+                "propertyNames": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "additionalProperties": {
+                  "anyOf": [
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "minItems": 1,
+                      "type": "array",
+                      "items": {
+                        "type": "number"
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            "required": [
+              "family",
+              "parameters"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "organic_demand_growth",
+        "wage_inflation",
+        "overhead_inflation",
+        "ticket_growth",
+        "other_revenue_growth",
+        "other_direct_cost_growth",
+        "collection_delay_months",
+        "payment_delay_months",
+        "ap_eligible_cost_categories",
+        "constant_inventory",
+        "existing_depreciation_per_year",
+        "maintenance_capex_per_year",
+        "truck_useful_life_months",
+        "tax_rate",
+        "liquidity_floor",
+        "valuation_multiple",
+        "seasonality",
+        "distribution_parameters"
+      ],
+      "additionalProperties": false
+    },
+    "provenance": {
+      "type": "object",
+      "propertyNames": {
+        "type": "string"
+      },
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "kind": {
+            "anyOf": [
+              {
+                "type": "string",
+                "const": "synthetic_historical"
+              },
+              {
+                "type": "string",
+                "const": "user_input"
+              },
+              {
+                "type": "string",
+                "const": "derived"
+              },
+              {
+                "type": "string",
+                "const": "assumed"
+              },
+              {
+                "type": "string",
+                "const": "simulated"
+              }
+            ]
+          },
+          "source": {
+            "type": "string",
+            "minLength": 1
+          },
+          "unit": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "kind",
+          "source",
+          "unit"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "id",
+    "name",
+    "industry",
+    "currency",
+    "model_version",
+    "valuation_month",
+    "horizon_months",
+    "forecast_start_month_of_year",
+    "historical_months",
+    "opening_financial_state",
+    "operations",
+    "global_assumptions",
+    "provenance"
+  ],
+  "additionalProperties": false
+}

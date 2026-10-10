@@ -1,0 +1,2188 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "1.0"
+    },
+    "contract_revision": {
+      "type": "number",
+      "const": 1
+    },
+    "model_version": {
+      "type": "string",
+      "const": "mvp-1.0"
+    },
+    "run_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "input_fingerprint": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "company_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "horizon_months": {
+      "type": "number",
+      "const": 60
+    },
+    "currency": {
+      "type": "string",
+      "const": "USD"
+    },
+    "seed": {
+      "anyOf": [
+        {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "assumptions": {
+      "type": "object",
+      "properties": {
+        "exit_multiple": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "cash_reserve_floor": {
+          "type": "number",
+          "minimum": 0
+        },
+        "resolved": {
+          "type": "object",
+          "properties": {
+            "organic_demand_growth": {
+              "type": "number",
+              "exclusiveMinimum": -1
+            },
+            "wage_inflation": {
+              "type": "number",
+              "exclusiveMinimum": -1
+            },
+            "overhead_inflation": {
+              "type": "number",
+              "exclusiveMinimum": -1
+            },
+            "ticket_growth": {
+              "type": "number",
+              "exclusiveMinimum": -1
+            },
+            "other_revenue_growth": {
+              "type": "number",
+              "exclusiveMinimum": -1
+            },
+            "other_direct_cost_growth": {
+              "type": "number",
+              "exclusiveMinimum": -1
+            },
+            "collection_delay_months": {
+              "type": "number",
+              "minimum": 0
+            },
+            "payment_delay_months": {
+              "type": "number",
+              "minimum": 0
+            },
+            "ap_eligible_cost_categories": {
+              "type": "array",
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "const": "service_variable_cost"
+                  },
+                  {
+                    "type": "string",
+                    "const": "other_direct_cost"
+                  },
+                  {
+                    "type": "string",
+                    "const": "tech_direct_labor"
+                  },
+                  {
+                    "type": "string",
+                    "const": "vehicle_direct_opex"
+                  }
+                ]
+              }
+            },
+            "constant_inventory": {
+              "type": "number",
+              "minimum": 0
+            },
+            "existing_depreciation_per_year": {
+              "type": "number",
+              "minimum": 0
+            },
+            "maintenance_capex_per_year": {
+              "type": "number",
+              "minimum": 0
+            },
+            "truck_useful_life_months": {
+              "type": "number",
+              "const": 60
+            },
+            "tax_rate": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "liquidity_floor": {
+              "type": "number",
+              "minimum": 0
+            },
+            "valuation_multiple": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            "seasonality": {
+              "minItems": 12,
+              "maxItems": 12,
+              "type": "array",
+              "items": {
+                "type": "number",
+                "minimum": 0
+              }
+            },
+            "distribution_parameters": {
+              "type": "object",
+              "propertyNames": {
+                "type": "string"
+              },
+              "additionalProperties": {
+                "type": "object",
+                "properties": {
+                  "family": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "const": "fixed"
+                      },
+                      {
+                        "type": "string",
+                        "const": "bounded_normal"
+                      },
+                      {
+                        "type": "string",
+                        "const": "triangular"
+                      },
+                      {
+                        "type": "string",
+                        "const": "discrete"
+                      },
+                      {
+                        "type": "string",
+                        "const": "latent_ar1"
+                      }
+                    ]
+                  },
+                  "parameters": {
+                    "type": "object",
+                    "propertyNames": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "additionalProperties": {
+                      "anyOf": [
+                        {
+                          "type": "number"
+                        },
+                        {
+                          "minItems": 1,
+                          "type": "array",
+                          "items": {
+                            "type": "number"
+                          }
+                        }
+                      ]
+                    }
+                  }
+                },
+                "required": [
+                  "family",
+                  "parameters"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          "required": [
+            "organic_demand_growth",
+            "wage_inflation",
+            "overhead_inflation",
+            "ticket_growth",
+            "other_revenue_growth",
+            "other_direct_cost_growth",
+            "collection_delay_months",
+            "payment_delay_months",
+            "ap_eligible_cost_categories",
+            "constant_inventory",
+            "existing_depreciation_per_year",
+            "maintenance_capex_per_year",
+            "truck_useful_life_months",
+            "tax_rate",
+            "liquidity_floor",
+            "valuation_multiple",
+            "seasonality",
+            "distribution_parameters"
+          ],
+          "additionalProperties": false
+        },
+        "provenance": {
+          "type": "object",
+          "propertyNames": {
+            "type": "string"
+          },
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "kind": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "const": "synthetic_historical"
+                  },
+                  {
+                    "type": "string",
+                    "const": "user_input"
+                  },
+                  {
+                    "type": "string",
+                    "const": "derived"
+                  },
+                  {
+                    "type": "string",
+                    "const": "assumed"
+                  },
+                  {
+                    "type": "string",
+                    "const": "simulated"
+                  }
+                ]
+              },
+              "source": {
+                "type": "string",
+                "minLength": 1
+              },
+              "unit": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "kind",
+              "source",
+              "unit"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "exit_multiple",
+        "cash_reserve_floor",
+        "resolved",
+        "provenance"
+      ],
+      "additionalProperties": false
+    },
+    "scenarios": {
+      "type": "object",
+      "propertyNames": {
+        "type": "string"
+      },
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "metadata": {
+            "readOnly": true,
+            "type": "object",
+            "properties": {
+              "scenario_id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "name": {
+                "type": "string",
+                "minLength": 1
+              },
+              "model_version": {
+                "type": "string",
+                "const": "mvp-1.0"
+              },
+              "input_fingerprint": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "seed": {
+                "anyOf": [
+                  {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 9007199254740991
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            },
+            "required": [
+              "scenario_id",
+              "name",
+              "model_version",
+              "input_fingerprint",
+              "seed"
+            ],
+            "additionalProperties": false
+          },
+          "months": {
+            "type": "array",
+            "prefixItems": [
+              {
+                "type": "object",
+                "properties": {
+                  "month": {
+                    "type": "number",
+                    "const": 0
+                  },
+                  "is_opening_state": {
+                    "type": "boolean",
+                    "const": true
+                  },
+                  "operations": {
+                    "type": "null"
+                  },
+                  "valuation": {
+                    "type": "null"
+                  },
+                  "events": {
+                    "type": "array",
+                    "prefixItems": [],
+                    "items": false,
+                    "maxItems": 0
+                  },
+                  "financials": {
+                    "type": "object",
+                    "properties": {
+                      "cash_end": {
+                        "type": "number"
+                      },
+                      "debt_end": {
+                        "type": "number",
+                        "minimum": 0
+                      },
+                      "accounts_receivable_end": {
+                        "type": "number",
+                        "minimum": 0
+                      },
+                      "inventory_end": {
+                        "type": "number",
+                        "minimum": 0
+                      },
+                      "accounts_payable_end": {
+                        "type": "number",
+                        "minimum": 0
+                      }
+                    },
+                    "required": [
+                      "cash_end",
+                      "debt_end",
+                      "accounts_receivable_end",
+                      "inventory_end",
+                      "accounts_payable_end"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "required": [
+                  "month",
+                  "is_opening_state",
+                  "operations",
+                  "valuation",
+                  "events",
+                  "financials"
+                ],
+                "additionalProperties": false
+              }
+            ],
+            "items": {
+              "type": "object",
+              "properties": {
+                "month": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 60
+                },
+                "is_opening_state": {
+                  "type": "boolean",
+                  "const": false
+                },
+                "operations": {
+                  "type": "object",
+                  "properties": {
+                    "service_demand_jobs": {
+                      "type": "number",
+                      "minimum": 0
+                    },
+                    "technician_capacity_jobs": {
+                      "type": "number",
+                      "minimum": 0
+                    },
+                    "vehicle_capacity_jobs": {
+                      "type": "number",
+                      "minimum": 0
+                    },
+                    "service_capacity_jobs": {
+                      "type": "number",
+                      "minimum": 0
+                    },
+                    "completed_jobs": {
+                      "type": "number",
+                      "minimum": 0
+                    },
+                    "unserved_jobs": {
+                      "type": "number",
+                      "minimum": 0
+                    },
+                    "utilization": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 1
+                    },
+                    "employed_technicians": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 9007199254740991
+                    },
+                    "productive_technician_fte": {
+                      "type": "number",
+                      "minimum": 0
+                    },
+                    "in_service_vehicles": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 9007199254740991
+                    },
+                    "average_ticket": {
+                      "type": "number",
+                      "minimum": 0
+                    }
+                  },
+                  "required": [
+                    "service_demand_jobs",
+                    "technician_capacity_jobs",
+                    "vehicle_capacity_jobs",
+                    "service_capacity_jobs",
+                    "completed_jobs",
+                    "unserved_jobs",
+                    "utilization",
+                    "employed_technicians",
+                    "productive_technician_fte",
+                    "in_service_vehicles",
+                    "average_ticket"
+                  ],
+                  "additionalProperties": false
+                },
+                "financials": {
+                  "type": "object",
+                  "properties": {
+                    "service_revenue": {
+                      "type": "number",
+                      "minimum": 0
+                    },
+                    "other_revenue": {
+                      "type": "number",
+                      "minimum": 0
+                    },
+                    "revenue": {
+                      "type": "number",
+                      "minimum": 0
+                    },
+                    "service_variable_cost": {
+                      "type": "number",
+                      "minimum": 0
+                    },
+                    "tech_direct_labor": {
+                      "type": "number",
+                      "minimum": 0
+                    },
+                    "vehicle_direct_opex": {
+                      "type": "number",
+                      "minimum": 0
+                    },
+                    "other_direct_cost": {
+                      "type": "number",
+                      "minimum": 0
+                    },
+                    "cogs": {
+                      "type": "number",
+                      "minimum": 0
+                    },
+                    "gross_profit": {
+                      "type": "number"
+                    },
+                    "fixed_overhead": {
+                      "type": "number",
+                      "minimum": 0
+                    },
+                    "incremental_marketing": {
+                      "type": "number",
+                      "minimum": 0
+                    },
+                    "recruitment": {
+                      "type": "number",
+                      "minimum": 0
+                    },
+                    "operating_overhead": {
+                      "type": "number",
+                      "minimum": 0
+                    },
+                    "ebitda": {
+                      "type": "number"
+                    },
+                    "depreciation": {
+                      "type": "number",
+                      "minimum": 0
+                    },
+                    "amortization": {
+                      "type": "number",
+                      "minimum": 0
+                    },
+                    "ebit": {
+                      "type": "number"
+                    },
+                    "cash_interest": {
+                      "type": "number",
+                      "minimum": 0
+                    },
+                    "pretax_income": {
+                      "type": "number"
+                    },
+                    "cash_taxes": {
+                      "type": "number",
+                      "minimum": 0
+                    },
+                    "accounts_receivable_end": {
+                      "type": "number",
+                      "minimum": 0
+                    },
+                    "inventory_end": {
+                      "type": "number",
+                      "minimum": 0
+                    },
+                    "accounts_payable_end": {
+                      "type": "number",
+                      "minimum": 0
+                    },
+                    "nwc_begin": {
+                      "type": "number"
+                    },
+                    "nwc_end": {
+                      "type": "number"
+                    },
+                    "delta_nwc": {
+                      "type": "number"
+                    },
+                    "operating_cash_flow": {
+                      "type": "number"
+                    },
+                    "maintenance_capex": {
+                      "type": "number",
+                      "minimum": 0
+                    },
+                    "growth_capex": {
+                      "type": "number",
+                      "minimum": 0
+                    },
+                    "capex": {
+                      "type": "number",
+                      "minimum": 0
+                    },
+                    "new_borrowings": {
+                      "type": "number",
+                      "minimum": 0
+                    },
+                    "debt_principal": {
+                      "type": "number",
+                      "minimum": 0
+                    },
+                    "owner_distributions": {
+                      "type": "number",
+                      "minimum": 0
+                    },
+                    "cash_begin": {
+                      "type": "number"
+                    },
+                    "cash_change": {
+                      "type": "number"
+                    },
+                    "cash_end": {
+                      "type": "number"
+                    },
+                    "debt_begin": {
+                      "type": "number",
+                      "minimum": 0
+                    },
+                    "debt_end": {
+                      "type": "number",
+                      "minimum": 0
+                    },
+                    "unlevered_tax": {
+                      "type": "number",
+                      "minimum": 0
+                    },
+                    "unlevered_fcf": {
+                      "type": "number"
+                    },
+                    "debt_movements": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "tranche_id": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "principal_begin": {
+                            "type": "number",
+                            "minimum": 0
+                          },
+                          "borrowing": {
+                            "type": "number",
+                            "minimum": 0
+                          },
+                          "cash_interest": {
+                            "type": "number",
+                            "minimum": 0
+                          },
+                          "principal_repayment": {
+                            "type": "number",
+                            "minimum": 0
+                          },
+                          "principal_end": {
+                            "type": "number",
+                            "minimum": 0
+                          }
+                        },
+                        "required": [
+                          "tranche_id",
+                          "principal_begin",
+                          "borrowing",
+                          "cash_interest",
+                          "principal_repayment",
+                          "principal_end"
+                        ],
+                        "additionalProperties": false
+                      }
+                    }
+                  },
+                  "required": [
+                    "service_revenue",
+                    "other_revenue",
+                    "revenue",
+                    "service_variable_cost",
+                    "tech_direct_labor",
+                    "vehicle_direct_opex",
+                    "other_direct_cost",
+                    "cogs",
+                    "gross_profit",
+                    "fixed_overhead",
+                    "incremental_marketing",
+                    "recruitment",
+                    "operating_overhead",
+                    "ebitda",
+                    "depreciation",
+                    "amortization",
+                    "ebit",
+                    "cash_interest",
+                    "pretax_income",
+                    "cash_taxes",
+                    "accounts_receivable_end",
+                    "inventory_end",
+                    "accounts_payable_end",
+                    "nwc_begin",
+                    "nwc_end",
+                    "delta_nwc",
+                    "operating_cash_flow",
+                    "maintenance_capex",
+                    "growth_capex",
+                    "capex",
+                    "new_borrowings",
+                    "debt_principal",
+                    "owner_distributions",
+                    "cash_begin",
+                    "cash_change",
+                    "cash_end",
+                    "debt_begin",
+                    "debt_end",
+                    "unlevered_tax",
+                    "unlevered_fcf",
+                    "debt_movements"
+                  ],
+                  "additionalProperties": false
+                },
+                "valuation": {
+                  "oneOf": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "status": {
+                          "type": "string",
+                          "const": "meaningful"
+                        },
+                        "ttm_ebitda": {
+                          "type": "number",
+                          "exclusiveMinimum": 0
+                        },
+                        "enterprise_multiple": {
+                          "type": "number",
+                          "exclusiveMinimum": 0
+                        },
+                        "enterprise_value": {
+                          "type": "number",
+                          "exclusiveMinimum": 0
+                        },
+                        "equity_value": {
+                          "type": "number"
+                        }
+                      },
+                      "required": [
+                        "status",
+                        "ttm_ebitda",
+                        "enterprise_multiple",
+                        "enterprise_value",
+                        "equity_value"
+                      ],
+                      "additionalProperties": false
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "status": {
+                          "type": "string",
+                          "const": "nonpositive_ttm_ebitda"
+                        },
+                        "ttm_ebitda": {
+                          "type": "number",
+                          "maximum": 0
+                        },
+                        "enterprise_multiple": {
+                          "type": "number",
+                          "exclusiveMinimum": 0
+                        },
+                        "enterprise_value": {
+                          "type": "null"
+                        },
+                        "equity_value": {
+                          "type": "null"
+                        }
+                      },
+                      "required": [
+                        "status",
+                        "ttm_ebitda",
+                        "enterprise_multiple",
+                        "enterprise_value",
+                        "equity_value"
+                      ],
+                      "additionalProperties": false
+                    }
+                  ]
+                },
+                "events": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "month": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 60
+                      },
+                      "decision_id": {
+                        "anyOf": [
+                          {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "type": {
+                        "anyOf": [
+                          {
+                            "type": "string",
+                            "const": "scheduled"
+                          },
+                          {
+                            "type": "string",
+                            "const": "simulated_operational"
+                          },
+                          {
+                            "type": "string",
+                            "const": "calculated_milestone"
+                          }
+                        ]
+                      },
+                      "kind": {
+                        "anyOf": [
+                          {
+                            "type": "string",
+                            "const": "truck_purchase"
+                          },
+                          {
+                            "type": "string",
+                            "const": "truck_in_service"
+                          },
+                          {
+                            "type": "string",
+                            "const": "recruitment"
+                          },
+                          {
+                            "type": "string",
+                            "const": "employment_start"
+                          },
+                          {
+                            "type": "string",
+                            "const": "ramp_complete"
+                          },
+                          {
+                            "type": "string",
+                            "const": "campaign_spend"
+                          },
+                          {
+                            "type": "string",
+                            "const": "campaign_demand"
+                          },
+                          {
+                            "type": "string",
+                            "const": "campaign_end"
+                          },
+                          {
+                            "type": "string",
+                            "const": "cash_trough"
+                          },
+                          {
+                            "type": "string",
+                            "const": "reserve_breach"
+                          },
+                          {
+                            "type": "string",
+                            "const": "payback"
+                          },
+                          {
+                            "type": "string",
+                            "const": "payback_reversal"
+                          },
+                          {
+                            "type": "string",
+                            "const": "debt_peak"
+                          },
+                          {
+                            "type": "string",
+                            "const": "exit"
+                          }
+                        ]
+                      },
+                      "label": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "provenance": {
+                        "anyOf": [
+                          {
+                            "type": "string",
+                            "const": "synthetic_historical"
+                          },
+                          {
+                            "type": "string",
+                            "const": "user_input"
+                          },
+                          {
+                            "type": "string",
+                            "const": "derived"
+                          },
+                          {
+                            "type": "string",
+                            "const": "assumed"
+                          },
+                          {
+                            "type": "string",
+                            "const": "simulated"
+                          }
+                        ]
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "month",
+                      "decision_id",
+                      "type",
+                      "kind",
+                      "label",
+                      "provenance"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              },
+              "required": [
+                "month",
+                "is_opening_state",
+                "operations",
+                "financials",
+                "valuation",
+                "events"
+              ],
+              "additionalProperties": false
+            },
+            "minItems": 61,
+            "maxItems": 61
+          },
+          "metrics": {
+            "type": "object",
+            "properties": {
+              "minimum_cash": {
+                "type": "number"
+              },
+              "cash_trough_month": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 60
+              },
+              "reserve_breach_months": {
+                "type": "array",
+                "items": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 60
+                }
+              },
+              "debt_peak": {
+                "type": "number",
+                "minimum": 0
+              },
+              "debt_peak_month": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 60
+              },
+              "exit_equity_value": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "exit_valuation_status": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "const": "meaningful"
+                  },
+                  {
+                    "type": "string",
+                    "const": "nonpositive_ttm_ebitda"
+                  }
+                ]
+              },
+              "payback": {
+                "oneOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "status": {
+                        "type": "string",
+                        "const": "reached"
+                      },
+                      "month": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 60
+                      },
+                      "first_investment_month": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 60
+                      },
+                      "subsequent_reversal_month": {
+                        "anyOf": [
+                          {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 60
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      }
+                    },
+                    "required": [
+                      "status",
+                      "month",
+                      "first_investment_month",
+                      "subsequent_reversal_month"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "status": {
+                        "type": "string",
+                        "const": "not_reached"
+                      },
+                      "month": {
+                        "type": "null"
+                      },
+                      "first_investment_month": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 60
+                      },
+                      "subsequent_reversal_month": {
+                        "type": "null"
+                      }
+                    },
+                    "required": [
+                      "status",
+                      "month",
+                      "first_investment_month",
+                      "subsequent_reversal_month"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "status": {
+                        "type": "string",
+                        "const": "not_applicable"
+                      },
+                      "month": {
+                        "type": "null"
+                      },
+                      "first_investment_month": {
+                        "type": "null"
+                      },
+                      "subsequent_reversal_month": {
+                        "type": "null"
+                      }
+                    },
+                    "required": [
+                      "status",
+                      "month",
+                      "first_investment_month",
+                      "subsequent_reversal_month"
+                    ],
+                    "additionalProperties": false
+                  }
+                ]
+              }
+            },
+            "required": [
+              "minimum_cash",
+              "cash_trough_month",
+              "reserve_breach_months",
+              "debt_peak",
+              "debt_peak_month",
+              "exit_equity_value",
+              "exit_valuation_status",
+              "payback"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "metadata",
+          "months",
+          "metrics"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "comparisons": {
+      "type": "object",
+      "propertyNames": {
+        "type": "string"
+      },
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "baseline_id": {
+            "type": "string",
+            "const": "baseline"
+          },
+          "scenario_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "monthly_deltas": {
+            "minItems": 61,
+            "maxItems": 61,
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "month": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 60
+                },
+                "values": {
+                  "type": "object",
+                  "propertyNames": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "const": "cash_end"
+                      },
+                      {
+                        "type": "string",
+                        "const": "ebitda"
+                      },
+                      {
+                        "type": "string",
+                        "const": "revenue"
+                      },
+                      {
+                        "type": "string",
+                        "const": "debt_end"
+                      },
+                      {
+                        "type": "string",
+                        "const": "utilization"
+                      },
+                      {
+                        "type": "string",
+                        "const": "ttm_ebitda"
+                      },
+                      {
+                        "type": "string",
+                        "const": "enterprise_value"
+                      },
+                      {
+                        "type": "string",
+                        "const": "equity_value"
+                      },
+                      {
+                        "type": "string",
+                        "const": "unlevered_fcf"
+                      }
+                    ]
+                  },
+                  "additionalProperties": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "required": [
+                    "cash_end",
+                    "ebitda",
+                    "revenue",
+                    "debt_end",
+                    "utilization",
+                    "ttm_ebitda",
+                    "enterprise_value",
+                    "equity_value",
+                    "unlevered_fcf"
+                  ]
+                },
+                "cumulative_incremental_unlevered_fcf": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "month",
+                "values",
+                "cumulative_incremental_unlevered_fcf"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "incremental_exit_equity_value": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "payback": {
+            "oneOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "status": {
+                    "type": "string",
+                    "const": "reached"
+                  },
+                  "month": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 60
+                  },
+                  "first_investment_month": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 60
+                  },
+                  "subsequent_reversal_month": {
+                    "anyOf": [
+                      {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 60
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  }
+                },
+                "required": [
+                  "status",
+                  "month",
+                  "first_investment_month",
+                  "subsequent_reversal_month"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "status": {
+                    "type": "string",
+                    "const": "not_reached"
+                  },
+                  "month": {
+                    "type": "null"
+                  },
+                  "first_investment_month": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 60
+                  },
+                  "subsequent_reversal_month": {
+                    "type": "null"
+                  }
+                },
+                "required": [
+                  "status",
+                  "month",
+                  "first_investment_month",
+                  "subsequent_reversal_month"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "status": {
+                    "type": "string",
+                    "const": "not_applicable"
+                  },
+                  "month": {
+                    "type": "null"
+                  },
+                  "first_investment_month": {
+                    "type": "null"
+                  },
+                  "subsequent_reversal_month": {
+                    "type": "null"
+                  }
+                },
+                "required": [
+                  "status",
+                  "month",
+                  "first_investment_month",
+                  "subsequent_reversal_month"
+                ],
+                "additionalProperties": false
+              }
+            ]
+          }
+        },
+        "required": [
+          "baseline_id",
+          "scenario_id",
+          "monthly_deltas",
+          "incremental_exit_equity_value",
+          "payback"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "monte_carlo": {
+      "anyOf": [
+        {
+          "type": "object",
+          "properties": {
+            "runs": {
+              "type": "integer",
+              "minimum": 2000,
+              "maximum": 5000
+            },
+            "seed": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            "distribution_parameters": {
+              "type": "object",
+              "propertyNames": {
+                "type": "string"
+              },
+              "additionalProperties": {
+                "type": "object",
+                "properties": {
+                  "family": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "const": "fixed"
+                      },
+                      {
+                        "type": "string",
+                        "const": "bounded_normal"
+                      },
+                      {
+                        "type": "string",
+                        "const": "triangular"
+                      },
+                      {
+                        "type": "string",
+                        "const": "discrete"
+                      },
+                      {
+                        "type": "string",
+                        "const": "latent_ar1"
+                      }
+                    ]
+                  },
+                  "parameters": {
+                    "type": "object",
+                    "propertyNames": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "additionalProperties": {
+                      "anyOf": [
+                        {
+                          "type": "number"
+                        },
+                        {
+                          "minItems": 1,
+                          "type": "array",
+                          "items": {
+                            "type": "number"
+                          }
+                        }
+                      ]
+                    }
+                  }
+                },
+                "required": [
+                  "family",
+                  "parameters"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "model_version": {
+              "type": "string",
+              "const": "mvp-1.0"
+            },
+            "scenarios": {
+              "type": "object",
+              "propertyNames": {
+                "type": "string"
+              },
+              "additionalProperties": {
+                "type": "object",
+                "properties": {
+                  "monthly_percentiles": {
+                    "type": "object",
+                    "propertyNames": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "const": "cash_end"
+                        },
+                        {
+                          "type": "string",
+                          "const": "ebitda"
+                        },
+                        {
+                          "type": "string",
+                          "const": "revenue"
+                        },
+                        {
+                          "type": "string",
+                          "const": "debt_end"
+                        },
+                        {
+                          "type": "string",
+                          "const": "utilization"
+                        },
+                        {
+                          "type": "string",
+                          "const": "ttm_ebitda"
+                        },
+                        {
+                          "type": "string",
+                          "const": "enterprise_value"
+                        },
+                        {
+                          "type": "string",
+                          "const": "equity_value"
+                        },
+                        {
+                          "type": "string",
+                          "const": "unlevered_fcf"
+                        }
+                      ]
+                    },
+                    "additionalProperties": {
+                      "minItems": 61,
+                      "maxItems": 61,
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "p10": {
+                            "type": [
+                              "number",
+                              "null"
+                            ]
+                          },
+                          "p50": {
+                            "type": [
+                              "number",
+                              "null"
+                            ]
+                          },
+                          "p90": {
+                            "type": [
+                              "number",
+                              "null"
+                            ]
+                          },
+                          "mean": {
+                            "type": [
+                              "number",
+                              "null"
+                            ]
+                          },
+                          "valid_path_count": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 9007199254740991
+                          },
+                          "unavailable_path_count": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 9007199254740991
+                          }
+                        },
+                        "required": [
+                          "p10",
+                          "p50",
+                          "p90",
+                          "mean",
+                          "valid_path_count",
+                          "unavailable_path_count"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "required": [
+                      "cash_end",
+                      "ebitda",
+                      "revenue",
+                      "debt_end",
+                      "utilization",
+                      "ttm_ebitda",
+                      "enterprise_value",
+                      "equity_value",
+                      "unlevered_fcf"
+                    ]
+                  },
+                  "monthly_probability_cash_below_reserve": {
+                    "minItems": 61,
+                    "maxItems": 61,
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "value": {
+                          "anyOf": [
+                            {
+                              "type": "number",
+                              "minimum": 0,
+                              "maximum": 1
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "valid_path_count": {
+                          "type": "integer",
+                          "minimum": 0,
+                          "maximum": 9007199254740991
+                        },
+                        "unavailable_path_count": {
+                          "type": "integer",
+                          "minimum": 0,
+                          "maximum": 9007199254740991
+                        },
+                        "unavailable_reason": {
+                          "anyOf": [
+                            {
+                              "type": "string",
+                              "const": "not_applicable"
+                            },
+                            {
+                              "type": "string",
+                              "const": "unavailable_valuation"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        }
+                      },
+                      "required": [
+                        "value",
+                        "valid_path_count",
+                        "unavailable_path_count",
+                        "unavailable_reason"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "path_risks": {
+                    "type": "object",
+                    "properties": {
+                      "probability_cash_below_reserve_any_month": {
+                        "type": "object",
+                        "properties": {
+                          "value": {
+                            "anyOf": [
+                              {
+                                "type": "number",
+                                "minimum": 0,
+                                "maximum": 1
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "valid_path_count": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 9007199254740991
+                          },
+                          "unavailable_path_count": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 9007199254740991
+                          },
+                          "unavailable_reason": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "const": "not_applicable"
+                              },
+                              {
+                                "type": "string",
+                                "const": "unavailable_valuation"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          }
+                        },
+                        "required": [
+                          "value",
+                          "valid_path_count",
+                          "unavailable_path_count",
+                          "unavailable_reason"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "probability_negative_exit_equity_delta": {
+                        "type": "object",
+                        "properties": {
+                          "value": {
+                            "anyOf": [
+                              {
+                                "type": "number",
+                                "minimum": 0,
+                                "maximum": 1
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "valid_path_count": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 9007199254740991
+                          },
+                          "unavailable_path_count": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 9007199254740991
+                          },
+                          "unavailable_reason": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "const": "not_applicable"
+                              },
+                              {
+                                "type": "string",
+                                "const": "unavailable_valuation"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          }
+                        },
+                        "required": [
+                          "value",
+                          "valid_path_count",
+                          "unavailable_path_count",
+                          "unavailable_reason"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "probability_payback_by_month_60": {
+                        "type": "object",
+                        "properties": {
+                          "value": {
+                            "anyOf": [
+                              {
+                                "type": "number",
+                                "minimum": 0,
+                                "maximum": 1
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "valid_path_count": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 9007199254740991
+                          },
+                          "unavailable_path_count": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 9007199254740991
+                          },
+                          "unavailable_reason": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "const": "not_applicable"
+                              },
+                              {
+                                "type": "string",
+                                "const": "unavailable_valuation"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          }
+                        },
+                        "required": [
+                          "value",
+                          "valid_path_count",
+                          "unavailable_path_count",
+                          "unavailable_reason"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "required": [
+                      "probability_cash_below_reserve_any_month",
+                      "probability_negative_exit_equity_delta",
+                      "probability_payback_by_month_60"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "terminal_distributions": {
+                    "type": "object",
+                    "properties": {
+                      "exit_equity_value": {
+                        "type": "object",
+                        "properties": {
+                          "p10": {
+                            "type": [
+                              "number",
+                              "null"
+                            ]
+                          },
+                          "p50": {
+                            "type": [
+                              "number",
+                              "null"
+                            ]
+                          },
+                          "p90": {
+                            "type": [
+                              "number",
+                              "null"
+                            ]
+                          },
+                          "mean": {
+                            "type": [
+                              "number",
+                              "null"
+                            ]
+                          },
+                          "valid_path_count": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 9007199254740991
+                          },
+                          "unavailable_path_count": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 9007199254740991
+                          }
+                        },
+                        "required": [
+                          "p10",
+                          "p50",
+                          "p90",
+                          "mean",
+                          "valid_path_count",
+                          "unavailable_path_count"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "incremental_exit_equity_value": {
+                        "type": "object",
+                        "properties": {
+                          "p10": {
+                            "type": [
+                              "number",
+                              "null"
+                            ]
+                          },
+                          "p50": {
+                            "type": [
+                              "number",
+                              "null"
+                            ]
+                          },
+                          "p90": {
+                            "type": [
+                              "number",
+                              "null"
+                            ]
+                          },
+                          "mean": {
+                            "type": [
+                              "number",
+                              "null"
+                            ]
+                          },
+                          "valid_path_count": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 9007199254740991
+                          },
+                          "unavailable_path_count": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 9007199254740991
+                          }
+                        },
+                        "required": [
+                          "p10",
+                          "p50",
+                          "p90",
+                          "mean",
+                          "valid_path_count",
+                          "unavailable_path_count"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "required": [
+                      "exit_equity_value",
+                      "incremental_exit_equity_value"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "payback": {
+                    "type": "object",
+                    "properties": {
+                      "probability_within_horizon": {
+                        "type": "object",
+                        "properties": {
+                          "value": {
+                            "anyOf": [
+                              {
+                                "type": "number",
+                                "minimum": 0,
+                                "maximum": 1
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "valid_path_count": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 9007199254740991
+                          },
+                          "unavailable_path_count": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 9007199254740991
+                          },
+                          "unavailable_reason": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "const": "not_applicable"
+                              },
+                              {
+                                "type": "string",
+                                "const": "unavailable_valuation"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          }
+                        },
+                        "required": [
+                          "value",
+                          "valid_path_count",
+                          "unavailable_path_count",
+                          "unavailable_reason"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "median_month_conditional_on_payback_or_null": {
+                        "anyOf": [
+                          {
+                            "type": "number",
+                            "minimum": 1,
+                            "maximum": 60
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "not_reached_count": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 9007199254740991
+                      },
+                      "not_applicable_count": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 9007199254740991
+                      }
+                    },
+                    "required": [
+                      "probability_within_horizon",
+                      "median_month_conditional_on_payback_or_null",
+                      "not_reached_count",
+                      "not_applicable_count"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "required": [
+                  "monthly_percentiles",
+                  "monthly_probability_cash_below_reserve",
+                  "path_risks",
+                  "terminal_distributions",
+                  "payback"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "comparisons": {
+              "type": "object",
+              "propertyNames": {
+                "type": "string"
+              },
+              "additionalProperties": {
+                "type": "object",
+                "properties": {
+                  "paired_monthly_delta_percentiles": {
+                    "type": "object",
+                    "propertyNames": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "const": "cash_end"
+                        },
+                        {
+                          "type": "string",
+                          "const": "ebitda"
+                        },
+                        {
+                          "type": "string",
+                          "const": "revenue"
+                        },
+                        {
+                          "type": "string",
+                          "const": "debt_end"
+                        },
+                        {
+                          "type": "string",
+                          "const": "utilization"
+                        },
+                        {
+                          "type": "string",
+                          "const": "ttm_ebitda"
+                        },
+                        {
+                          "type": "string",
+                          "const": "enterprise_value"
+                        },
+                        {
+                          "type": "string",
+                          "const": "equity_value"
+                        },
+                        {
+                          "type": "string",
+                          "const": "unlevered_fcf"
+                        }
+                      ]
+                    },
+                    "additionalProperties": {
+                      "minItems": 61,
+                      "maxItems": 61,
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "p10": {
+                            "type": [
+                              "number",
+                              "null"
+                            ]
+                          },
+                          "p50": {
+                            "type": [
+                              "number",
+                              "null"
+                            ]
+                          },
+                          "p90": {
+                            "type": [
+                              "number",
+                              "null"
+                            ]
+                          },
+                          "mean": {
+                            "type": [
+                              "number",
+                              "null"
+                            ]
+                          },
+                          "valid_path_count": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 9007199254740991
+                          },
+                          "unavailable_path_count": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 9007199254740991
+                          }
+                        },
+                        "required": [
+                          "p10",
+                          "p50",
+                          "p90",
+                          "mean",
+                          "valid_path_count",
+                          "unavailable_path_count"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "required": [
+                      "cash_end",
+                      "ebitda",
+                      "revenue",
+                      "debt_end",
+                      "utilization",
+                      "ttm_ebitda",
+                      "enterprise_value",
+                      "equity_value",
+                      "unlevered_fcf"
+                    ]
+                  },
+                  "paired_terminal_delta_percentiles": {
+                    "type": "object",
+                    "properties": {
+                      "p10": {
+                        "type": [
+                          "number",
+                          "null"
+                        ]
+                      },
+                      "p50": {
+                        "type": [
+                          "number",
+                          "null"
+                        ]
+                      },
+                      "p90": {
+                        "type": [
+                          "number",
+                          "null"
+                        ]
+                      },
+                      "mean": {
+                        "type": [
+                          "number",
+                          "null"
+                        ]
+                      },
+                      "valid_path_count": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 9007199254740991
+                      },
+                      "unavailable_path_count": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 9007199254740991
+                      }
+                    },
+                    "required": [
+                      "p10",
+                      "p50",
+                      "p90",
+                      "mean",
+                      "valid_path_count",
+                      "unavailable_path_count"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "required": [
+                  "paired_monthly_delta_percentiles",
+                  "paired_terminal_delta_percentiles"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          "required": [
+            "runs",
+            "seed",
+            "distribution_parameters",
+            "model_version",
+            "scenarios",
+            "comparisons"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "warnings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "minLength": 1
+          },
+          "message": {
+            "type": "string",
+            "minLength": 1
+          },
+          "scenario_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "month": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 60
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "code",
+          "message",
+          "scenario_id",
+          "month"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "schema_version",
+    "contract_revision",
+    "model_version",
+    "run_id",
+    "input_fingerprint",
+    "company_id",
+    "horizon_months",
+    "currency",
+    "seed",
+    "assumptions",
+    "scenarios",
+    "comparisons",
+    "monte_carlo",
+    "warnings"
+  ],
+  "additionalProperties": false
+}

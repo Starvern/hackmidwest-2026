@@ -1,8 +1,8 @@
 # Shared contract baseline
 
-Authority: [specification](../docs/OperatorOS_Implementation_Spec.md). Initial typed vocabulary: [contracts.ts](contracts.ts). Status: established for review; **not a completed Gate A freeze**. No calculated example response is supplied until the engine exists.
+Authority: [specification](../docs/OperatorOS_Implementation_Spec.md). Generated typed vocabulary: [contracts.ts](contracts.ts). Status: established for review; **not a completed Gate A freeze**. No calculated example response is supplied until the engine exists.
 
-Per the [stack amendment](../docs/STACK_DECISION.md), TypeScript/Zod is the Person 3 runtime validation source of truth; the accepted engine remains authoritative for financial calculations. Implement these types there, generate JSON schemas into this directory, and verify the TypeScript mirror before freezing revision 1. Keep schema version `1.0`, model version `mvp-1.0`, and contract revision distinct. Breaking changes require an explicit revision/migration and coordinated changes; no silent field renames.
+Per the [stack amendment](../docs/STACK_DECISION.md), TypeScript/Zod is the Person 3 runtime validation source of truth; the accepted engine remains authoritative for financial calculations. Authoritative Zod definitions now live in `src/lib/server/schemas.ts`; generate/check JSON schemas and inferred TypeScript with the npm contract scripts. See the [candidate handoff](../docs/PERSON_3_SCHEMA_HANDOFF.md). Keep schema version `1.0`, model version `mvp-1.0`, and contract revision distinct. Breaking changes require an explicit revision/migration and coordinated changes; no silent field renames.
 
 ## Validation and serialization
 
@@ -31,3 +31,16 @@ Per the [stack amendment](../docs/STACK_DECISION.md), TypeScript/Zod is the Pers
 Engine functions are callable without HTTP, UI or AI. No module mutates shared inputs. `prior_state` carries cash/AR/inventory/AP, debt tranches and assets. `MonthEvents` carries state transitions and decision-specific costs rather than recalculated KPIs; completed milestones are emitted by metrics after the financial step. These internal types must be finalized with the phase-1 policy register before scheduler work.
 
 The response below includes the required cross-module and UI-facing fields. Distribution keys and parameter validation remain blocked on explicit fixture assumptions; `DistributionParameters` is a manifest, not permission for arbitrary risk formulas. Missing valuation paths must never silently disappear from reported risk denominators.
+
+## Executable checkpoint candidate
+
+Interface revision `checkpoint-1-candidate-1` awaits Persons 1/2 acceptance.
+`contracts/engine.ts` records the coordinated sixth scheduler argument and
+`FinancialStepResult` wrapper; growth-only asset additions prevent duplicate
+maintenance ownership. All public types are generated from Zod.
+
+JSON Schema captures shape/bounds; cross-field Zod refinements remain required
+for provenance, IDs, request reuse, chronological states and null/status semantics.
+Run `npm test`, `npm run fixture:contract` and P2's `node scripts/validate_fixture.ts`.
+Do not hand-edit generated artifacts. No schema parsing constitutes accounting
+acceptance or a completed Gate A/B freeze.

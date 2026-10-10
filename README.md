@@ -31,7 +31,7 @@ GET `/api/v1/health` returns:
 
 Health reports HTTP availability separately from engine readiness. The four
 remaining specified endpoints await real fixture/engine integration. API routes
-live under `src/routes/api/v1/`; runtime schemas will use Zod after the checkpoint.
+live under `src/routes/api/v1/`; runtime schemas use Zod; the executable contract is a candidate for checkpoint review.
 There is no separate Python API to install or run.
 
 ## Person 3 workflow
@@ -41,3 +41,21 @@ Follow [our ownership guide](docs/PERSON_3_CONTRACTS_API_FRONTEND.md) and
 review baseline. Dashboard development waits for deterministic Gates A/B;
 Monte Carlo integration waits for Gate C. No financial defaults or forecasts
 are introduced by the infrastructure setup.
+
+## Shared contracts
+
+Authoritative runtime definitions are in `src/lib/server/schemas.ts`; generated
+types are in `contracts/contracts.ts`. Engine signatures and the exact candidate
+revision are documented in [the schema handoff](docs/PERSON_3_SCHEMA_HANDOFF.md).
+
+```sh
+npm run contracts:generate
+npm run contracts:check
+npm run contracts:types
+npm run fixture:contract
+node scripts/validate_fixture.ts
+```
+
+`npm test` includes artifact/type checks and contract/API tests. Validate both
+the Zod schema and Person 2's reconciliation checks before fixture integration.
+The example request is illustrative input; no engine-generated result exists yet.
