@@ -56,3 +56,13 @@ run: no simulated bands, percentiles, probabilities or stochastic claims are sho
 P2 owns distribution/runner work and Gate C precedes integration of those results.
 Hosting adapter/deployment remains separate. The local dev preview can be kept
 running on port 4173 for the user's UI review.
+
+## Error/retry follow-up after valuation handoff
+
+Integrated P1 `cc45bf0` (approved corrected internal MC boundary and tested valuation
+vector). The dashboard now uses a shared same-origin request client with tested readable
+network/cancellation/HTML/malformed-response handling and preserved structured validation
+details. Explicit retries issue exactly one additional request; no automatic duplicate
+simulation submission occurs. The page retains previous successful results when a request
+fails. This improves error-path evidence; it is not full browser accessibility/Gate D approval.
+MC transport planning is in PERSON_3_MC_TRANSPORT_PROPOSAL.md and awaits real measurements.
