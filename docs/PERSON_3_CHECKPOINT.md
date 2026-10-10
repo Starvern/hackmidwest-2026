@@ -8,11 +8,11 @@ Working branch: `codex/contracts-api`; review baseline: Gavin commit `8c7acc7`.
 ## Ready for review
 
 The existing `contracts/contracts.ts` and contract README remain the proposed
-public vocabulary. Person 3 will encode the agreed version in Pydantic and
+public vocabulary. Person 3 will encode the agreed version in Zod and
 generate/check its JSON Schema and TypeScript artifacts. No financial defaults
 will be introduced by schema defaults.
 
-Backend setup now supports dependency installation, pytest, FastAPI and a health
+Backend setup now supports npm dependency installation, Node tests, SvelteKit and a health
 endpoint. Health reports HTTP service availability separately from simulation
 readiness. No simulation endpoint exists until a real engine can be connected.
 
@@ -40,18 +40,16 @@ freeze additionally requires the reconciled fixture, engine tests and complete
 
 ## Handoff status
 
-- Owned changes: backend package/dependencies, API infrastructure/tests, setup
+- Owned changes: SvelteKit routes/dependencies, API infrastructure/tests, setup
   documentation and this checkpoint agenda.
 - Public interface: GET `/api/v1/health` returns `status` and `simulation_ready`.
 - Contract revision: unchanged; existing revision 1 is still a review baseline.
 - Financial assumptions added: none. Breaking contract changes: none.
 - Pending: runtime schemas, fixture validation, engine adapters, four remaining
-  specified endpoints and React dashboard. Gates A/B/C/D remain pending.
-- Verification: Python 3.13.2; `cd backend && .venv/bin/python -m pytest`
-  passed 5 tests; `.venv/bin/python -m pip check` found no broken requirements.
-  Starlette emits a deprecation warning for its httpx TestClient integration;
-  tests pass, and a future dependency update should migrate the test transport.
+  specified endpoints and SvelteKit dashboard. Gates A/B/C/D remain pending.
+- Verification: `npm test` passed the health-route test; `npm run check`
+  reported zero errors/warnings; `npm run build` passed.
 - Example: GET `/api/v1/health` → HTTP 200,
   `{"status":"ok","simulation_ready":false}`.
-- Changes remain uncommitted for review; the pre-existing `package-lock.json`
-  modification was preserved.
+- Stack: user-directed SvelteKit amendment; see [decision](STACK_DECISION.md).
+- The original Python setup was pushed as `f465634`; this change replaces it.

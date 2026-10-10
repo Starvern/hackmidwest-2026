@@ -1,64 +1,43 @@
 # OperatorOS
 
-Operational and financial scenario modeling for a synthetic HVAC business.
-The [specification](docs/OperatorOS_Implementation_Spec.md) is authoritative.
+Operational and financial scenario modeling for a synthetic HVAC business,
+built on the existing SvelteKit + TypeScript app.
 
-Current status: Person 3 backend infrastructure is available. Runtime contracts,
-fixture and engines await the shared interface checkpoint. The Svelte starter
-remains until Gates A/B permit the React + TypeScript + Recharts migration.
+The [specification](docs/OperatorOS_Implementation_Spec.md) defines product and
+financial behavior. The user-directed [stack amendment](docs/STACK_DECISION.md)
+supersedes its Python/React stack requirements for Person 3.
 
-## Backend setup
+## Setup and checks
 
-Requires Python 3.11 or newer. From the repository root:
-
-```sh
-python3 -m venv backend/.venv
-backend/.venv/bin/python -m pip install -e 'backend[dev]'
-```
-
-Run checks and start the API from `backend/`:
+Use Node 24 or newer (the tests execute TypeScript directly) and npm 11:
 
 ```sh
-cd backend
-.venv/bin/python -m pytest
-.venv/bin/python -m uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
+npm ci
+npm run dev
 ```
 
-GET `http://127.0.0.1:8000/api/v1/health` returns:
+```sh
+npm test
+npm run check
+npm run build
+```
+
+UI and API share the SvelteKit server, normally `http://localhost:5173`.
+GET `/api/v1/health` returns:
 
 ```json
 {"status":"ok","simulation_ready":false}
 ```
 
-Health checks HTTP service availability separately from engine readiness. The
-other four specified endpoints await real fixture/engine integration. OpenAPI
-is available at `/docs`.
-
-CORS permits `http://localhost:5173` by default. Set
-`OPERATOROS_FRONTEND_ORIGINS` to a comma-separated list of explicit origins;
-wildcards are rejected.
-
-Dependencies are declared in `backend/pyproject.toml`. The tested Python 3.13
-environment is pinned in `backend/requirements-dev.lock`. To reproduce it:
-
-```sh
-backend/.venv/bin/python -m pip install -r backend/requirements-dev.lock
-backend/.venv/bin/python -m pip install --no-deps -e backend
-```
-
-## Existing frontend starter
-
-Node 24 and npm 11 were available during setup. Run `npm ci`, then `npm run dev`.
-Existing checks are `npm run check` and `npm run build`. This is still the starter,
-not an OperatorOS dashboard or a completed frontend acceptance gate.
+Health reports HTTP availability separately from engine readiness. The four
+remaining specified endpoints await real fixture/engine integration. API routes
+live under `src/routes/api/v1/`; runtime schemas will use Zod after the checkpoint.
+There is no separate Python API to install or run.
 
 ## Person 3 workflow
 
-Follow [our ownership guide](docs/PERSON_3_CONTRACTS_API_FRONTEND.md).
-[The checkpoint agenda](docs/PERSON_3_CHECKPOINT.md) records unresolved interfaces
-and policies for Persons 1 and 2 to review before runtime schema implementation.
-The TypeScript contract remains a review baseline.
-
-Merge order: setup/schema → fixture → scheduler/operations → financials and
-scenario response → deterministic acceptance → API/dashboard. Monte Carlo
-integration follows Gate C. This setup introduces no financial assumptions.
+Follow [our ownership guide](docs/PERSON_3_CONTRACTS_API_FRONTEND.md) and
+[checkpoint agenda](docs/PERSON_3_CHECKPOINT.md). Current shared types remain a
+review baseline. Dashboard development waits for deterministic Gates A/B;
+Monte Carlo integration waits for Gate C. No financial defaults or forecasts
+are introduced by the infrastructure setup.

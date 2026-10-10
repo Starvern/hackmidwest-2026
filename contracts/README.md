@@ -2,7 +2,7 @@
 
 Authority: [specification](../docs/OperatorOS_Implementation_Spec.md). Initial typed vocabulary: [contracts.ts](contracts.ts). Status: established for review; **not a completed Gate A freeze**. No calculated example response is supplied until the engine exists.
 
-Python/Pydantic is the eventual runtime and financial source of truth. Implement these types there, generate JSON schemas into this directory, and verify the TypeScript mirror before freezing revision 1. Keep schema version `1.0`, model version `mvp-1.0`, and contract revision distinct. Breaking changes require an explicit revision/migration and coordinated changes; no silent field renames.
+Per the [stack amendment](../docs/STACK_DECISION.md), TypeScript/Zod is the Person 3 runtime validation source of truth; the accepted engine remains authoritative for financial calculations. Implement these types there, generate JSON schemas into this directory, and verify the TypeScript mirror before freezing revision 1. Keep schema version `1.0`, model version `mvp-1.0`, and contract revision distinct. Breaking changes require an explicit revision/migration and coordinated changes; no silent field renames.
 
 ## Validation and serialization
 
