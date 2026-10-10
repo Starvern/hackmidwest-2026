@@ -1,0 +1,11 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "readOnly": true,
+  "minItems": 60,
+  "maxItems": 60,
+  "type": "array",
+  "items": {
+    "type": "number",
+    "exclusiveMinimum": 0
+  }
+}

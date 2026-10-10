@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "family": {
+      "type": "string",
+      "const": "triangular"
+    },
+    "min": {
+      "type": "number",
+      "exclusiveMinimum": 0
+    },
+    "mode": {
+      "type": "number",
+      "exclusiveMinimum": 0
+    },
+    "max": {
+      "type": "number",
+      "exclusiveMinimum": 0
+    }
+  },
+  "required": [
+    "family",
+    "min",
+    "mode",
+    "max"
+  ],
+  "additionalProperties": false
+}

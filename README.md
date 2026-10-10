@@ -74,3 +74,10 @@ The Svelte dashboard at `/` runs the real deterministic API and provides editabl
 truck/hire/marketing templates, six timeline metrics, month inspection, comparisons
 and disclosed assumptions. See [dashboard handoff](docs/PERSON_3_DASHBOARD_HANDOFF.md)
 for verified behavior and remaining design/Gate D review. Monte Carlo is not run.
+
+## Monte Carlo configuration candidate
+
+The separate MC manifest has executable candidate validation, generated types/schemas
+and MC-only fingerprints. See [MC contract handoff](docs/PERSON_3_MC_CONTRACT_HANDOFF.md)
+for review status and interfaces. `npm test` checks these artifacts alongside the frozen
+deterministic reference. This does not enable Monte Carlo or claim Gate C acceptance.

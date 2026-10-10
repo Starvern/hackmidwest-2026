@@ -19,6 +19,7 @@
     "scripts/validate_contract_fixture.ts",
     "tests/**/*.ts",
     "scripts/example_request.ts",
-    "scripts/check_api.ts"
+    "scripts/check_api.ts",
+    "scripts/monte_carlo_contracts.ts"
   ]
 }
