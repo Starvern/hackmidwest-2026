@@ -1,56 +1,64 @@
-# sv
+# OperatorOS
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+Operational and financial scenario modeling for a synthetic HVAC business.
+The [specification](docs/OperatorOS_Implementation_Spec.md) is authoritative.
 
-## Creating a project
+Current status: Person 3 backend infrastructure is available. Runtime contracts,
+fixture and engines await the shared interface checkpoint. The Svelte starter
+remains until Gates A/B permit the React + TypeScript + Recharts migration.
 
-If you're seeing this, you've probably already done this step. Congrats!
+## Backend setup
 
-```sh
-# create a new project
-npx sv create my-app
-```
-
-To recreate this project with the same configuration:
+Requires Python 3.11 or newer. From the repository root:
 
 ```sh
-# recreate this project
-npx sv@1.1.1 create --template minimal --types ts --add tailwindcss="plugins:none" --install npm hackmidwest-2026
+python3 -m venv backend/.venv
+backend/.venv/bin/python -m pip install -e 'backend[dev]'
 ```
 
-## Adding features
-
-Add features to your project with `sv add`:
+Run checks and start the API from `backend/`:
 
 ```sh
-npx sv add
+cd backend
+.venv/bin/python -m pytest
+.venv/bin/python -m uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
 ```
 
-For example, to add Tailwind CSS:
+GET `http://127.0.0.1:8000/api/v1/health` returns:
+
+```json
+{"status":"ok","simulation_ready":false}
+```
+
+Health checks HTTP service availability separately from engine readiness. The
+other four specified endpoints await real fixture/engine integration. OpenAPI
+is available at `/docs`.
+
+CORS permits `http://localhost:5173` by default. Set
+`OPERATOROS_FRONTEND_ORIGINS` to a comma-separated list of explicit origins;
+wildcards are rejected.
+
+Dependencies are declared in `backend/pyproject.toml`. The tested Python 3.13
+environment is pinned in `backend/requirements-dev.lock`. To reproduce it:
 
 ```sh
-npx sv add tailwindcss
+backend/.venv/bin/python -m pip install -r backend/requirements-dev.lock
+backend/.venv/bin/python -m pip install --no-deps -e backend
 ```
 
-## Developing
+## Existing frontend starter
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+Node 24 and npm 11 were available during setup. Run `npm ci`, then `npm run dev`.
+Existing checks are `npm run check` and `npm run build`. This is still the starter,
+not an OperatorOS dashboard or a completed frontend acceptance gate.
 
-```sh
-npm run dev
+## Person 3 workflow
 
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
+Follow [our ownership guide](docs/PERSON_3_CONTRACTS_API_FRONTEND.md).
+[The checkpoint agenda](docs/PERSON_3_CHECKPOINT.md) records unresolved interfaces
+and policies for Persons 1 and 2 to review before runtime schema implementation.
+The TypeScript contract remains a review baseline.
 
-## Building
-
-To create a production version of your app:
-
-```sh
-npm run build
-```
-
-You can preview the production build with `npm run preview`.
-
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+Merge order: setup/schema → fixture → scheduler/operations → financials and
+scenario response → deterministic acceptance → API/dashboard. Monte Carlo
+integration follows Gate C. This setup introduces no financial assumptions.
