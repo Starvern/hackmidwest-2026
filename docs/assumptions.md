@@ -59,13 +59,20 @@ that risk is zero. No operational or financial forecast output has been fabricat
 
 ## Reproduction and handoff
 
-Run `python scripts/build_synthetic_fixture.py` to regenerate the data, then
-`python scripts/validate_fixture.py` to check reconciliation, opening balances, capacity,
-finite values, CSV agreement and provenance coverage. These scripts use the Python standard
-library. Person 3 still needs to validate the JSON against authoritative Pydantic models;
+Run `node scripts/build_synthetic_fixture.ts` to regenerate the data, then
+`node scripts/validate_fixture.ts` to check reconciliation, opening balances, capacity,
+finite values, CSV agreement and provenance coverage. These scripts use TypeScript and Node built-ins (Node 22.20+). Person 3 still needs to
+validate the JSON against authoritative Zod schemas;
 the reconciliation script does not replace runtime schema validation.
 
 Public engine signatures and shared contracts are unchanged. Before scheduler work,
 Person 1 must approve these policies and Person 3 must finalize internal MonthEvents,
 prior-state and market-factor types. Next handoff: validated fixture plus one month's
 real scheduler/operations output. No Gate A/B completion is claimed by this data delivery.
+
+## Accepted implementation stack
+
+User confirmed SvelteKit, TypeScript and Zod. The engine will use pure TypeScript
+functions, called by SvelteKit server routes; no Python service boundary is required.
+Person 3 owns authoritative Zod schemas. The fixture scripts perform reconciliation
+without defining competing runtime schemas. Financial policy approval remains pending.

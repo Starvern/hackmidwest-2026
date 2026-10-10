@@ -1,5 +1,8 @@
 # Person 2 — Synthetic data, scheduler and operations
 
+Implementation stack: SvelteKit, TypeScript and Zod, confirmed by the user. See
+[stack amendment](STACK_DECISION.md); it supersedes historical Python/React references.
+
 ## Your responsibility
 
 Own the validated company fixture and the causal chain from decisions to demand, capacity and completed jobs. After deterministic acceptance, own paired Monte Carlo. Your first shared milestone is **one validated month from decisions through operations, accounting, cash and valuation** with Person 1.
@@ -18,11 +21,11 @@ The specification is the authority. Fixture values and distributions are synthet
 Primary ownership:
 
 - `data/synthetic_hvac_company.json`, `data/historical_12_months.csv` and named scenario input fixtures.
-- `backend/app/fixtures.py`, `event_scheduler.py`, `operations.py`.
-- `scripts/validate_fixture.py`.
-- `backend/tests/test_fixture.py`, `test_operations.py`, `test_event_timing.py`.
+- `src/lib/server/fixtures.ts`, `event_scheduler.ts`, `operations.ts`.
+- `scripts/validate_fixture.ts` and `scripts/build_synthetic_fixture.ts`.
+- `tests/fixture.test.ts`, `tests/operations.test.ts`, `tests/event_timing.test.ts`.
 - `docs/assumptions.md`: shared policy register with Person 1's financial decisions explicitly recorded.
-- Later: `backend/app/monte_carlo.py`, `aggregation.py`, and `backend/tests/test_monte_carlo.py`.
+- Later: `src/lib/server/monte_carlo.ts`, `aggregation.ts`, and `tests/monte_carlo.test.ts`.
 
 Person 1 owns financials/valuation/scenario orchestration and integration approval. Person 3 owns schemas, generated contracts, dependencies, API and frontend. Do not edit those files without coordination. Submit missing schema fields to Person 3 instead of building local incompatible types.
 
@@ -37,7 +40,7 @@ The checkpoint permits engine development. Full Gate A/B contract freeze comes l
 ## Build order
 
 1. **Historical fixture.** Supply 12 ordered records reconciling exactly to the specification's annual P&L. Initialize cash/debt, AR/inventory/AP and assets according to documented policy. Include provenance for all inputs, calendar start, units, seasonality and separate other revenue/cost assumptions.
-2. **Fixture validation.** Validate through Person 3's Pydantic models and assert totals, finite values and opening-state consistency. Do not adjust forecast outputs to force historical reconciliation.
+2. **Fixture validation.** Validate through Person 3's Zod schemas and assert totals, finite values and opening-state consistency. Do not adjust forecast outputs to force historical reconciliation.
 3. **Scheduler.** Implement `schedule_month(company, scenario, month, path_risks, prior_state) -> MonthEvents`. Schedule costs and state transitions exactly once; no revenue, tax, cash or valuation calculations here.
 4. **Operations.** Implement `calculate_operations(company, prior_state, month_events, market_factors) -> OperationsResult`. Constrain completed jobs by nonnegative demand, productive technician capacity and available vehicle capacity. Utilization is an output, never a second revenue haircut.
 5. **One-month handoff.** Give Person 1 validated fixture, real scheduled events and operational output for a reference month. Jointly verify timing and downstream accounting; resolve interface issues through Person 3.
