@@ -65,4 +65,8 @@ The following are disclosed implementation choices allowed by the specification,
 
 ## Verification of this planning change
 
+### Person 1 kickoff status
+
+Person 1 has prepared [the shared checkpoint proposal](PERSON_1_CHECKPOINT.md) and [independent financial acceptance cases](../backend/tests/financial_acceptance_cases.json). These cases are test-only arithmetic targets, not a validated company fixture or generated simulation response. Runtime schemas, internal event/state interfaces and shared policy review remain prerequisites for independent engine implementation. No checkpoint or Gate A/B/C/D/E is marked passed. Person 2 must review fixture/operational timing; Person 3 must implement agreed runtime contracts and setup. The next integration milestone remains one reconciled real month.
+
 Repository files and all specification sections/appendices were inspected. No financial module or dashboard has been implemented and no forecast has been fabricated. Contract checks are recorded with the delivery; engine, fixture and UI acceptance tests remain future gates, not claimed passes.
