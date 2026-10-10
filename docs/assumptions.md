@@ -109,3 +109,7 @@ Person 2 confirms Persons 1/3's issue #2 design clarifications:
 Person 3's design agreement is recorded in
 [issue #2](https://github.com/Starvern/hackmidwest-2026/issues/2#issuecomment-6101674113).
 Executable schema validation and joint checkpoint acceptance remain pending.
+
+Provenance correction: `/operations/working_days_per_month` uses `days/month`,
+not currency. Corrected in the TypeScript generator and generated fixture following
+Person 3 review; the operating value remains 20 and no forecast input changed.

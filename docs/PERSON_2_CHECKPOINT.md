@@ -155,7 +155,7 @@ Company pointers are rooted at company; decision pointers at each decision. Cove
 scalar leaf including identity/calendar, excluding provenance itself and empty containers.
 Units: USD for historical period amounts/balances/acquisition costs; USD/year or USD/month
 for rate inputs; USD/job for ticket; jobs/month for demand/history; jobs/resource/day for
-productivity; count for headcount/vehicles; months for delays/terms; calendar_month_index
+productivity; days/month for working days; count for headcount/vehicles; months for delays/terms; calendar_month_index
 for calendar position; decimal_rate for interest/growth/tax; multiple for seasonality and
 valuation; label for string identity/enums. Existing manifest uses this vocabulary.
 

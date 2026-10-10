@@ -1118,7 +1118,7 @@ const company: CompanyInput = {
     "/operations/working_days_per_month": {
       "kind": "assumed",
       "source": "docs/assumptions.md: proposed fixture inputs; spec \u00a7\u00a73.1\u20133.4",
-      "unit": "USD/month"
+      "unit": "days/month"
     },
     "/operations/max_jobs_per_tech_per_day": {
       "kind": "assumed",

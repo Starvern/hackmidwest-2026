@@ -1115,7 +1115,7 @@
     "/operations/working_days_per_month": {
       "kind": "assumed",
       "source": "docs/assumptions.md: proposed fixture inputs; spec §§3.1–3.4",
-      "unit": "USD/month"
+      "unit": "days/month"
     },
     "/operations/max_jobs_per_tech_per_day": {
       "kind": "assumed",
