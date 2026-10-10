@@ -1,0 +1,142 @@
+{
+  "purpose": "Computed scheduler/operations handoff; financials and valuation not yet calculated",
+  "accepted_dependency": "5725edf1e8e979c9c9bcb3b0673acb308a96385f",
+  "interface_revision": "checkpoint-1-candidate-1",
+  "company_id": "synthetic-hvac-001",
+  "scenario": {
+    "id": "baseline",
+    "name": "Baseline",
+    "decisions": []
+  },
+  "prior_state": {
+    "month": 0,
+    "financial": {
+      "cash": 400000,
+      "accounts_receivable": 416666.6666666667,
+      "inventory": 50000,
+      "accounts_payable": 59583.333333333336,
+      "debt_tranches": [
+        {
+          "id": "existing-debt-01",
+          "principal": 1200000,
+          "annual_interest_rate": 0.08,
+          "remaining_term_months": 60,
+          "monthly_principal": 20000,
+          "first_repayment_month": 1,
+          "amortization_policy": "level_principal"
+        }
+      ],
+      "depreciable_assets": [
+        {
+          "id": "existing-assets-01",
+          "cost_basis": 900000,
+          "accumulated_depreciation": 150000,
+          "monthly_depreciation": 12500,
+          "remaining_life_months": 60,
+          "in_service_month": 0
+        }
+      ]
+    },
+    "operational": {
+      "technician_cohorts": [
+        {
+          "id": "initial-technicians",
+          "decision_id": null,
+          "stable_investment_key": null,
+          "quantity": 12,
+          "employment_start_month": 0,
+          "ramp_months": 0,
+          "annual_loaded_cost_per_person": 95000
+        }
+      ],
+      "vehicle_cohorts": [
+        {
+          "id": "initial-vehicles",
+          "decision_id": null,
+          "stable_investment_key": null,
+          "quantity": 12,
+          "in_service_month": 0,
+          "annual_opex_per_vehicle": 15000
+        }
+      ],
+      "pending_campaign_demand": []
+    }
+  },
+  "market_factors": {
+    "demand_multiplier": 1,
+    "ticket_multiplier": 1,
+    "wage_multiplier": 1,
+    "vehicle_opex_multiplier": 1,
+    "overhead_multiplier": 1,
+    "service_variable_cost_multiplier": 1,
+    "other_revenue_multiplier": 1,
+    "other_direct_cost_multiplier": 1
+  },
+  "path_risks": {
+    "by_stable_investment_key": {}
+  },
+  "month_events": {
+    "month": 1,
+    "purchases": [],
+    "employment_starts": [],
+    "vehicle_activations": [],
+    "campaign_spending": [],
+    "campaign_demand": [],
+    "employed_technicians": 12,
+    "productive_technician_fte": 12,
+    "in_service_vehicles": 12,
+    "financial_inputs": {
+      "tech_direct_labor": 95000,
+      "vehicle_direct_opex": 15000,
+      "other_revenue": 65666.66666666667,
+      "other_direct_cost": 27500,
+      "fixed_overhead": 125000,
+      "service_variable_cost_rate": 0.2611585944919278,
+      "incremental_marketing": 0,
+      "recruitment": 0,
+      "maintenance_capex": 8333.333333333334,
+      "growth_capex": 0,
+      "new_debt_tranches": [],
+      "asset_additions": [],
+      "incremental_investment_outlay": 0
+    },
+    "ending_operational_state": {
+      "technician_cohorts": [
+        {
+          "id": "initial-technicians",
+          "decision_id": null,
+          "stable_investment_key": null,
+          "quantity": 12,
+          "employment_start_month": 0,
+          "ramp_months": 0,
+          "annual_loaded_cost_per_person": 95000
+        }
+      ],
+      "vehicle_cohorts": [
+        {
+          "id": "initial-vehicles",
+          "decision_id": null,
+          "stable_investment_key": null,
+          "quantity": 12,
+          "in_service_month": 0,
+          "annual_opex_per_vehicle": 15000
+        }
+      ],
+      "pending_campaign_demand": []
+    },
+    "events": []
+  },
+  "operations": {
+    "service_demand_jobs": 540,
+    "technician_capacity_jobs": 720,
+    "vehicle_capacity_jobs": 720,
+    "service_capacity_jobs": 720,
+    "completed_jobs": 540,
+    "unserved_jobs": 0,
+    "utilization": 0.75,
+    "employed_technicians": 12,
+    "productive_technician_fte": 12,
+    "in_service_vehicles": 12,
+    "average_ticket": 650
+  }
+}
