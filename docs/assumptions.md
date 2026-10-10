@@ -1,6 +1,7 @@
 # Synthetic company fixture and proposed policies
 
-Status: Person 2 review baseline, not an approved interface checkpoint or Gate A/B freeze.
+Status: fixture policies approved by Person 1 in issue #2; Person 2 confirms operational timing.
+Joint interface checkpoint and Gate A/B freeze remain pending.
 All figures are synthetic and illustrative, not measured HVAC industry facts. Authority:
 `OperatorOS_Implementation_Spec.md` §3.4; fields follow `contracts/contracts.ts`.
 
@@ -21,7 +22,7 @@ again to completed jobs. Labor is $95,000 per technician/year; vehicle operating
 $15,000 per vehicle/year. Service variable cost rate is exactly 1,100,000 / 4,212,000.
 Other direct costs are $330,000/year. These are specified synthetic values.
 
-## Additional fixture proposals requiring Person 1 review
+## Fixture policies approved by Person 1
 
 | Input/policy | Proposed value and interpretation |
 |---|---|
@@ -30,7 +31,7 @@ Other direct costs are $330,000/year. These are specified synthetic values.
 | Payables | Half a month of service variable costs plus other direct costs only; opening AP = $59,583.333…; payroll and vehicle costs excluded |
 | Inventory | Constant $50,000, including opening inventory |
 | Existing assets | Aggregate pool: $900,000 cost less $150,000 accumulated depreciation = $750,000 net; 60 months remaining at $12,500/month, matching specified $150,000 annual D&A |
-| Maintenance CapEx | Specified $100,000/year; proposed equal monthly spend, capitalized with a 60-month straight-line life starting in spend month; Person 1 must approve and track separately from existing assets |
+| Maintenance CapEx | Specified $100,000/year; proposed equal monthly spend, capitalized with a 60-month straight-line life starting in spend month; approved by Person 1; track separately from existing assets |
 | Baseline marketing | $10,000/month included within $125,000 fixed overhead, never added again |
 | Annual forecast rates | Demand +2%, ticket +2%, wages +3%, overhead +2%; other revenue and other direct costs flat |
 | Growth reference | Proposed multiplier `(1 + annual_rate) ** ((month - 1) / 12)`; first January uses unchanged reference run rate; historical year contains no growth |
@@ -66,7 +67,7 @@ validate the JSON against authoritative Zod schemas;
 the reconciliation script does not replace runtime schema validation.
 
 Public engine signatures and shared contracts are unchanged. Before scheduler work,
-Person 1 must approve these policies and Person 3 must finalize internal MonthEvents,
+Person 3 must finalize internal MonthEvents,
 prior-state and market-factor types. Next handoff: validated fixture plus one month's
 real scheduler/operations output. No Gate A/B completion is claimed by this data delivery.
 
@@ -75,4 +76,14 @@ real scheduler/operations output. No Gate A/B completion is claimed by this data
 User confirmed SvelteKit, TypeScript and Zod. The engine will use pure TypeScript
 functions, called by SvelteKit server routes; no Python service boundary is required.
 Person 3 owns authoritative Zod schemas. The fixture scripts perform reconciliation
-without defining competing runtime schemas. Financial policy approval remains pending.
+without defining competing runtime schemas. Financial policies were approved by Person 1; joint interface acceptance remains pending.
+
+## Checkpoint review record
+
+Person 1 approved the fixture policies and spend-month maintenance depreciation in
+[issue #2](https://github.com/Starvern/hackmidwest-2026/issues/2#issuecomment-6101606666).
+Person 2 agrees with the operational timing and numerical/payback rules in that review.
+The isolated Person 1 accounting case excludes new maintenance depreciation; the integrated
+first month must include an additional `100000 / 12 / 60` depreciation under the accepted policy.
+Exact operational types, cost-factor resolution and asset ownership proposals are in
+[Person 2 checkpoint](PERSON_2_CHECKPOINT.md), awaiting Persons 1/3 review.
