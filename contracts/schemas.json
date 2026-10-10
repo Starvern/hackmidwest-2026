@@ -4287,6 +4287,90 @@
     ],
     "additionalProperties": false
   },
+  "MetricDefinition": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "properties": {
+      "key": {
+        "anyOf": [
+          {
+            "type": "string",
+            "const": "cash_end"
+          },
+          {
+            "type": "string",
+            "const": "ebitda"
+          },
+          {
+            "type": "string",
+            "const": "revenue"
+          },
+          {
+            "type": "string",
+            "const": "debt_end"
+          },
+          {
+            "type": "string",
+            "const": "utilization"
+          },
+          {
+            "type": "string",
+            "const": "ttm_ebitda"
+          },
+          {
+            "type": "string",
+            "const": "enterprise_value"
+          },
+          {
+            "type": "string",
+            "const": "equity_value"
+          },
+          {
+            "type": "string",
+            "const": "unlevered_fcf"
+          }
+        ]
+      },
+      "label": {
+        "type": "string",
+        "minLength": 1
+      },
+      "unit": {
+        "type": "string",
+        "enum": [
+          "USD",
+          "USD/month",
+          "decimal_ratio"
+        ]
+      },
+      "kind": {
+        "type": "string",
+        "enum": [
+          "ending_balance",
+          "monthly_flow",
+          "trailing_12_month_flow",
+          "ratio",
+          "valuation"
+        ]
+      },
+      "description": {
+        "type": "string",
+        "minLength": 1
+      },
+      "available_at_opening": {
+        "type": "boolean"
+      }
+    },
+    "required": [
+      "key",
+      "label",
+      "unit",
+      "kind",
+      "description",
+      "available_at_opening"
+    ],
+    "additionalProperties": false
+  },
   "MetricKey": {
     "$schema": "https://json-schema.org/draft/2020-12/schema",
     "anyOf": [
@@ -4465,6 +4549,186 @@
       "kind",
       "label",
       "provenance"
+    ],
+    "additionalProperties": false
+  },
+  "ModelMetadata": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "properties": {
+      "schema_version": {
+        "type": "string",
+        "const": "1.0"
+      },
+      "model_version": {
+        "type": "string",
+        "const": "mvp-1.0"
+      },
+      "contract_revision": {
+        "type": "number",
+        "const": 1
+      },
+      "interface_revision": {
+        "type": "string",
+        "const": "checkpoint-1-candidate-1"
+      },
+      "horizon_months": {
+        "type": "number",
+        "const": 60
+      },
+      "currency": {
+        "type": "string",
+        "const": "USD"
+      },
+      "decision_types": {
+        "type": "array",
+        "prefixItems": [
+          {
+            "type": "string",
+            "const": "purchase_trucks"
+          },
+          {
+            "type": "string",
+            "const": "hire_technicians"
+          },
+          {
+            "type": "string",
+            "const": "increase_marketing"
+          }
+        ],
+        "items": false,
+        "minItems": 3,
+        "maxItems": 3
+      },
+      "metrics": {
+        "minItems": 9,
+        "maxItems": 9,
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "key": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "const": "cash_end"
+                },
+                {
+                  "type": "string",
+                  "const": "ebitda"
+                },
+                {
+                  "type": "string",
+                  "const": "revenue"
+                },
+                {
+                  "type": "string",
+                  "const": "debt_end"
+                },
+                {
+                  "type": "string",
+                  "const": "utilization"
+                },
+                {
+                  "type": "string",
+                  "const": "ttm_ebitda"
+                },
+                {
+                  "type": "string",
+                  "const": "enterprise_value"
+                },
+                {
+                  "type": "string",
+                  "const": "equity_value"
+                },
+                {
+                  "type": "string",
+                  "const": "unlevered_fcf"
+                }
+              ]
+            },
+            "label": {
+              "type": "string",
+              "minLength": 1
+            },
+            "unit": {
+              "type": "string",
+              "enum": [
+                "USD",
+                "USD/month",
+                "decimal_ratio"
+              ]
+            },
+            "kind": {
+              "type": "string",
+              "enum": [
+                "ending_balance",
+                "monthly_flow",
+                "trailing_12_month_flow",
+                "ratio",
+                "valuation"
+              ]
+            },
+            "description": {
+              "type": "string",
+              "minLength": 1
+            },
+            "available_at_opening": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "key",
+            "label",
+            "unit",
+            "kind",
+            "description",
+            "available_at_opening"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "readiness": {
+        "type": "object",
+        "properties": {
+          "deterministic": {
+            "type": "boolean"
+          },
+          "monte_carlo": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "deterministic",
+          "monte_carlo"
+        ],
+        "additionalProperties": false
+      },
+      "data_notice": {
+        "type": "string",
+        "minLength": 1
+      },
+      "limitations": {
+        "minItems": 1,
+        "type": "array",
+        "items": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "required": [
+      "schema_version",
+      "model_version",
+      "contract_revision",
+      "interface_revision",
+      "horizon_months",
+      "currency",
+      "decision_types",
+      "metrics",
+      "readiness",
+      "data_notice",
+      "limitations"
     ],
     "additionalProperties": false
   },

@@ -9,7 +9,8 @@
     "skipLibCheck": true,
     "types": [
       "node"
-    ]
+    ],
+    "resolveJsonModule": true
   },
   "include": [
     "contracts/**/*.ts",
@@ -17,6 +18,7 @@
     "scripts/contracts.ts",
     "scripts/validate_contract_fixture.ts",
     "tests/**/*.ts",
-    "scripts/example_request.ts"
+    "scripts/example_request.ts",
+    "scripts/check_api.ts"
   ]
 }

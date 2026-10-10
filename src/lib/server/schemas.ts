@@ -600,3 +600,22 @@ export const NEUTRAL_MARKET_FACTORS = Object.freeze(MarketFactorsSchema.parse({
   demand_multiplier: 1, ticket_multiplier: 1, wage_multiplier: 1, vehicle_opex_multiplier: 1,
   overhead_multiplier: 1, service_variable_cost_multiplier: 1, other_revenue_multiplier: 1, other_direct_cost_multiplier: 1,
 }));
+
+/** Additive API discovery contract; engine interfaces remain at accepted revision. */
+export const MetricDefinitionSchema = z.strictObject({
+  key: MetricKeySchema, label: z.string().min(1),
+  unit: z.enum(['USD', 'USD/month', 'decimal_ratio']),
+  kind: z.enum(['ending_balance', 'monthly_flow', 'trailing_12_month_flow', 'ratio', 'valuation']),
+  description: z.string().min(1), available_at_opening: z.boolean(),
+});
+export const ModelMetadataSchema = z.strictObject({
+  schema_version: z.literal('1.0'), model_version: z.literal('mvp-1.0'), contract_revision: z.literal(1),
+  interface_revision: z.literal(INTERFACE_REVISION), horizon_months: z.literal(60), currency: z.literal('USD'),
+  decision_types: z.tuple([z.literal('purchase_trucks'), z.literal('hire_technicians'), z.literal('increase_marketing')]),
+  metrics: z.array(MetricDefinitionSchema).length(9),
+  readiness: z.strictObject({ deterministic: z.boolean(), monte_carlo: z.boolean() }),
+  data_notice: z.string().min(1), limitations: z.array(z.string().min(1)).min(1),
+}).superRefine((v, ctx) => {
+  const keys = new Set(v.metrics.map(metric => metric.key));
+  if (keys.size !== 9) ctx.addIssue({ code: 'custom', path: ['metrics'], message: 'Require each metric exactly once' });
+});

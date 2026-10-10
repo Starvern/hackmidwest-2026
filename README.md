@@ -29,8 +29,8 @@ GET `/api/v1/health` returns:
 {"status":"ok","simulation_ready":false}
 ```
 
-Health reports HTTP availability separately from engine readiness. The four
-remaining specified endpoints await real fixture/engine integration. API routes
+Health reports HTTP availability separately from engine readiness. The company and model-metadata endpoints are available; the two simulation
+endpoints await real engine integration. API routes
 live under `src/routes/api/v1/`; runtime schemas use Zod; the executable contract is a candidate for checkpoint review.
 There is no separate Python API to install or run.
 
@@ -59,3 +59,13 @@ node scripts/validate_fixture.ts
 `npm test` includes artifact/type checks and contract/API tests. Validate both
 the Zod schema and Person 2's reconciliation checks before fixture integration.
 The example request is illustrative input; no engine-generated result exists yet.
+
+## API adapters
+
+GET `/api/v1/company/demo` returns the validated synthetic company. GET
+`/api/v1/model/metadata` returns versions, decision/metric definitions, units and
+explicit engine readiness. API errors use the shared structured JSON contract.
+See [the API handoff](docs/PERSON_3_API_HANDOFF.md) for behavior and limits.
+
+With a local server on port 4173 (`npm run dev -- --host 127.0.0.1 --port 4173`),
+run `npm run test:api:live`. Set `OPERATOROS_API_BASE_URL` for a different port.

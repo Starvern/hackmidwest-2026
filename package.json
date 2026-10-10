@@ -14,7 +14,8 @@
 		"contracts:generate": "node scripts/contracts.ts && node scripts/example_request.ts",
 		"contracts:check": "node scripts/contracts.ts --check && node scripts/example_request.ts --check",
 		"fixture:contract": "node scripts/validate_contract_fixture.ts",
-		"contracts:types": "tsc -p tsconfig.contracts.json"
+		"contracts:types": "tsc -p tsconfig.contracts.json",
+		"test:api:live": "node scripts/check_api.ts"
 	},
 	"devDependencies": {
 		"@sveltejs/adapter-auto": "^8.0.0",

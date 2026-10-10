@@ -16,6 +16,6 @@ const all = Object.fromEntries(entries.map(([name, schema]) => [name.slice(0, -6
 artifact('contracts/schemas.json', JSON.stringify(all, null, 2) + '\n');
 for (const [name, filename] of [
   ['CompanyInput', 'company'], ['ScenarioInput', 'scenario'], ['DeterministicRequest', 'deterministic-request'],
-  ['MonteCarloRequest', 'monte-carlo-request'], ['SimulationResult', 'simulation-result'],
+  ['MonteCarloRequest', 'monte-carlo-request'], ['SimulationResult', 'simulation-result'], ['ModelMetadata', 'model-metadata'],
 ] as const) artifact(`contracts/${filename}.schema.json`, JSON.stringify(all[name], null, 2) + '\n');
 console.log(check ? 'Contract artifacts match authoritative schemas' : 'Generated contract artifacts');
