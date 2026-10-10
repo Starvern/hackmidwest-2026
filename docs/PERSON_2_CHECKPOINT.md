@@ -174,3 +174,29 @@ scenarios; response hash covers the request. Person 3 must finalize exact implem
    dependency revision; Person 1 records checkpoint acceptance.
 4. Person 2 implements scheduler/operations and OP/TIME tests, then delivers one real
    month to Person 1. No dashboard/MC or Gate A/B freeze is implied by this checkpoint.
+
+## Executable candidate validation evidence
+
+Person 2 integrated exact candidate `0177c63` (`checkpoint-1-candidate-1`) via
+fast-forward and reviewed the internal schemas/function aliases against this proposal.
+Cohort persistence, units, sixth scheduler argument, growth-only additions and financial
+return wrapper match the reviewed implementation plan. Person 2 accepts this candidate
+from the operations/fixture side; Person 1 records final joint acceptance separately.
+
+Local environment: Windows, Node 22.20.0, npm 11.12.1. Installed candidate lockfile with
+`npm ci --ignore-scripts --no-audit --fetch-retries=0`, using process-local
+`NODE_OPTIONS=--use-system-ca` to resolve certificate trust without disabling TLS checks.
+
+Passed: `npm run fixture:contract`, `node scripts/validate_fixture.ts`, `npm test`
+(artifact drift, TypeScript boundary checks, 11 tests), `npm run check` (0 errors/warnings),
+and `npm run build`. The actual fixture was validated without altered input values.
+
+Windows checkout converted generated artifacts to CRLF, causing the first byte-for-byte
+drift check to fail. `npm run contracts:generate` restored LF; Git showed no content
+changes, and the full test then passed. Person 3 should make drift checks tolerate
+checkout line endings or pin generated artifacts to LF for clean-checkout reproducibility.
+No schema edits or generated artifact changes are included in this evidence update.
+Build uses adapter-auto; hosting adapter selection remains future deployment work.
+
+Authoritative fixture validation is complete against the candidate. Checkpoint closure
+and full deterministic Gates A/B still require their separately documented acceptance.
