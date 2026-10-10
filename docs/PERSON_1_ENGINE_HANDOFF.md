@@ -78,3 +78,5 @@ The calculated reference outcomes are intentionally not guaranteed positive:
 Truck-only adds costs without changing jobs because baseline demand is below existing capacity. Combined expansion temporarily adds campaign-driven jobs but retains additional payroll/fleet costs after campaign demand ends. Its lower modeled value follows these disclosed assumptions; no favorable outcome is forced.
 
 Next: P2 independently reviews the real accounting/operational integration; P3 validates/consumes the engine-generated response and connects the API. Automated deterministic acceptance evidence is ready for Gate A/B review; full shared freeze has not been announced. Gates C/D/E remain pending and Monte Carlo remains deferred. Repeated runtime boundary parsing is currently retained for correctness; no MC performance claim is made.
+
+Current release status: shared deterministic Gates A/B accepted on October 10, 2026, superseding earlier pending-review statements above. See [Person 1 acceptance record](PERSON_1_DETERMINISTIC_ACCEPTANCE.md) for the exact integrated dependency, 66-test and live API evidence, and next-owner checkpoints. Gates C/D/E remain pending.

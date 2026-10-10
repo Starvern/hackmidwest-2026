@@ -17,7 +17,7 @@ for (const [path, method, status, code] of [
   ['/api/v1/missing', 'GET', 404, 'NOT_FOUND'],
   ['/api/v1/simulate/deterministic', 'GET', 405, 'METHOD_NOT_ALLOWED'],
 ] as const) {
-  const response = await fetch(`${base}${path}`, { method, headers: { accept: 'application/json' } });
+  const response = await fetch(`${base}${path}`, { method, headers: { accept: 'application/json', 'content-type': 'application/json' } });
   assert.equal(response.status, status, path);
   assert.equal(ApiErrorSchema.parse(await response.json()).error.code, code, path);
 }
