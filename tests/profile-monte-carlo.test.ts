@@ -1,45 +1,14 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
 import { eligibleFixture } from './intake-fixture.ts';
-import { ProfileStore, type ReviewSelection } from '../src/lib/server/intake/store.ts';
 import { loadMonteCarloConfig } from '../src/lib/server/monte-carlo/config.ts';
 import { ProfileMonteCarloJobs, validateRecordedProfileMonteCarlo } from '../src/lib/server/monte-carlo/profile-jobs.ts';
 import { runMonteCarloWorker } from '../src/lib/server/monte-carlo/worker.ts';
 import { profileMCContext } from '../src/lib/server/monte-carlo/binding.ts';
 import { LOCAL_MC_LIMITS } from '../src/lib/server/monte-carlo/jobs.ts';
-import { MonteCarloRequestSchema, DeterministicRequestSchema } from '../src/lib/server/schemas.ts';
-import example from '../contracts/example-request.json' with { type: 'json' };
+import { DeterministicRequestSchema } from '../src/lib/server/schemas.ts';
 const turn = () => new Promise(resolve => setImmediate(resolve));
-function selections(value: unknown, pointer = ''): ReviewSelection[] {
-  if (!value || typeof value !== 'object') return [];
-  if ('state' in value && 'value' in value) return value.value === null ? [] : [{ pointer, state: 'confirmed', rationale: 'Synthetic transport test review' }];
-  return Object.entries(value).flatMap(([key, child]) => selections(child, `${pointer}/${key}`));
-}
-function setup(withRisk = true) {
-  const store = new ProfileStore(':memory:'), p = eligibleFixture();
-  // Explicit fixture-only config, never a production fallback or company calibration claim.
-  if (withRisk) p.assumptions.risk_configuration = { ...p.opening.cash, value: JSON.parse(JSON.stringify(loadMonteCarloConfig())), unit: 'record' };
-  const created = store.create('owner', p), id = created.profile_id;
-  const reviews = selections(created.revisions[0].profile);
-  reviews.push({ pointer: '/sources/0', state: 'confirmed', rationale: 'Synthetic source review' });
-  const reviewed = store.review('owner', id, 1, reviews);
-  const preview = store.preview('owner', id, reviewed.revision);
-  store.acknowledge('owner', id, reviewed.revision, preview.preview_id);
-  const confirmed = store.confirm('owner', id, reviewed.revision);
-  const company = confirmed.compiled!.binding;
-  const input = { simulation_version: 'profile-simulation-2-draft' as const, company,
-    request: MonteCarloRequestSchema.parse({ ...structuredClone(example), company_id: `profile:${id}`, monte_carlo: { enabled: true, runs: 2000, seed: 42 } }) };
-  return { store, input, id };
-}
-/** Synthetic full-envelope adapter: validates transport, never represents new sampled output. */
-function syntheticResult(company: any, request: any, config: any, options: any) {
-  const result = JSON.parse(readFileSync('data/example-monte-carlo-result.json', 'utf8'));
-  const context = profileMCContext(options.profileContext.company, company, request, config);
-  for (let completed = 1; completed <= 2000; completed++) options.onProgress(completed);
-  return { ...result, company_id: company.id, run_id: options.runId, configuration: config,
-    input_fingerprint: context.input_fingerprint, config_fingerprint: context.config_fingerprint };
-}
+import { setup, syntheticResult } from './profile-mc-fixture.ts';
 test('profile jobs require confirmed owner snapshot and explicit reviewed risk config, never demo defaults', () => {
   const { store, input } = setup(false);
   try {
