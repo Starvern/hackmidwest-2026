@@ -1,6 +1,6 @@
 /** Local single-process candidate. Principals come from the server, never request actor IDs. */
 import { DatabaseSync } from 'node:sqlite';
-import { randomUUID } from 'node:crypto';
+import { randomUUID, randomBytes, createHash } from 'node:crypto';
 import { constants, openSync, closeSync, fchmodSync, lstatSync } from 'node:fs';
 import { dirname } from 'node:path';
 import { z } from 'zod';
@@ -49,6 +49,7 @@ export class ProfileStore {
   private db: DatabaseSync;
   constructor(filename: string) {
     if (filename !== ':memory:') {
+      if (!['darwin', 'linux'].includes(process.platform)) throw new Error('Durable profile storage supports macOS and Linux only; Windows ACL privacy is not implemented');
       const dir = lstatSync(dirname(filename));
       if (!dir.isDirectory() || (dir.mode & 0o077) !== 0) throw new Error('Profile database requires a private application directory');
       const fd = openSync(filename, constants.O_CREAT | constants.O_RDWR | constants.O_NOFOLLOW, 0o600);
@@ -56,8 +57,26 @@ export class ProfileStore {
     }
     this.db = new DatabaseSync(filename);
     this.db.exec('PRAGMA journal_mode=DELETE; PRAGMA secure_delete=ON; CREATE TABLE IF NOT EXISTS profiles (id TEXT PRIMARY KEY, owner TEXT NOT NULL, body TEXT NOT NULL)');
+    this.db.exec('CREATE TABLE IF NOT EXISTS sessions (digest TEXT PRIMARY KEY, owner TEXT NOT NULL, expires INTEGER NOT NULL)');
   }
   close() { this.db.close(); }
+  createSession() {
+    const token = randomBytes(32).toString('hex'), owner = randomUUID(), expires = Date.now() + 30 * 86400000;
+    this.db.prepare('INSERT INTO sessions VALUES (?, ?, ?)').run(createHash('sha256').update(token).digest('hex'), owner, expires);
+    return { token, owner, expires };
+  }
+  authenticate(token: string | undefined) {
+    if (!token || !/^[a-f0-9]{64}$/.test(token)) return null;
+    const row = this.db.prepare('SELECT owner FROM sessions WHERE digest = ? AND expires > ?').get(createHash('sha256').update(token).digest('hex'), Date.now());
+    return row ? String(row.owner) : null;
+  }
+  list(owner: string) {
+    this.principal(owner);
+    return this.db.prepare('SELECT body FROM profiles WHERE owner = ?').all(owner).map(row => {
+      const document = JSON.parse(String(row.body)) as Document, current = document.revisions.at(-1)!;
+      return { profile_id: document.profile_id, revision: document.head, status: current.status, name: current.profile.business.name.value };
+    });
+  }
   private principal(owner: string) { if (!owner.trim()) throw new Error('Authenticated owner required'); }
   private load(owner: string, id: string): Document {
     this.principal(owner);
@@ -81,12 +100,14 @@ export class ProfileStore {
     return current;
   }
   private append(document: Document, profile: ProfilePayload, estimates: string[] = []) {
+    if (document.head >= 200) throw new Error('Revision limit reached');
     const revision: Revision = { revision: ++document.head, profile, estimate_pointers: [...new Set(estimates)], status: 'draft', preview: null, acknowledgment: null, compiled: null, confirmation: null };
     document.revisions.push(revision);
     return revision;
   }
   create(owner: string, input: unknown) {
     this.principal(owner);
+    if (this.list(owner).length >= 20) throw new Error('Profile limit reached');
     const profile = unreviewed(input), profile_id = randomUUID();
     const document: Document = { profile_id, head: 0, revisions: [] };
     this.append(document, profile, estimatePointers(input));

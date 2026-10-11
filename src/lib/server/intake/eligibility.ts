@@ -2,7 +2,7 @@
 import { MAPPING_VERSION, type ProfilePayload } from './schemas.ts';
 import { reviewDraft, historicalTickets } from './review.ts';
 
-type Field = { value: unknown; state: string; period: { as_of: string } | { start: string; end: string }; source_ids: string[]; raw: { text: string; unit: string; precision: string } | null };
+type Field = { value: unknown; state: string; period: { as_of: string } | { start: string; end: string } | null; source_ids: string[]; raw: { text: string; unit: string; precision: string } | null };
 export type IntakeIssue = { code: string; pointer: string; severity: 'blocking' | 'notice'; message: string; source_ids: string[] };
 const isField = (v: unknown): v is Field => !!v && typeof v === 'object' && 'state' in v && 'unit' in v && 'value' in v;
 const ready = (f: Field) => f.value !== null && ['confirmed', 'reviewed_estimate'].includes(f.state);
@@ -55,7 +55,7 @@ export function assessIntake(input: unknown) {
       add('HISTORY_GAP', `/history/${i}/period`, 'History must cover the opening year in calendar order');
     const days = new Date(Date.UTC(Number(row.period.slice(0, 4)), Number(row.period.slice(5)), 0)).getUTCDate();
     for (const [key, field] of Object.entries(row)) if (isField(field) && ready(field)) {
-      if (!('start' in field.period) || field.period.start !== `${row.period}-01` || field.period.end !== `${row.period}-${days}`)
+      if (!field.period || !('start' in field.period) || field.period.start !== `${row.period}-01` || field.period.end !== `${row.period}-${days}`)
         add('AS_OF_MISMATCH', `/history/${i}/${key}`, 'Historical field coverage must match its actual calendar month', field);
     }
     const identity = (total: keyof typeof row, components: (keyof typeof row)[], subtract = false) => {
@@ -84,7 +84,7 @@ export function assessIntake(input: unknown) {
     if ((row.reported_profit.value === null) !== (row.reported_profit_basis.value === null))
       add('SOURCE_CONFLICT', `/history/${i}/reported_profit_basis`, 'Reported profit and its basis must be supplied together');
   });
-  for (const [key, field] of Object.entries(p.opening)) if (isField(field) && ready(field) && asOf && (!('as_of' in field.period) || field.period.as_of !== asOf))
+  for (const [key, field] of Object.entries(p.opening)) if (isField(field) && ready(field) && asOf && (!field.period || !('as_of' in field.period) || field.period.as_of !== asOf))
     add('AS_OF_MISMATCH', `/opening/${key}`, 'Opening balances and declarations must share the books-through date', field);
   for (const [declaration, rows, pointer] of [
     [p.opening.debt_declaration, p.opening.loans, '/opening/loans'],
@@ -99,7 +99,7 @@ export function assessIntake(input: unknown) {
     if (balance !== null && payment !== null && term !== null && (balance > 0 ? payment <= 0 || term < 1 ||
       balance > payment * term + 1e-6 || balance <= payment * (term - 1) : term !== 0 || payment !== 0))
       add('UNSUPPORTED_DEBT', pointer, 'Monthly principal must retire the outstanding balance exactly in the stated remaining term, with final payment capped');
-    for (const [key, f] of Object.entries(loan)) if (isField(f) && ready(f) && asOf && (!('as_of' in f.period) || f.period.as_of !== asOf))
+    for (const [key, f] of Object.entries(loan)) if (isField(f) && ready(f) && asOf && (!f.period || !('as_of' in f.period) || f.period.as_of !== asOf))
       add('AS_OF_MISMATCH', `${pointer}/${key}`, 'Loan facts must describe the opening schedule', f);
   });
   p.opening.assets.forEach((asset, i) => {
@@ -109,7 +109,7 @@ export function assessIntake(input: unknown) {
       (accumulated > cost || !close(cost - accumulated, monthly * life)))
       add('ASSET_SCHEDULE_CONFLICT', pointer, 'Remaining net asset value must reconcile to its straight-line remaining schedule');
     if (asset.service_date.value && asOf && asset.service_date.value > asOf) add('ASSET_SCHEDULE_CONFLICT', `${pointer}/service_date`, 'Future service assets require unsupported opening scheduling');
-    for (const [key, f] of Object.entries(asset)) if (isField(f) && ready(f) && asOf && (!('as_of' in f.period) || f.period.as_of !== asOf))
+    for (const [key, f] of Object.entries(asset)) if (isField(f) && ready(f) && asOf && (!f.period || !('as_of' in f.period) || f.period.as_of !== asOf))
       add('AS_OF_MISMATCH', `${pointer}/${key}`, 'Asset facts must describe the opening schedule', f);
   });
   const o = p.operations, a = p.assumptions;

@@ -1,5 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte';
+  import { page } from '$app/state';
+  import type { CompanyBinding } from '../../contracts/intake.ts';
   import { requestJson as get } from '../lib/dashboard/api.ts';
   import type { Decision, CompanyInput, DeterministicRequest, MetricKey, ModelMetadata, SimulationResult } from '../../contracts/contracts.ts';
   import example from '../../contracts/example-request.json';
@@ -9,7 +11,10 @@
   import ResultsExplanation from '../lib/dashboard/ResultsExplanation.svelte';
   import Timeline from '../lib/dashboard/Timeline.svelte';
   import { metrics, metricValue, formatValue, paybackLabel, decisionFields, fieldValue } from '../lib/dashboard/model.ts';
-  let request = $state<DeterministicRequest>(structuredClone(example) as unknown as DeterministicRequest);
+  const profileMode = $derived(page.url.searchParams.has('profile'));
+  let binding = $state<CompanyBinding | null>(null);
+  let latestRevision = $state<number | null>(null);
+  let request = $state<DeterministicRequest>(page.url.searchParams.has('profile') ? { schema_version: '1.0', company_id: '', horizon_months: 60, reserve_floor_usd: 0, exit_multiple: 1, scenarios: [{ id: 'baseline', name: 'Do nothing new', decisions: [] }, { id: 'trucks_only', name: 'Plan A', decisions: [] }, { id: 'combined_expansion', name: 'Plan B', decisions: [] }] } : structuredClone(example) as unknown as DeterministicRequest);
   let company = $state<CompanyInput | null>(null);
   let metadata = $state<ModelMetadata | null>(null);
   let result = $state<SimulationResult | null>(null);
@@ -44,9 +49,16 @@
     pending = true; error = '';
     const snapshot = JSON.stringify(request);
     try {
-      result = await get<SimulationResult>('/api/v1/simulate/deterministic', {
-        method: 'POST', headers: { 'content-type': 'application/json' }, body: snapshot,
-      });
+      if (profileMode) {
+        if (!binding) throw new Error('Load a confirmed business revision first.');
+        const response = await get<{ company: CompanyBinding; result: SimulationResult }>('/api/v2/intake/simulate', {
+          method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ simulation_version: 'profile-simulation-2-draft', company: binding, request: JSON.parse(snapshot) }),
+        });
+        if (JSON.stringify(response.company) !== JSON.stringify(binding) || response.result.company_id !== request.company_id) throw new Error('The result does not match this business revision.');
+        result = response.result;
+      } else result = await get<SimulationResult>('/api/v1/simulate/deterministic', {
+          method: 'POST', headers: { 'content-type': 'application/json' }, body: snapshot,
+        });
       resultInput = snapshot;
     } catch (cause) { error = cause instanceof Error ? cause.message : 'Simulation failed. Please retry.'; }
     finally { pending = false; }
@@ -54,7 +66,17 @@
   async function initialize() {
     pending = true; error = '';
     try {
-      [company, metadata] = await Promise.all([get<CompanyInput>('/api/v1/company/demo'), get<ModelMetadata>('/api/v1/model/metadata')]);
+      if (profileMode) {
+        const id = page.url.searchParams.get('profile'), revision = page.url.searchParams.get('revision');
+        const [record, model, profiles] = await Promise.all([
+          get<{ status: string; compiled: { company: CompanyInput; binding: CompanyBinding } | null }>(`/api/v2/intake/profiles/${encodeURIComponent(id ?? '')}?revision=${encodeURIComponent(revision ?? '')}`),
+          get<ModelMetadata>('/api/v1/model/metadata'), get<{ profile_id: string; revision: number }[]>('/api/v2/intake/profiles'),
+        ]);
+        if (record.status !== 'confirmed' || !record.compiled) throw new Error('Confirm this business’s starting picture before comparing investments.');
+        company = record.compiled.company; binding = record.compiled.binding; metadata = model;
+        latestRevision = profiles.find(p => p.profile_id === id)?.revision ?? binding.revision;
+        request.company_id = company.id; request.reserve_floor_usd = company.global_assumptions.liquidity_floor; request.exit_multiple = company.global_assumptions.valuation_multiple;
+      } else [company, metadata] = await Promise.all([get<CompanyInput>('/api/v1/company/demo'), get<ModelMetadata>('/api/v1/model/metadata')]);
       await run();
     } catch (cause) { error = cause instanceof Error ? cause.message : 'Could not load company.'; pending = false; }
   }
@@ -71,7 +93,8 @@
     <span class="rail-bottom">01</span>
   </aside>
   <main>
-    <header><div class="wordmark">Operator<span>OS</span><span class="divider">/</span><span class="workspace-name">Investment workspace</span></div><span class="synthetic">● Synthetic company</span></header>
+    <header><div class="wordmark">Operator<span>OS</span><span class="divider">/</span><span class="workspace-name">Investment workspace</span></div><a href="/intake">Your business</a><span class="synthetic">{profileMode ? `● ${company?.name ?? 'Your business'} · revision ${binding?.revision ?? '—'}` : '● Synthetic company'}</span></header>
+    {#if profileMode && binding && latestRevision !== binding.revision}<p class="editor-note">Viewing confirmed revision {binding.revision}. A newer revision {latestRevision} exists. <a href="/intake">Review the latest draft</a>.</p>{/if}
     <section class="intro"><div><p class="eyebrow">OPERATING DECISIONS, OVER TIME</p><h1>Plan the next move.</h1><p class="subtitle">See what your investments change—and when they matter.</p></div><div class="company-tag"><span class="company-icon">⌁</span><div><strong>{company?.name ?? 'Loading company…'}</strong><small>HVAC services · USD · 60-month horizon</small></div></div></section>
     <div class="notice"><span>↗</span><p>Deterministic workspace <span>One set of disclosed assumptions. Risk simulations are shown separately below.</span></p><span class="status">{pending ? 'Computing…' : stale ? 'Results need updating' : result ? 'Results current' : 'Ready to load'}</span></div>
     {#if error}<div class="error" role="alert"><strong>We couldn’t complete that request.</strong><p>{error}</p><button onclick={() => company ? run() : initialize()} disabled={pending}>Retry</button></div>{/if}
@@ -122,9 +145,9 @@
         {#if result?.warnings.length}<section class="panel warnings"><h2>Model warnings</h2><ul>{#each result.warnings as warning}<li>{warning.message}</li>{/each}</ul></section>{/if}
       </div>
     </div>
-    <RiskPanel {request} enabled={metadata?.readiness.monte_carlo ?? false} {month} {scenarioId} {metric} />
-    <section class="panel assumptions" id="assumptions"><details><summary><div><p class="eyebrow">CONTEXT MATTERS</p><h2>Assumptions & model notes</h2></div><span>View details +</span></summary><p>{metadata?.data_notice}</p><ul>{#each metadata?.limitations ?? [] as limitation}<li>{limitation}</li>{/each}</ul><p>Month 0 contains opening balances only. Null valuation means unavailable. Project payback uses paired incremental unlevered cash flow and may reverse. Utilization differences are percentage-point differences.</p><details><summary>Resolved run assumptions and company input provenance</summary><pre>{JSON.stringify({ assumptions: result?.assumptions ?? company?.global_assumptions, provenance: company?.provenance }, null, 2)}</pre></details><p class="muted">Schema {metadata?.schema_version ?? '—'} · Model {metadata?.model_version ?? '—'} · Revision {metadata?.contract_revision ?? '—'} · Run {result?.run_id ?? 'not run'}</p><p class="fingerprint">Input fingerprint: {result?.input_fingerprint ?? 'not run'}</p></details></section>
-    <footer><span>OperatorOS / A clearer view of what comes next.</span><span>Synthetic inputs. Modeled outcomes.</span></footer>
+    {#if profileMode}<section class="panel"><h2>Risk analysis has not been run for this business</h2><p>Company-specific risk configuration and job binding are still under review. The fictional demo’s recorded results do not describe your business.</p></section>{:else}<RiskPanel {request} enabled={metadata?.readiness.monte_carlo ?? false} {month} {scenarioId} {metric} />{/if}
+    <section class="panel assumptions" id="assumptions"><details><summary><div><p class="eyebrow">CONTEXT MATTERS</p><h2>Assumptions & model notes</h2></div><span>View details +</span></summary><p>{profileMode ? 'This run uses the selected confirmed business revision, including its reviewed estimates. Results are modeled outcomes.' : metadata?.data_notice}</p><ul>{#each metadata?.limitations ?? [] as limitation}<li>{limitation}</li>{/each}</ul><p>Month 0 contains opening balances only. Null valuation means unavailable. Project payback uses paired incremental unlevered cash flow and may reverse. Utilization differences are percentage-point differences.</p><details><summary>Resolved run assumptions and company input provenance</summary><pre>{JSON.stringify({ assumptions: result?.assumptions ?? company?.global_assumptions, provenance: company?.provenance }, null, 2)}</pre></details><p class="muted">Schema {metadata?.schema_version ?? '—'} · Model {metadata?.model_version ?? '—'} · Revision {metadata?.contract_revision ?? '—'} · Run {result?.run_id ?? 'not run'}</p><p class="fingerprint">Input fingerprint: {result?.input_fingerprint ?? 'not run'}</p></details></section>
+    <footer><span>OperatorOS / A clearer view of what comes next.</span><span>{profileMode ? 'Confirmed facts and reviewed estimates. Modeled outcomes.' : 'Synthetic inputs. Modeled outcomes.'}</span></footer>
     <div class="sr-only" aria-live="polite">{pending ? 'Simulation running' : error ? 'Request failed' : stale ? 'Inputs changed; results are stale' : result ? 'Simulation complete' : ''}</div>
   </main>
 </div>

@@ -44,8 +44,8 @@ No new dependency or unrelated lockfile edit is included.
 
 Each operation takes a **trusted server principal**, never a request-supplied actor.
 Owner-scoped lookup occurs for reads/edits/reviews/previews/acknowledgments/confirmation,
-snapshot resolution and deletion. HTTP session authentication is still to implement;
-calling these methods directly is a trusted application boundary, not public auth.
+snapshot resolution and deletion. HTTP session integration is now documented in PERSON_3_INTAKE_API_UI.md;
+calling these methods directly remains a trusted application boundary, not public auth.
 
 - Create/save strips incoming field/source/reconciliation review authority. Values
   remain entered or unknown; reviewed-estimate intent is retained separately so
@@ -84,8 +84,8 @@ compiler/engine projection is now ready for your published operating matrix, and
 the authoritative source reference can be reviewed alongside it. No repeat broad
 custom-investment accounting review or full MC benchmark is requested.
 
-Remaining P3 work: HTTP session/access integration, bounded API transport/errors,
-manual intake/review forms, importer normalization, UI stale-result handling and
+HTTP session/access, bounded transport and manual intake/bound workspace are implemented
+as an opt-in local candidate; see PERSON_3_INTAKE_API_UI.md. Remaining P3 work: importer normalization and
 worker/job/recorded snapshot binding. Company MC, extraction/uploads, hosting/sharing,
 broader dates/debt/trades and multi-user deployment are not enabled. Preflight's
 `execution_available: false` still describes public availability. Gates D/E remain open.
