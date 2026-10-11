@@ -1,6 +1,7 @@
 /** Local single-process candidate. Principals come from the server, never request actor IDs. */
 import { ProfileMCStoredRecordingSchema, type ProfileMCStoredRecording } from '../monte-carlo/recording-contracts.ts';
 import { validateRecordedProfileMonteCarlo } from '../monte-carlo/profile-context.ts';
+import { prepareRiskConfiguration } from './risk-editor.ts';
 import { DatabaseSync } from 'node:sqlite';
 import { randomUUID, randomBytes, createHash } from 'node:crypto';
 import { constants, openSync, closeSync, fchmodSync, lstatSync } from 'node:fs';
@@ -136,6 +137,17 @@ export class ProfileStore {
       });
       return this.append(document, profile, [...estimatePointers(input), ...retained]);
     });
+  }
+  saveRiskConfiguration(owner: string, id: string, expected: number, draft: unknown) {
+    const current = this.read(owner, id, expected);
+    const { configuration, source_ids, draft: raw } = prepareRiskConfiguration(draft, current.profile.sources);
+    const profile = current.profile, source_id = randomUUID();
+    profile.sources.push({ source_id, kind: 'owner_estimate', title: 'Company sensitivity parameter estimates',
+      period: { start: raw.start, end: raw.end }, locator: JSON.stringify(raw.evidence) });
+    profile.assumptions.risk_configuration = { value: configuration, state: 'entered', unit: 'record',
+      period: { start: raw.start, end: raw.end }, source_ids: [...source_ids,source_id],
+      raw: { text: JSON.stringify(raw), unit: 'record', precision: 'as entered' }, review: null, derivation: null };
+    return this.save(owner, id, expected, profile);
   }
   review(owner: string, id: string, expected: number, selections: ReviewSelection[]) {
     return this.mutate(owner, id, document => {

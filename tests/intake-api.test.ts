@@ -1,3 +1,4 @@
+import { riskDraft } from './intake-risk-fixture.ts';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import type { RequestEvent } from '@sveltejs/kit';
@@ -89,4 +90,27 @@ test('workbook uploads create only session-owned unreviewed drafts; failures lea
   assert.equal((await b.call(`/profiles/${draft.profile_id}?revision=1`)).status,404);
   const before=await (await a.call('/profiles')).json();assert.equal((await a.upload(new Uint8Array([1,2]))).status,422);assert.deepEqual(await (await a.call('/profiles')).json(),before);
  }finally{store.close();}
+});
+
+test('risk configuration editing is session-owned, same-origin, strict and creates unreviewed estimate drafts', async () => {
+  const store = new ProfileStore(':memory:');
+  try {
+    const a = client(store), b = client(store);
+    await a.call('/session','POST'); await b.call('/session','POST');
+    const created = await (await a.call('/profiles','POST',eligibleFixture())).json(), id = created.profile_id;
+    const path = `/profiles/${id}/risk-configuration`, body = { revision: 1, draft: riskDraft() };
+    assert.equal((await b.call(path,'POST',body)).status,404);
+    assert.equal((await a.call(path,'POST',body,'https://elsewhere.example')).status,403);
+    const invalid = structuredClone(body); invalid.draft.values['macro.rho'] = '';
+    assert.equal((await a.call(path,'POST',invalid)).status,422);
+    assert.equal((await a.call(path,'POST',{...body,actor_id:'forged'})).status,422);
+    assert.equal((await (await a.call('/profiles')).json())[0].revision,1);
+    const response = await a.call(path,'POST',body), saved = await response.json();
+    assert.equal(response.status,200); assert.equal(saved.revision,2);
+    assert.equal(saved.profile.assumptions.risk_configuration.state,'entered');
+    assert.equal(saved.profile.assumptions.risk_configuration.review,null);
+    assert.ok(saved.profile.sources.some((s:any)=>s.kind==='owner_estimate'));
+    assert.equal((await a.call(path,'POST',body)).status,409);
+    assert.equal((await a.call(`/profiles/${id}?revision=1`)).status,200);
+  } finally { store.close(); }
 });
