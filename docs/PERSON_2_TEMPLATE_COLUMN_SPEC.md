@@ -1,9 +1,9 @@
 # P2 template column specification — shared proposal review
 
-Targets exact P3 `ae9e4e4`, `company-profile-1-draft` and
-`company-mapping-1-draft`. Design only; not an accepted importer or generated
-workbook. Operating policy disposition: agrees with P1/P2 policy, subject to the
-two representation clarifications below. Initial runtime scope remains USD HVAC,
+Finalized P2 column mapping against exact P3 `340508a`, `company-profile-2-draft`
+and `company-mapping-2-draft`. Design only; not an implemented importer or generated
+workbook. Operating representation disposition: accepted by P2; the revision-2
+resolution below supersedes the original clarification requests. Initial runtime scope remains USD HVAC,
 Dec-31 opening, prior Jan–Dec history, next January forecast, supported fully
 productive cohorts, and exact supported debt. Drafts can preserve unsupported facts.
 
@@ -67,6 +67,8 @@ provenance aliases. Template/export and manual entry must use the same vocabular
 
 ## Narrow representation changes requested from P3
 
+Historical review requests against revision 1, resolved by revision 2 below:
+
 1. Publish canonical unit literals and structured evidence member shapes for the
    operating pointers. `unit: string` alone does not settle interoperable workbook
    columns. The table above supplies P2's unit proposal; engine provenance units
@@ -86,7 +88,59 @@ ticket, zero-job ticket, 0.5/1.5 normalized seasonality, workforce/pool blocking
 zero-versus-unknown, date boundaries and no-demo company binding. No broad operating
 policy mismatch found. P1 retains financial schedule/reconciliation review.
 
-After P3 resolves the two representation points and exact structured member names,
-P2 can finalize this column mapping and generate the workbook against that agreed
-revision. No executable schema/importer is introduced here. Tests were not run for
-this documentation-only review.
+Both P2 representation requests are resolved at `340508a`. No executable intake
+schema/importer is introduced here. Workbook generation follows shared agreement,
+including P1's specific confirmation-identity disposition. No runtime intake tests
+are claimed for these design rules.
+
+## Revision-2 final mapping and review disposition
+
+Use the closed `ProfileUnit` registry and pointer-specific engine aliases in
+`340508a:docs/COMPANY_PROFILE_CONTRACT_PROPOSAL.md`; the operating unit table above
+is confirmed there. Monetary raw precision is preserved. Lists in cells are JSON
+arrays (source IDs, history/mix references, dependencies and category lists), never
+comma-split text. Reject malformed lists rather than guessing.
+
+Operations uses linked detail tables with `record_kind`, `parent_pointer`,
+`row_id` and the following exact value-member columns; parent envelope columns
+carry applicable source/review/period information. Container records are identified
+by their canonical pointer; child records use stable row IDs. Do not add fictional
+row IDs to objects that have no row_id member in the profile contract.
+
+| Record kind / parent | Exact value members / detail columns |
+| --- | --- |
+| Service mix / `operations.service_mix` | `row_id`, `trade`, `service_kind`, `description`, `comparable_job_definition`, `pool_id`, `historical_row_ids`, `completed_jobs`, `service_revenue_usd`, `source_ids` |
+| Workforce declaration / `operations.workforce_availability` | `declaration` (`none`, `itemized`, `unknown`); linked constraints supply `constraints[]`. |
+| Workforce constraint / `operations.workforce_availability` | `row_id`, `people`, `kind`, `available_fraction`, `productivity_fraction`, `pool_id`, `description`, `source_ids` |
+| Demand declaration / `operations.demand_evidence` | Tagged `kind`: `measured`, `reviewed_estimate`, `confirmed_no_unserved`. Only the selected variant's members apply. |
+| Measured demand observation | `row_id`, `period`, `requested_jobs`, `unserved_jobs`, `service_mix_row_ids`, `source_ids` under `observations[]` |
+| Demand estimate | `period_start`, `period_end`, `estimated_jobs_per_month`, `method`, `limitations`, `service_mix_row_ids`, `source_ids` |
+| No-unserved declaration | `historical_row_ids`, `rationale`, `source_ids` |
+
+Trade/service-kind enums and exact restrictions come from the revision-2 proposal.
+Optional null mix counts/revenue or unknown availability fractions remain null,
+not zero/one. Mix totals reference actual covered history periods. Workforce
+overlapping constraints are not added or multiplied into a second capacity loss;
+initial unsupported itemized constraints block compilation. Demand estimates retain
+reviewed_estimate state; no-unserved declarations need explicit reviewed history
+coverage and do not calibrate base demand. Referenced IDs must exist in the revision.
+
+Derived ticket location is `review_projection.historical_tickets[]` in the server
+review response, outside editable profile facts and hashed preview payload.
+Optional read-only export columns: `history_row_id`, `period`, `unit`,
+`mapping_version`, `source_ids`, `dependencies`, `status`, `value`, `reason`, plus
+response-level `profile_id`/`revision`. Available values have null reason;
+unavailable values are null with `zero_jobs`, `inputs_unreviewed` or
+`source_conflict`. Import ignores/recomputes these values. Zero-job revenue still
+blocks reconciliation and forecast_ticket remains separately required/reviewed.
+
+P2 accepts these exact operating representations and known-answer obligations.
+P1's confirmation-identity and financial display disposition remains separate.
+P3 owns authoritative intake encoding; no implemented company-specific execution,
+browser/Gate D/E acceptance or importer compatibility is established by this mapping.
+
+Focused independent correction verification at `340508a`:
+`node --test tests/dashboard.test.ts` passed all seven tests, including copied
+truck/hire/marketing labels preserving original labels, shared keys, economic
+fingerprints and sampled action risks across 20 run indices. Economic edits still
+detach and conflicting shared economics reject. P2's rename finding is resolved.
