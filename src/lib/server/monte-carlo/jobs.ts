@@ -1,3 +1,4 @@
+import { profileMCContext, assertProfileMCContext, type ProfileMCContext } from './binding.ts';
 import { createHash, randomBytes, randomUUID, timingSafeEqual } from 'node:crypto';
 import type { z } from 'zod';
 import { APPROVED_POLICIES, CompanyInputSchema, MonteCarloRequestSchema } from '../schemas.ts';
@@ -8,7 +9,7 @@ import { runMonteCarloWorker, type WorkerOptions } from './worker.ts';
 
 type Status = z.infer<typeof MCJobStatusSchema>;
 type Result = ReturnType<typeof validateMonteCarloResult>;
-type Snapshot = { company: unknown; request: unknown; config: unknown };
+type Snapshot = { company: unknown; request: unknown; config: unknown; profileContext?: ProfileMCContext };
 type Job = { status: Status; tokenHash: Buffer; snapshot: Snapshot; controller: AbortController; result?: Result };
 export class JobError extends Error {
   readonly status: number;
@@ -36,9 +37,14 @@ export class MonteCarloJobs {
   prune() {
     for (const [id, job] of this.jobs) if (job.status.expires_at && Date.parse(job.status.expires_at) <= this.now()) this.jobs.delete(id);
   }
-  submit(companyValue: unknown, requestValue: unknown, configValue: unknown) {
+  /** Server-side retention bookkeeping; conveys no result or job access. */
+  retains(id: string) { this.prune(); return this.jobs.has(id); }
+  submit(companyValue: unknown, requestValue: unknown, configValue: unknown, contextValue?: ProfileMCContext) {
     this.prune();
     const company = CompanyInputSchema.parse(companyValue), request = MonteCarloRequestSchema.parse(requestValue), config = MCConfigSchema.parse(configValue);
+    const profileContext = contextValue ? structuredClone(contextValue) : undefined;
+    if (company.id.startsWith('profile:') && !profileContext) throw new Error('Profile MC transport binding required');
+    if (profileContext) assertProfileMCContext(profileContext, profileMCContext(profileContext.company, company, request, config));
     if (company.id !== request.company_id) throw new JobError(422, 'VALIDATION_ERROR', 'Unknown company ID.');
     if (request.monte_carlo.runs !== 2000) throw new JobError(422, 'UNSUPPORTED_RUN_COUNT', 'This review supports exactly 2,000 runs.');
     if (this.jobs.size >= LOCAL_MC_LIMITS.records || (this.busy && this.queue.length >= LOCAL_MC_LIMITS.waiting)) {
@@ -47,7 +53,7 @@ export class MonteCarloJobs {
     const id = randomUUID(), token = randomBytes(32).toString('hex');
     const status = MCJobStatusSchema.parse({ transport_version: MC_JOB_VERSION, job_id: id, state: 'queued',
       completed_runs: 0, total_runs: 2000, created_at: new Date(this.now()).toISOString(), finished_at: null, expires_at: null, error: null });
-    this.jobs.set(id, { status, tokenHash: hash(token), snapshot: { company, request, config }, controller: new AbortController() });
+    this.jobs.set(id, { status, tokenHash: hash(token), snapshot: { company, request, config, profileContext }, controller: new AbortController() });
     this.queue.push(id);
     const base = `/api/v1/simulate/monte-carlo/jobs/${id}`;
     const receipt = MCJobReceiptSchema.parse({ ...status, access_token: token, status_url: base, result_url: `${base}/result` });
@@ -89,9 +95,9 @@ export class MonteCarloJobs {
     const job = this.jobs.get(id)!;
     this.busy = true;
     job.status.state = 'running';
-    const { company, request, config } = job.snapshot;
+    const { company, request, config, profileContext } = job.snapshot;
     const options: WorkerOptions = { timeoutMs: LOCAL_MC_LIMITS.timeoutMs, signal: job.controller.signal,
-      runId: id, workerUrl: this.workerUrl, onProgress: completed => {
+      profileContext, runId: id, workerUrl: this.workerUrl, onProgress: completed => {
         if (job.status.state !== 'running') return;
         if (completed !== job.status.completed_runs + 1 || completed > 2000) throw new Error('Invalid job progress');
         job.status.completed_runs = completed;

@@ -1,3 +1,4 @@
+import { profileMCContext, assertProfileMCContext, type ProfileMCContext } from './binding.ts';
 import { randomUUID } from 'node:crypto';
 import { Worker } from 'node:worker_threads';
 import { APPROVED_POLICIES, CompanyInputSchema, MonteCarloRequestSchema } from '../schemas.ts';
@@ -10,6 +11,7 @@ export type WorkerOptions = {
   onProgress?: (completed: number) => void;
   runId?: string;
   workerUrl?: URL;
+  profileContext?: ProfileMCContext;
 };
 
 /** Internal source-runtime adapter; no endpoint/readiness change or production packaging claim. */
@@ -21,9 +23,12 @@ export async function runMonteCarloWorker(companyValue: unknown, requestValue: u
   const config = MCConfigSchema.parse(configValue);
   if (company.id !== request.company_id) throw new Error('Unknown company ID');
   if (options.signal?.aborted) throw new Error('Monte Carlo job cancelled');
+  const profileContext = options.profileContext ? structuredClone(options.profileContext) : undefined;
+  if (company.id.startsWith('profile:') && !profileContext) throw new Error('Profile MC transport binding required');
+  if (profileContext) assertProfileMCContext(profileContext, profileMCContext(profileContext.company, company, request, config));
   const runId = options.runId ?? randomUUID();
   const worker = new Worker(options.workerUrl ?? new URL('./worker-entry.ts', import.meta.url), {
-    workerData: { company, request, config, runId },
+    workerData: { company, request, config, runId, profileContext },
   });
   return new Promise<ReturnType<typeof validateMonteCarloResult>>((resolve, reject) => {
     let settled = false, completed = 0;
@@ -58,6 +63,7 @@ export async function runMonteCarloWorker(companyValue: unknown, requestValue: u
           completed = count;
           options.onProgress?.(completed);
         } else if (message.type === 'result' && 'result' in message) {
+          if (profileContext) assertProfileMCContext('profileContext' in message ? message.profileContext : undefined, profileContext);
           const result = validateMonteCarloResult(message.result, company, request, APPROVED_POLICIES, config);
           if (result.run_id !== runId || completed !== request.monte_carlo.runs) throw new Error('Worker result/run progress mismatch');
           finish(undefined, result);

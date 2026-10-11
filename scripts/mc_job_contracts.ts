@@ -1,7 +1,8 @@
 import { readFileSync, writeFileSync } from 'node:fs';
 import { z } from 'zod';
 import { MCJobStatusSchema, MCJobReceiptSchema } from '../src/lib/server/monte-carlo/jobs-contracts.ts';
-for (const [name, schema] of Object.entries({ MCJobStatus: MCJobStatusSchema, MCJobReceipt: MCJobReceiptSchema })) {
+import { ProfileMCContextSchema } from '../src/lib/server/monte-carlo/binding.ts';
+for (const [name, schema] of Object.entries({ MCJobStatus: MCJobStatusSchema, MCJobReceipt: MCJobReceiptSchema, ProfileMCContext: ProfileMCContextSchema })) {
   const path = `contracts/${name}.schema.json`;
   const body = JSON.stringify(z.toJSONSchema(schema, { target: 'draft-2020-12' }), null, 2) + '\n';
   if (process.argv.includes('--check')) {

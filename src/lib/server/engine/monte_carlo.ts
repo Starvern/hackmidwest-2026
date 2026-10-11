@@ -68,19 +68,27 @@ export function sample_action_risks(config: MCConfig, seed: number, run: number,
   return validatePathRisks({ by_stable_investment_key }, decisions);
 }
 
+/** Resolve request overrides without retaining superseded profile-source authority. */
+export function resolveMonteCarloCompany(companyValue: unknown, requestValue: unknown) {
+  const original = CompanyInputSchema.parse(companyValue), request = MonteCarloRequestSchema.parse(requestValue);
+  if (original.id !== request.company_id) throw new Error('Unknown company ID');
+  const company = structuredClone(original);
+  company.global_assumptions.valuation_multiple = request.exit_multiple;
+  company.global_assumptions.liquidity_floor = request.reserve_floor_usd;
+  for (const [field, source] of [['valuation_multiple', 'exit_multiple'], ['liquidity_floor', 'reserve_floor_usd']] as const) {
+    const pointer = `/global_assumptions/${field}`;
+    company.provenance[pointer] = { unit: company.provenance[pointer].unit, kind: 'user_input', source: `Resolved request.${source}` };
+  }
+  return CompanyInputSchema.parse(company);
+}
+
 /** Compact streaming aggregation; expanded paths are released after each run. No HTTP readiness change. */
 export function simulate_monte_carlo(companyValue: unknown, requestValue: unknown, configValue: unknown = loadMonteCarloConfig(), runId: string = randomUUID(), onProgress?: (completed: number) => void) {
   const original = CompanyInputSchema.parse(companyValue);
   const request = MonteCarloRequestSchema.parse(requestValue);
   const config = MCConfigSchema.parse(configValue);
   const input_fingerprint = fingerprintMonteCarloRequest(original, request, APPROVED_POLICIES, config);
-  const company = structuredClone(original);
-  company.global_assumptions.valuation_multiple = request.exit_multiple;
-  company.global_assumptions.liquidity_floor = request.reserve_floor_usd;
-  for (const [field, source] of [['valuation_multiple', 'exit_multiple'], ['liquidity_floor', 'reserve_floor_usd']] as const) {
-    const pointer = `/global_assumptions/${field}`;
-    company.provenance[pointer] = { ...company.provenance[pointer], kind: 'user_input', source: `Resolved request.${source}` };
-  }
+  const company = resolveMonteCarloCompany(original, request);
   const sorted = [...request.scenarios].sort((a, b) => a.id < b.id ? -1 : a.id > b.id ? 1 : 0);
   const fingerprints = Object.fromEntries(sorted.map(s => [s.id, fingerprintMonteCarloScenario(original, request, APPROVED_POLICIES, config, s.id)]));
   function* paths() {
