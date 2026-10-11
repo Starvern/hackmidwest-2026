@@ -20,6 +20,14 @@ To update an existing teammate checkout, first preserve/commit local work. Fetch
 
 Stop the previous dev/preview process with Ctrl-C before starting. A running preview serves its previous build; pulling code alone does not refresh it. `npm run demo` always rebuilds and uses port 4182 with `--strictPort`, so an occupied port fails rather than silently opening a different server. Open the URL printed by this process. After the rebuild/restart, refresh the browser. Plan edits reset on refresh; recreate the selected settings. Do not delete profile storage or browser cookies as a cache fix.
 
+P2's fictional-business risk work (`will 550de02`, including 100-path preview `41425f2`) is integrated at `5126a02`. To enable new risk runs on a local review host, add `OPERATOROS_MC_REVIEW=1` when starting the server, for example:
+
+```sh
+OPERATOROS_MC_REVIEW=1 OPERATOROS_INTAKE_REVIEW=1 OPERATOROS_INTAKE_DIRECTORY=/absolute/private/profile-directory npm run demo
+```
+
+Use your existing private profile directory. This flag must be present in the running server environment; setting it in a separate terminal or refreshing an old server does not enable simulations. The fictional workspace at `/` defaults to Quick preview (100 paths), with Full run (2,000 paths) available explicitly. A no-action plan has no investment payback to measure; “Not applicable” does not mean the risk simulator failed. Imported-company comparisons remain deterministic and do not expose risk execution. Restart clears in-memory fictional risk jobs; keep a running job's browser/server alive.
+
 From the repository, with dependencies installed:
 
 ```sh
