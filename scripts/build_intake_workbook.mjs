@@ -42,10 +42,19 @@ make('Business','Start here: enter business dates and facts. Initial supported s
  ...['name','trade','currency','accounting_basis'].map(x=>['business.'+x,'text']),...['books_through','forecast_start'].map(x=>['business.'+x,'ISO_date'])]);
 const hist=['service_jobs','service_revenue','other_revenue','revenue','tech_direct_labor','vehicle_direct_opex','service_variable_cost','other_direct_cost','cogs','operating_overhead','ebitda','reported_profit','reported_profit_basis'];
 make('Monthly history','Supply 12 actual contiguous Jan-Dec periods (YYYY-MM). Keep reported profit basis separate from EBITDA.',Array.from({length:12},(_,i)=>hist.map(x=>['history[].'+x,x==='service_jobs'?'jobs/month':x==='reported_profit_basis'?'text':'USD/month',`history-${String(i+1).padStart(2,'0')}`,''])).flat());
-make('Existing expenses','Existing costs apply to all plans. Included detail does not add to totals. Material irregular cash timing requires support.',[
+const [expenses]=make('Existing expenses','Existing costs apply to all plans. Included detail does not add to totals. Material irregular cash timing requires support.',[
  ...['name','category','source_period','currency','frequency','target_bucket','mapping_mode','allocation_rule'].map(x=>['expense_ledger[].'+x,'text','expense-1']),
  ...['raw_amount','normalized_recognition_amount'].map(x=>['expense_ledger[].'+x,x==='raw_amount'?'USD':'USD/month','expense-1']),
  ...['coverage_start','coverage_end'].map(x=>['expense_ledger[].'+x,'ISO_date','expense-1']),['expense_ledger[].irregular_payment','boolean','expense-1']]);
+expenses.getRange('C16').dataValidation={rule:{type:'list',values:['replace_total','included_detail']}};
+expenses.getRange('A25').values=[['How to map existing expenses']];
+expenses.getRange('A25').format.font={bold:true,size:11};
+expenses.getRange('A26').values=[['replace_total: use reconciled item details instead of the category total. Do not add both.']];
+expenses.getRange('A27').values=[['included_detail: describe an expense already inside the category total. It adds no extra cost.']];
+expenses.getRange('A28').values=[['normalized_recognition_amount is the monthly recognized expense, not the payment.']];
+expenses.getRange('A29').values=[['Example: $1,200 annual insurance may be recognized as $100/month where accounting supports it.']];
+expenses.getRange('A30').values=[['The $1,200 payment stays a separate source fact. It does not become twelve $100 cash payments.']];
+expenses.getRange('A31').values=[['Material irregular payment timing blocks compilation until baseline scheduling is supported.']];
 make('Opening balances','Use the same Dec-31 as-of date. Cash may be negative. Declare no debt/assets explicitly rather than leaving schedules unknown.',[
  ...['cash','accounts_receivable','inventory','accounts_payable'].map(x=>['opening.'+x,'USD']),...['debt_declaration','asset_declaration'].map(x=>['opening.'+x,'text'])]);
 make('Loans','Initial support: exactly representable fixed-rate, monthly level-principal loans. No conversion from equal-payment or irregular debt.',[
@@ -80,6 +89,6 @@ console.log((await wb.inspect({kind:'region',sheetId:'Operations',range:'A9:D15'
 console.log((await wb.inspect({kind:'match',searchTerm:'#REF!|#DIV/0!|#VALUE!|#NAME\\?',options:{useRegex:true,maxResults:10},maxChars:600})).ndjson);
 await fs.mkdir(out,{recursive:true});
 for(const s of sheets){const img=await wb.render({sheetName:s.name,range:'A1:D15',scale:1,format:'png'});await fs.writeFile(`${out}/${s.name.replaceAll(' ','-')}.png`,new Uint8Array(await img.arrayBuffer()));}
-for(const [name,range,suffix] of [['Business','A33:H43','instructions'],['Operations','A32:L43','details']]){const img=await wb.render({sheetName:name,range,scale:1,format:'png'});await fs.writeFile(`${out}/${suffix}.png`,new Uint8Array(await img.arrayBuffer()));}
+for(const [name,range,suffix] of [['Business','A33:H43','instructions'],['Operations','A32:L43','details'],['Existing expenses','A15:H32','expense-guidance']]){const img=await wb.render({sheetName:name,range,scale:1,format:'png'});await fs.writeFile(`${out}/${suffix}.png`,new Uint8Array(await img.arrayBuffer()));}
 await (await SpreadsheetFile.exportXlsx(wb)).save(`${out}/company-intake-v2.xlsx`);
 console.log('Exported eight-sheet blank intake template.');

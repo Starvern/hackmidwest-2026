@@ -35,6 +35,15 @@ Material irregular baseline cash timing and unsupported facts block compilation.
 Existing company costs are separate from new alternative expense/purchase decisions.
 Company-specific intake execution, persistence and confirmation are P3 runtime work.
 
+Existing expenses includes the exact mapping choices beside its inputs:
+`replace_total` uses reconciled details instead of the category total;
+`included_detail` describes a cost already included and adds nothing. Never add
+both the original total and its details. The mapping-mode value cell has a dropdown.
+`normalized_recognition_amount` means monthly recognized expense, not payment.
+For example, $1,200 annual insurance may be recognized at $100/month where accounting
+supports it; its $1,200 cash payment is not converted into monthly payments.
+Material irregular cash timing blocks compilation until baseline scheduling exists.
+
 ## Reproduce
 
 Use the bundled runtime returned by `load_workspace_dependencies`. Set
