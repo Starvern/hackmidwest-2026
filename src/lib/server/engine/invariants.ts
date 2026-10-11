@@ -30,7 +30,7 @@ export function assertFinancials(f: FinancialResult, ending: FinancialState): vo
   assertClose(f.revenue, f.service_revenue + f.other_revenue, 'Revenue');
   assertClose(f.cogs, f.service_variable_cost + f.tech_direct_labor + f.vehicle_direct_opex + f.other_direct_cost, 'COGS');
   assertClose(f.gross_profit, f.revenue - f.cogs, 'Gross profit');
-  assertClose(f.operating_overhead, f.fixed_overhead + f.incremental_marketing + f.recruitment, 'Overhead');
+  assertClose(f.operating_overhead, f.fixed_overhead + f.incremental_marketing + f.recruitment + (f.custom_operating_expenses ?? 0), 'Overhead');
   assertClose(f.ebitda, f.gross_profit - f.operating_overhead, 'EBITDA');
   assertClose(f.ebit, f.ebitda - f.depreciation - f.amortization, 'EBIT');
   assertClose(f.pretax_income, f.ebit - f.cash_interest, 'Pretax income');

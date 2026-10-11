@@ -30,6 +30,17 @@ export function paybackLabel(value: Payback): string {
 export type EditorField = { path: string; label: string; min: number; max?: number; step?: number };
 export function decisionFields(decision: Decision): EditorField[] {
   const start = { path: 'start_month', label: 'Start month', min: 1, max: 60 };
+  if (decision.type === 'operating_expense') return [start,
+    { path: 'amount_per_month', label: 'Amount each month · USD', min: 0, step: .01 },
+    { path: 'duration_months', label: 'Months charged · 1 = one-time', min: 1, max: 60 }];
+  if (decision.type === 'purchase_asset') return [start,
+    { path: 'purchase_cost', label: 'Purchase price · USD', min: 0, step: .01 },
+    { path: 'in_service_delay_months', label: 'Service delay · months', min: 0 },
+    { path: 'useful_life_months', label: 'Depreciation life · months', min: 1, max: 600 },
+    { path: 'monthly_operating_cost', label: 'Operating cost after service · USD/month', min: 0, step: .01 },
+    { path: 'funding.debt_fraction', label: 'Debt funding · fraction (0–1)', min: 0, max: 1, step: .05 },
+    { path: 'funding.annual_interest_rate', label: 'Annual interest · fraction', min: 0, step: .01 },
+    { path: 'funding.term_months', label: 'Loan term · months', min: 1 }];
   if (decision.type === 'purchase_trucks') return [start,
     { path: 'quantity', label: 'Trucks', min: 0 }, { path: 'cost_per_unit', label: 'Cost per truck · USD', min: 0.01, step: 0.01 },
     { path: 'in_service_delay_months', label: 'Service delay · months', min: 0 },
@@ -53,7 +64,7 @@ export function fieldValue(decision: Decision, path: string): number {
   return value as number;
 }
 /** Preserve paired actions across scenarios and mark edited leaves as user inputs. */
-export function editDecision(request: DeterministicRequest, key: string, path: string, value: number): DeterministicRequest {
+export function editDecision(request: DeterministicRequest, key: string, path: string, value: number | string): DeterministicRequest {
   const next = structuredClone(request);
   for (const scenario of next.scenarios) for (const decision of scenario.decisions) {
     if (decision.stable_investment_key !== key) continue;
@@ -64,5 +75,39 @@ export function editDecision(request: DeterministicRequest, key: string, path: s
     const pointer = '/' + parts.join('/');
     decision.provenance[pointer] = { ...decision.provenance[pointer], kind: 'user_input', source: 'OperatorOS decision editor' };
   }
+  return next;
+}
+
+/** Candidate controls create explicit user assumptions; labels never infer benefits. */
+export function addFlexibleDecision(request: DeterministicRequest, scenarioId: string,
+  type: 'operating_expense' | 'purchase_asset', id: string): DeterministicRequest {
+  const next = structuredClone(request);
+  const scenario = next.scenarios.find(s => s.id === scenarioId);
+  if (!scenario || scenarioId === 'baseline') throw new Error('Choose an alternative plan');
+  if (next.scenarios.some(s => s.decisions.some(d => d.id === id || d.stable_investment_key === id))) throw new Error('Decision identity already exists');
+  const base = { id, stable_investment_key: id, start_month: 1, type,
+    decision_version: 'flexible-investment-1-candidate' as const };
+  const value = type === 'operating_expense'
+    ? { ...base, type, name: 'New expense', amount_per_month: 1000, duration_months: 1 }
+    : { ...base, type, name: 'New asset', purchase_cost: 10000, in_service_delay_months: 0,
+      useful_life_months: 60, monthly_operating_cost: 0,
+      funding: { debt_fraction: 0, annual_interest_rate: 0, term_months: 60 } };
+  const provenance: Decision['provenance'] = {};
+  for (const [key, entry] of Object.entries(value)) {
+    const entries = typeof entry === 'object' ? Object.entries(entry).map(([child, v]) => [`${key}/${child}`, v] as const) : [[key, entry] as const];
+    for (const [pointer, leaf] of entries) provenance['/' + pointer] = { kind: 'user_input', source: 'OperatorOS flexible decision editor',
+      unit: typeof leaf === 'string' ? 'label' : pointer.endsWith('_months') || pointer === 'start_month' ? 'months'
+        : pointer.endsWith('debt_fraction') || pointer.endsWith('_rate') ? 'decimal_rate'
+        : pointer === 'amount_per_month' || pointer === 'monthly_operating_cost' ? 'USD/month' : 'USD' };
+  }
+  scenario.decisions.push({ ...value, provenance });
+  return next;
+}
+
+export function removeDecision(request: DeterministicRequest, scenarioId: string, id: string) {
+  const next = structuredClone(request);
+  const scenario = next.scenarios.find(s => s.id === scenarioId);
+  if (!scenario || scenarioId === 'baseline') throw new Error('Choose an alternative plan');
+  scenario.decisions = scenario.decisions.filter(d => d.id !== id);
   return next;
 }

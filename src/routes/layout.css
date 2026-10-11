@@ -51,6 +51,10 @@ h2{font-size:17px;font-weight:550;letter-spacing:-.5px;margin:0}
 .field-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px 10px;margin-top:15px}
 .field-grid label{font-size:9px;line-height:1.5}
 .field-grid input{display:block;width:100%;border:1px solid #dce4d8;border-radius:4px;padding:8px;margin-top:5px;font-size:12px;color:#294d3d;background:#fcfdfb}
+.full-label input{display:block;width:100%;border:1px solid #dce4d8;border-radius:4px;padding:8px;margin-top:5px;font-size:12px;color:#294d3d;background:#fcfdfb}
+.decision .full-label{margin-top:14px}
+.decision-actions button{border:1px solid #cfdbcc;border-radius:5px;padding:9px 7px;background:#f4f8f1;color:#294d3d;font-size:11px;text-align:left}
+.decision-actions button:hover{background:#e7efdf}
 .primary{display:flex;justify-content:space-between;width:100%;background:#204e3c;color:white;border:0;border-radius:5px;padding:12px 14px;font-size:12px;margin-top:8px}
 .primary:hover{background:#163e2d}
 .results{display:grid;gap:20px;min-width:0}

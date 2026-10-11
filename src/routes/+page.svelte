@@ -5,7 +5,7 @@
   import example from '../../contracts/example-request.json';
   import RiskPanel from '../lib/dashboard/RiskPanel.svelte';
   import Timeline from '../lib/dashboard/Timeline.svelte';
-  import { metrics, metricValue, formatValue, paybackLabel, decisionFields, fieldValue, editDecision } from '../lib/dashboard/model.ts';
+  import { metrics, metricValue, formatValue, paybackLabel, decisionFields, fieldValue, editDecision, addFlexibleDecision, removeDecision } from '../lib/dashboard/model.ts';
   let request = $state<DeterministicRequest>(structuredClone(example) as unknown as DeterministicRequest);
   let company = $state<CompanyInput | null>(null);
   let metadata = $state<ModelMetadata | null>(null);
@@ -66,8 +66,11 @@
         <form bind:this={editorForm} onsubmit={event => { event.preventDefault(); void run(); }}>
           <label class="full-label">Editing scenario<select bind:value={scenarioId} disabled={pending}>{#each request.scenarios.filter(s => s.id !== 'baseline') as s}<option value={s.id}>{s.name}</option>{/each}</select></label>
           <p class="editor-note">The truck decision is shared across both alternatives. Editing it updates both.</p>
+          <div class="field-grid decision-actions"><button type="button" disabled={pending} onclick={() => request = addFlexibleDecision($state.snapshot(request), scenarioId, 'operating_expense', crypto.randomUUID())}>+ Add expense</button><button type="button" disabled={pending} onclick={() => request = addFlexibleDecision($state.snapshot(request), scenarioId, 'purchase_asset', crypto.randomUUID())}>+ Add asset purchase</button></div>
+          <p class="editor-note">Use one month for a one-time expense, or several for recurring costs. Custom assets affect cash, debt and depreciation. To change capacity or bring in customers, use the truck, hiring and marketing decisions.</p>
           {#each scenario.decisions as decision (decision.id)}
-            <details class="decision" open><summary><span class="decision-icon">{decision.type === 'purchase_trucks' ? '↗' : decision.type === 'hire_technicians' ? '+' : '◎'}</span><strong>{decision.type === 'purchase_trucks' ? 'Purchase trucks' : decision.type === 'hire_technicians' ? 'Hire technicians' : 'Increase marketing'}</strong><span>M{decision.start_month}</span></summary>
+            <details class="decision" open><summary><span class="decision-icon">{decision.type === 'purchase_trucks' ? '↗' : decision.type === 'hire_technicians' ? '+' : '◎'}</span><strong>{decision.type === 'purchase_trucks' ? 'Purchase trucks' : decision.type === 'hire_technicians' ? 'Hire technicians' : decision.type === 'increase_marketing' ? 'Increase marketing' : decision.name}</strong><span>M{decision.start_month}</span></summary>
+              {#if decision.type === 'operating_expense' || decision.type === 'purchase_asset'}<label class="full-label">Name<input type="text" value={decision.name} maxlength="100" required disabled={pending} oninput={event => request = editDecision($state.snapshot(request), decision.stable_investment_key, 'name', event.currentTarget.value)} /></label><p class="editor-note">{decision.type === 'operating_expense' ? 'Charged as operating overhead in each scheduled month; no automatic revenue benefit.' : 'Capitalized at purchase; straight-line depreciation and operating costs start in service. No automatic operational benefit.'}</p><button type="button" disabled={pending} onclick={() => request = removeDecision($state.snapshot(request), scenarioId, decision.id)}>Remove this item</button>{/if}
               <div class="field-grid">{#each decisionFields(decision) as field}<label>{field.label}<input type="number" value={fieldValue(decision, field.path)} min={field.min} max={field.max} step={field.step ?? 1} required disabled={pending} oninput={event => { request = editDecision($state.snapshot(request), decision.stable_investment_key, field.path, event.currentTarget.valueAsNumber); }} /></label>{/each}</div>
             </details>
           {/each}

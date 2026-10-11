@@ -28,7 +28,7 @@ export function inputUnit(pointer: string, value: unknown): string {
 	if (field === 'valuation_multiple') return 'multiple';
 	if (field.endsWith('_rate') || field.endsWith('_growth') || field.endsWith('_inflation') || field === 'debt_fraction') return 'decimal_rate';
 	if (field.endsWith('_year') || field === 'fully_loaded_annual_cost_per_person') return 'USD/year';
-	if (field.endsWith('_per_month') || field === 'baseline_marketing_in_overhead' || field === 'monthly_principal' || field === 'monthly_depreciation') return 'USD/month';
+	if (field.endsWith('_per_month') || field === 'monthly_operating_cost' || field === 'baseline_marketing_in_overhead' || field === 'monthly_principal' || field === 'monthly_depreciation') return 'USD/month';
 	if (field.endsWith('_months') || field.endsWith('_month') || field === 'start_month') return 'months';
 	return 'USD';
 }
