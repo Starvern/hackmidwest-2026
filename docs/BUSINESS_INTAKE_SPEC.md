@@ -5,6 +5,12 @@ Prepared by P1 against `0d83db7` and P2 flexible-investment candidate `acfba83`.
 Planning deliverable only: no intake UI, upload service, profile schema or new
 engine behavior is implemented/accepted by this document. Prior gates keep their scope.
 
+P1/P2 operating design agreement recorded in issue #2 comments
+[P1](https://github.com/Starvern/hackmidwest-2026/issues/2#issuecomment-6104109103)
+and [P2](https://github.com/Starvern/hackmidwest-2026/issues/2#issuecomment-6104131820).
+The policies below are design requirements, not implemented validation guarantees
+or a business owner's confirmation of their own inputs.
+
 ## Goal and first release
 
 Help small/medium HVAC, plumbing and mixed field-service owners describe their
@@ -106,6 +112,85 @@ Current blockers to real-business execution need coordinated implementation:
 - No full balance sheet, accrual-to-cash reconstruction, owner distributions or
   custom equipment productivity benefits currently modeled. Expose material omissions.
 
+## Confirmed operating design policies
+
+- Define a comparable job and preserve service mix. Require explicit owner
+  confirmation that technician/vehicle pooling is suitable; incompatible mixes
+  block compilation until supported. Apply each availability constraint once.
+- Derive observed weighted ticket as summed comparable service revenue divided by
+  summed comparable completed jobs, excluding non-service revenue. A zero-job
+  period has unavailable derived ticket, not zero. Require a separately reviewed
+  forecast ticket; positive service revenue with zero jobs needs reconciliation.
+- Demand requires measured evidence, a reviewed estimate or explicit confirmation
+  of no unserved work. Capacity-constrained completions alone cannot establish it.
+- Use 12 calendar seasonality factors with mean 1 and separately confirmed base
+  demand. Preserve original factors, normalization and provenance. Reject all-zero
+  factors; never infer growth or seasonality silently from historical sales.
+- Capture actual employment, availability, part-time and ramp facts. Unsupported
+  opening cohorts block compilation unless a specific disclosed approximation is
+  explicitly reviewed. Whole fully productive opening headcounts are a limitation,
+  not permission to discard these facts or reduce both headcount and capacity twice.
+- Existing costs map once into monthly baseline buckets. Preserve annual/prepaid
+  facts separately; material irregular cash timing blocks the profile until baseline
+  scheduling support exists. Disclose bucket inflation and MC overhead factors:
+  a named subscription does not become individually fixed by retaining its label.
+
+## P1 financial mapping and initial support policy
+
+These are P1's financial requirements for the shared mapping proposal. P3/shared
+owner must encode and review the profile/compiler boundary before implementation.
+
+Map service and non-service revenue separately. Technician loaded payroll and fleet
+operating costs each have dedicated direct-cost buckets; remove amounts already
+allocated there from variable costs and overhead. Materials/job subcontractors map
+to service variable costs where supported; other direct costs remain separate.
+Office wages, rent and ordinary subscriptions map to overhead. Baseline marketing
+is an included subset of overhead. Category mapping is explicit, never inferred
+solely from an expense label. Reconcile historical categories independently of the
+chosen forecast run rate; preserve both observations and reviewed assumptions.
+
+Principal is financing cash flow, interest is below EBITDA, asset purchases are
+CapEx and depreciation is a noncash charge from the asset schedule. None belongs
+in operating-expense totals. Reconcile opening loan balances and net asset values
+to their schedules. The existing-depreciation summary is a reconciliation figure,
+not an additional charge on top of scheduled depreciation. Existing allocations
+retain source/period/stable row ID and replace-total versus included-detail mode.
+No balancing plugs, duplicate costs or automatic debt conversion.
+
+Reconciliation requirements:
+- Compiled engine financial identities use absolute USD tolerance `1e-6` plus
+  relative `1e-12`: `abs(actual - expected) <= 1e-6 + 1e-12 * max(abs(actual), abs(expected))`.
+  This checks arithmetic, not permission to ignore source discrepancies.
+- Preserve source precision. For cent-denominated statement totals and category
+  sums, compare normalized integer cents exactly. Rounded whole-dollar or other
+  reports retain their stated precision; show any discrepancy and obtain an
+  explicit documented reconciliation before confirmation. Never silently round
+  away a difference or overwrite the source figure.
+- Service sales/job/ticket checks use matching periods and comparable services.
+  A reviewed forecast ticket need not equal every historical month's ticket.
+  Unexplained historical identity/allocation conflicts block confirmation; reviewed
+  estimates remain labeled and cannot masquerade as reconciled observations.
+
+Initial debt support: explicit no debt, or existing fixed-rate level-principal
+loans whose remaining monthly schedule can be represented exactly by current
+tranche fields. Capture outstanding principal (not original borrowing), annual
+rate, monthly principal, remaining term and first repayment month. Verify the
+schedule retires the balance within its stated remaining term (final principal
+capped at balance) and interest on beginning balance agrees with the actual terms.
+Reject material fees, arrears, irregular payment dates, equal-total-payment loans,
+interest-only/balloon debt, variable rates and revolvers until reviewed support
+exists. Never approximate those silently with level principal. New alternative
+financing remains a separate decision and review scope.
+
+P1 recommends a restricted initial date boundary: books through December 31,
+the preceding complete January–December history, and forecast beginning the
+following January. Retain actual dates/year in the profile and verify opening
+balances share that as-of date. Other periods remain unsupported until a reviewed
+dated-history/calendar extension exists. This is a recommendation for the shared
+contract checkpoint, not a claim that date validation already exists. Plumbing
+and mixed-trade runs still require authoritative industry/mapping changes; do not
+compile them by relabeling the company HVAC.
+
 ## Spreadsheet template and later document intake
 
 Proposed template tabs (specification only; no spreadsheet delivered yet):
@@ -134,7 +219,7 @@ analytics logs. Implement bounded validation and a defined deletion path before 
 3. Reconcile monthly sales/direct costs/overhead/earnings, payroll and fleet cost
    allocations. Check service sales against jobs x weighted ticket; explain differences.
 4. Surface capacity versus observed/turned-away jobs, seasonality/growth assumptions,
-   payment timing and existing cash/debt. Reconciliation tolerances need owner agreement.
+   payment timing and existing cash/debt. Apply the financial reconciliation policy above.
 5. Present “Here is the business we will simulate”: confirmed numbers, estimates,
    missing/unsupported items and limitations. Owner confirms an immutable profile revision.
 6. Compile a validated CompanyInput with complete per-leaf provenance and approved
@@ -154,8 +239,8 @@ authoritative profile/import schemas, intake/review UI, profile storage/access a
 company-aware API/job binding. P3 availability is a scheduling dependency, not approval.
 
 Next deliverables, in order:
-1. P1/P2 review this field list and unsupported cases; settle minimum blended-service
-   scope, date/debt support and monthly baseline-expense treatment.
+1. Operating design agreement is recorded above. Shared owner reviews the proposed
+   restricted date boundary, P1 debt/mapping requirements and unsupported cases.
 2. Publish versioned draft profile/mapping contracts and a spreadsheet template; agree
    source/provenance and storage scope. No silent revision of frozen demo contracts.
 3. Implement manual entry/import/review and profile revision selection, plus supported
@@ -169,6 +254,9 @@ Next deliverables, in order:
 6. Add document extraction after those controls work; evaluate extraction on permitted
    test documents and owner-confirmed corrections before enabling real uploads.
 
-Immediate requests: P2 confirm operation/service-mix fields and existing-expense mapping;
-P3/shared owner review date/profile/provenance/API implications when available. No
+Immediate requests: P3/shared owner publish the versioned draft/confirmed profile,
+mapping and provenance proposal, including date/industry boundaries and company-aware
+API/job binding. P2 owns operating questionnaire/column definitions and acceptance
+examples against that shared proposal, then the matching template after agreement.
+No repeat broad operating review is requested. No
 intake coding or file uploads are implied to be complete by publishing this plan.
