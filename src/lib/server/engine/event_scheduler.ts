@@ -44,6 +44,36 @@ export const schedule_month: ScheduleMonth = (companyInput, scenarioInput, month
   for (const d of [...scenario.decisions].sort((a, b) => a.id < b.id ? -1 : a.id > b.id ? 1 : 0)) {
     const risk = risks.by_stable_investment_key[d.stable_investment_key];
     const identity = JSON.stringify([scenario.id, d.id]);
+    if (d.type === 'operating_expense' && month >= d.start_month && month < d.start_month + d.duration_months && d.amount_per_month > 0) {
+      fi.custom_operating_expenses = (fi.custom_operating_expenses ?? 0) + d.amount_per_month;
+      fi.incremental_investment_outlay += d.amount_per_month;
+      event(identity, d.id, 'operating_expense', `${d.name}: operating expense`);
+    }
+    if (d.type === 'purchase_asset') {
+      const serviceMonth = d.start_month + d.in_service_delay_months;
+      if (!Number.isSafeInteger(serviceMonth)) throw new Error('Asset service month exceeds safe integer range');
+      if (month === d.start_month && d.purchase_cost > 0) {
+        out.purchases.push({ decision_id: d.id, stable_investment_key: d.stable_investment_key,
+          quantity: 1, cost_per_unit: d.purchase_cost, in_service_month: serviceMonth, funding: structuredClone(d.funding) });
+        fi.growth_capex += d.purchase_cost;
+        const borrowing = d.purchase_cost * d.funding.debt_fraction;
+        if (borrowing > 0) fi.new_debt_tranches.push({ id: `asset-debt:${identity}`, principal: borrowing,
+          annual_interest_rate: d.funding.annual_interest_rate, remaining_term_months: d.funding.term_months,
+          monthly_principal: borrowing / d.funding.term_months, first_repayment_month: month + 1, amortization_policy: 'level_principal' });
+        fi.asset_additions.push({ category: 'growth', depreciation_life_months: d.useful_life_months, asset: {
+          id: `asset-purchase:${identity}`, cost_basis: d.purchase_cost, accumulated_depreciation: 0,
+          monthly_depreciation: d.purchase_cost / d.useful_life_months,
+          remaining_life_months: d.useful_life_months, in_service_month: serviceMonth,
+        } });
+        event(identity, d.id, 'asset_purchase', `Purchase ${d.name}`);
+      }
+      if (month >= serviceMonth && d.monthly_operating_cost > 0) {
+        fi.custom_operating_expenses = (fi.custom_operating_expenses ?? 0) + d.monthly_operating_cost;
+        fi.incremental_investment_outlay += d.monthly_operating_cost;
+        event(identity, d.id, 'operating_expense', `${d.name}: operating cost`);
+      }
+      if (month === serviceMonth && (d.purchase_cost > 0 || d.monthly_operating_cost > 0)) event(identity, d.id, 'asset_in_service', `${d.name} enters service`);
+    }
     if (d.type === 'purchase_trucks' && d.start_month === month && d.quantity > 0) {
       const in_service_month = month + (risk?.in_service_delay_months ?? d.in_service_delay_months);
       const cost = d.quantity * d.cost_per_unit;

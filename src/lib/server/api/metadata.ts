@@ -6,6 +6,7 @@ export function loadModelMetadata(localMCReady = false) {
     schema_version: '1.0', model_version: 'mvp-1.0', contract_revision: 1,
     interface_revision: INTERFACE_REVISION, horizon_months: 60, currency: 'USD',
     decision_types: ['purchase_trucks', 'hire_technicians', 'increase_marketing'],
+    decision_extensions: { version: 'flexible-investment-1-candidate', types: ['operating_expense', 'purchase_asset'], status: 'candidate' },
     metrics: [
       { key: 'cash_end', label: 'Ending cash', unit: 'USD', kind: 'ending_balance', available_at_opening: true,
         description: 'Month-end cash after operating, investing and financing flows; negative cash remains visible.' },

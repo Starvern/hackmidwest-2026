@@ -51,6 +51,10 @@ h2{font-size:17px;font-weight:550;letter-spacing:-.5px;margin:0}
 .field-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px 10px;margin-top:15px}
 .field-grid label{font-size:9px;line-height:1.5}
 .field-grid input{display:block;width:100%;border:1px solid #dce4d8;border-radius:4px;padding:8px;margin-top:5px;font-size:12px;color:#294d3d;background:#fcfdfb}
+.full-label input{display:block;width:100%;border:1px solid #dce4d8;border-radius:4px;padding:8px;margin-top:5px;font-size:12px;color:#294d3d;background:#fcfdfb}
+.decision .full-label{margin-top:14px}
+.decision-actions button{border:1px solid #cfdbcc;border-radius:5px;padding:9px 7px;background:#f4f8f1;color:#294d3d;font-size:11px;text-align:left}
+.decision-actions button:hover{background:#e7efdf}
 .primary{display:flex;justify-content:space-between;width:100%;background:#204e3c;color:white;border:0;border-radius:5px;padding:12px 14px;font-size:12px;margin-top:8px}
 .primary:hover{background:#163e2d}
 .results{display:grid;gap:20px;min-width:0}
@@ -147,7 +151,7 @@ main{min-width:0}
 /* Keep planning controls and the default reading path comfortable at laptop widths. */
 .full-label,.field-grid label,.editor-note,.muted{font-size:12px;color:#607366}
 .full-label select,.decision summary,.metric-tabs button,.primary{font-size:12px}
-.plan-name{display:block;width:100%;border:1px solid #dae2d7;border-radius:5px;padding:10px;margin-top:8px;color:#304c40}
+input.plan-name{display:block;width:100%;border:1px solid #dae2d7;border-radius:5px;padding:10px;margin-top:8px;color:#304c40}
 .plan-buttons{display:flex;gap:6px;flex-wrap:wrap;margin:12px 0 18px}
 .plan-buttons button,.add-action>button,.chart-mode button{font-size:12px;border:1px solid #d7e0d4;border-radius:5px;padding:9px;background:#fff;color:#365342}
 button:disabled{cursor:default}
@@ -164,3 +168,4 @@ button:disabled{cursor:default}
 .cards{grid-template-columns:repeat(auto-fit,minmax(185px,1fr))}.outcome h3{font-size:23px;white-space:normal;overflow-wrap:anywhere}
 .card-label,.delta,.scenario-name{font-size:11px}.outcome dl div{font-size:11px;flex-wrap:wrap}.outcome dd{text-align:left}
 @media(max-width:800px){.explanation-numbers{grid-template-columns:1fr;gap:14px}.explanation-numbers div{display:flex;justify-content:space-between;gap:12px;align-items:center}.explanation-numbers span{margin:0}.cards{grid-template-columns:1fr}}
+.item-name{display:block;width:100%;margin-top:8px;border:1px solid #dae2d7;border-radius:5px;padding:10px;color:#304c40}

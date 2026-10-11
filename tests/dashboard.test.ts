@@ -77,3 +77,24 @@ test('chart changes reconcile revenue uplift and return to baseline without repl
   assert.equal(timelineValue(path, 'revenue', 0, result, true), null);
   assert.equal(timelineValue(result.scenarios.trucks_only, 'revenue', 5, result, true), 0);
 });
+
+test('custom expenses and assets compose into new plans and copied edits remain isolated', () => {
+  let next = addPlan(request, 'custom-plan');
+  next = addAction(next, 'custom-plan', 'operating_expense', 'subscription');
+  next = addAction(next, 'custom-plan', 'purchase_asset', 'equipment');
+  next = editPlanAction(next, 'custom-plan', 'subscription', 'duration_months', 12, 'unused');
+  next = editPlanAction(next, 'custom-plan', 'subscription', 'name', 'Dispatch software', 'unused');
+  const before = structuredClone(next);
+  next = addPlan(next, 'custom-copy', 'custom-plan');
+  next = editPlanAction(next, 'custom-copy', 'equipment', 'funding.debt_fraction', .5, 'copy-equipment');
+  next = editPlanAction(next, 'custom-copy', 'subscription', 'name', 'Different subscription', 'copy-subscription');
+  DeterministicRequestSchema.parse(next);
+  assert.deepEqual(next.scenarios.slice(0, 4), before.scenarios);
+  assert.equal(next.scenarios[4].decisions[0].stable_investment_key, 'copy-subscription');
+  assert.equal(next.scenarios[4].decisions[0].provenance['/name'].kind, 'user_input');
+  assert.equal(next.scenarios[4].decisions[1].stable_investment_key, 'copy-equipment');
+  assert.equal(next.scenarios[4].decisions[1].provenance['/funding/debt_fraction'].unit, 'decimal_rate');
+  const risk = riskComparison(next, 'custom-copy', 'custom-plan');
+  DeterministicRequestSchema.parse(risk);
+  assert.equal(risk.scenarios.length, 3);
+});

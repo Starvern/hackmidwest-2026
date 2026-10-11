@@ -1,6 +1,6 @@
 import type { Decision, DeterministicRequest, MetricKey, ScenarioPath, SimulationResult } from '../../../contracts/contracts.ts';
 import example from '../../../contracts/example-request.json' with { type: 'json' };
-import { editDecision, metricValue } from './model.ts';
+import { editDecision, metricValue, addFlexibleDecision } from './model.ts';
 
 const userLabel = { kind: 'user_input' as const, source: 'OperatorOS plan editor', unit: 'label' };
 export function addPlan(request: DeterministicRequest, id: string, copyId?: string): DeterministicRequest {
@@ -10,6 +10,7 @@ export function addPlan(request: DeterministicRequest, id: string, copyId?: stri
   return next;
 }
 export function addAction(request: DeterministicRequest, scenarioId: string, type: Decision['type'], id: string): DeterministicRequest {
+  if (type === 'operating_expense' || type === 'purchase_asset') return addFlexibleDecision(request, scenarioId, type, id);
   const next = structuredClone(request);
   const template = example.scenarios.flatMap(s => s.decisions).find(d => d.type === type)!;
   const decision = structuredClone(template) as unknown as Decision;
@@ -20,7 +21,7 @@ export function addAction(request: DeterministicRequest, scenarioId: string, typ
   return next;
 }
 /** Editing a copied/shared action detaches it before changing its economics. Other plans stay intact. */
-export function editPlanAction(request: DeterministicRequest, scenarioId: string, decisionId: string, path: string, value: number, detachedKey: string): DeterministicRequest {
+export function editPlanAction(request: DeterministicRequest, scenarioId: string, decisionId: string, path: string, value: number | string, detachedKey: string): DeterministicRequest {
   const next = structuredClone(request);
   const decision = next.scenarios.find(s => s.id === scenarioId)!.decisions.find(d => d.id === decisionId)!;
   const shared = next.scenarios.some(s => s.id !== scenarioId && s.decisions.some(d => d.stable_investment_key === decision.stable_investment_key));

@@ -46,6 +46,41 @@
       "minItems": 3,
       "maxItems": 3
     },
+    "decision_extensions": {
+      "type": "object",
+      "properties": {
+        "version": {
+          "type": "string",
+          "const": "flexible-investment-1-candidate"
+        },
+        "types": {
+          "type": "array",
+          "prefixItems": [
+            {
+              "type": "string",
+              "const": "operating_expense"
+            },
+            {
+              "type": "string",
+              "const": "purchase_asset"
+            }
+          ],
+          "items": false,
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "status": {
+          "type": "string",
+          "const": "candidate"
+        }
+      },
+      "required": [
+        "version",
+        "types",
+        "status"
+      ],
+      "additionalProperties": false
+    },
     "metrics": {
       "minItems": 9,
       "maxItems": 9,

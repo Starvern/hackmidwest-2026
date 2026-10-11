@@ -40,6 +40,8 @@ export function sample_shared_path(config: MCConfig, seed: number, run: number, 
 export function sample_action_risks(config: MCConfig, seed: number, run: number, decisions: Decision[]): PathRisks {
   const by_stable_investment_key: PathRisks['by_stable_investment_key'] = {};
   for (const decision of decisions) {
+    // Candidate costs/assets have explicit fixed assumptions; no invented risk distributions.
+    if (decision.type === 'operating_expense' || decision.type === 'purchase_asset') continue;
     const key = decision.stable_investment_key;
     const offset = (risk: keyof MCConfig['decision']) => {
       const spec = config.decision[risk];

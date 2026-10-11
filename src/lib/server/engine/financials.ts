@@ -65,11 +65,12 @@ export const calculate_financials: CalculateFinancials = (company, prior, operat
   assertClose(input.asset_additions.reduce((sum, addition) => sum + addition.asset.cost_basis, 0),
     input.growth_capex, 'Growth assets versus growth CapEx');
   const assetIds = new Set(ending.depreciable_assets.map(a => a.id));
-  for (const { asset } of input.asset_additions) {
+  for (const { asset, depreciation_life_months } of input.asset_additions) {
     requireModel(!assetIds.has(asset.id), `Duplicate growth asset ID: ${asset.id}`);
+    const life = depreciation_life_months ?? 60;
     requireModel(asset.accumulated_depreciation === 0 && asset.in_service_month >= month
-      && asset.remaining_life_months === 60, 'New truck asset must be un-depreciated with 60-month service life');
-    assertClose(asset.monthly_depreciation, asset.cost_basis / 60, 'Truck straight-line depreciation');
+      && asset.remaining_life_months === life, 'New asset must be un-depreciated with its explicit service life');
+    assertClose(asset.monthly_depreciation, asset.cost_basis / life, 'Asset straight-line depreciation');
     assetIds.add(asset.id);
     ending.depreciable_assets.push(structuredClone(asset));
   }
@@ -95,7 +96,7 @@ export const calculate_financials: CalculateFinancials = (company, prior, operat
     tech_direct_labor: input.tech_direct_labor, vehicle_direct_opex: input.vehicle_direct_opex };
   const cogs = Object.values(eligibleCosts).reduce((sum, value) => sum + value, 0);
   const grossProfit = revenue - cogs;
-  const overhead = input.fixed_overhead + input.incremental_marketing + input.recruitment;
+  const overhead = input.fixed_overhead + input.incremental_marketing + input.recruitment + (input.custom_operating_expenses ?? 0);
   const ebitda = grossProfit - overhead;
   const ebit = ebitda - depreciation;
   const interest = movements.reduce((sum, m) => sum + m.cash_interest, 0);
@@ -117,6 +118,7 @@ export const calculate_financials: CalculateFinancials = (company, prior, operat
   ending.cash = state.financial.cash + cashChange;
   const unleveredTax = Math.max(0, ebit) * assumptions.tax_rate;
   const financials: FinancialResult = {
+    ...(input.custom_operating_expenses === undefined ? {} : { custom_operating_expenses: input.custom_operating_expenses }),
     service_revenue: serviceRevenue, other_revenue: input.other_revenue, revenue,
     service_variable_cost: variableCost, tech_direct_labor: input.tech_direct_labor,
     vehicle_direct_opex: input.vehicle_direct_opex, other_direct_cost: input.other_direct_cost,

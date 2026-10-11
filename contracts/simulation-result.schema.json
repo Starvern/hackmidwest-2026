@@ -543,6 +543,10 @@
                       "type": "number",
                       "minimum": 0
                     },
+                    "custom_operating_expenses": {
+                      "type": "number",
+                      "minimum": 0
+                    },
                     "operating_overhead": {
                       "type": "number",
                       "minimum": 0
@@ -841,6 +845,18 @@
                       },
                       "kind": {
                         "anyOf": [
+                          {
+                            "type": "string",
+                            "const": "asset_purchase"
+                          },
+                          {
+                            "type": "string",
+                            "const": "asset_in_service"
+                          },
+                          {
+                            "type": "string",
+                            "const": "operating_expense"
+                          },
                           {
                             "type": "string",
                             "const": "truck_purchase"

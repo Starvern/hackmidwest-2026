@@ -1368,6 +1368,245 @@
           "incremental_cost_per_booked_job"
         ],
         "additionalProperties": false
+      },
+      {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "stable_investment_key": {
+            "type": "string",
+            "minLength": 1
+          },
+          "start_month": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 60
+          },
+          "provenance": {
+            "type": "object",
+            "propertyNames": {
+              "type": "string"
+            },
+            "additionalProperties": {
+              "type": "object",
+              "properties": {
+                "kind": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "const": "synthetic_historical"
+                    },
+                    {
+                      "type": "string",
+                      "const": "user_input"
+                    },
+                    {
+                      "type": "string",
+                      "const": "derived"
+                    },
+                    {
+                      "type": "string",
+                      "const": "assumed"
+                    },
+                    {
+                      "type": "string",
+                      "const": "simulated"
+                    }
+                  ]
+                },
+                "source": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "unit": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "required": [
+                "kind",
+                "source",
+                "unit"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "type": {
+            "type": "string",
+            "const": "operating_expense"
+          },
+          "decision_version": {
+            "type": "string",
+            "const": "flexible-investment-1-candidate"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "amount_per_month": {
+            "type": "number",
+            "minimum": 0
+          },
+          "duration_months": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 60
+          }
+        },
+        "required": [
+          "id",
+          "stable_investment_key",
+          "start_month",
+          "provenance",
+          "type",
+          "decision_version",
+          "name",
+          "amount_per_month",
+          "duration_months"
+        ],
+        "additionalProperties": false
+      },
+      {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "stable_investment_key": {
+            "type": "string",
+            "minLength": 1
+          },
+          "start_month": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 60
+          },
+          "provenance": {
+            "type": "object",
+            "propertyNames": {
+              "type": "string"
+            },
+            "additionalProperties": {
+              "type": "object",
+              "properties": {
+                "kind": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "const": "synthetic_historical"
+                    },
+                    {
+                      "type": "string",
+                      "const": "user_input"
+                    },
+                    {
+                      "type": "string",
+                      "const": "derived"
+                    },
+                    {
+                      "type": "string",
+                      "const": "assumed"
+                    },
+                    {
+                      "type": "string",
+                      "const": "simulated"
+                    }
+                  ]
+                },
+                "source": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "unit": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "required": [
+                "kind",
+                "source",
+                "unit"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "type": {
+            "type": "string",
+            "const": "purchase_asset"
+          },
+          "decision_version": {
+            "type": "string",
+            "const": "flexible-investment-1-candidate"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "purchase_cost": {
+            "type": "number",
+            "minimum": 0
+          },
+          "in_service_delay_months": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "useful_life_months": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 600
+          },
+          "monthly_operating_cost": {
+            "type": "number",
+            "minimum": 0
+          },
+          "funding": {
+            "type": "object",
+            "properties": {
+              "debt_fraction": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1
+              },
+              "annual_interest_rate": {
+                "type": "number",
+                "minimum": 0
+              },
+              "term_months": {
+                "type": "integer",
+                "exclusiveMinimum": 0,
+                "maximum": 9007199254740991
+              }
+            },
+            "required": [
+              "debt_fraction",
+              "annual_interest_rate",
+              "term_months"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "id",
+          "stable_investment_key",
+          "start_month",
+          "provenance",
+          "type",
+          "decision_version",
+          "name",
+          "purchase_cost",
+          "in_service_delay_months",
+          "useful_life_months",
+          "monthly_operating_cost",
+          "funding"
+        ],
+        "additionalProperties": false
       }
     ]
   },
@@ -1780,6 +2019,245 @@
                       "extra_spend_per_month",
                       "lead_to_job_lag_months",
                       "incremental_cost_per_booked_job"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "stable_investment_key": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "start_month": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 60
+                      },
+                      "provenance": {
+                        "type": "object",
+                        "propertyNames": {
+                          "type": "string"
+                        },
+                        "additionalProperties": {
+                          "type": "object",
+                          "properties": {
+                            "kind": {
+                              "anyOf": [
+                                {
+                                  "type": "string",
+                                  "const": "synthetic_historical"
+                                },
+                                {
+                                  "type": "string",
+                                  "const": "user_input"
+                                },
+                                {
+                                  "type": "string",
+                                  "const": "derived"
+                                },
+                                {
+                                  "type": "string",
+                                  "const": "assumed"
+                                },
+                                {
+                                  "type": "string",
+                                  "const": "simulated"
+                                }
+                              ]
+                            },
+                            "source": {
+                              "type": "string",
+                              "minLength": 1
+                            },
+                            "unit": {
+                              "type": "string",
+                              "minLength": 1
+                            }
+                          },
+                          "required": [
+                            "kind",
+                            "source",
+                            "unit"
+                          ],
+                          "additionalProperties": false
+                        }
+                      },
+                      "type": {
+                        "type": "string",
+                        "const": "operating_expense"
+                      },
+                      "decision_version": {
+                        "type": "string",
+                        "const": "flexible-investment-1-candidate"
+                      },
+                      "name": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 100
+                      },
+                      "amount_per_month": {
+                        "type": "number",
+                        "minimum": 0
+                      },
+                      "duration_months": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 60
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "stable_investment_key",
+                      "start_month",
+                      "provenance",
+                      "type",
+                      "decision_version",
+                      "name",
+                      "amount_per_month",
+                      "duration_months"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "stable_investment_key": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "start_month": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 60
+                      },
+                      "provenance": {
+                        "type": "object",
+                        "propertyNames": {
+                          "type": "string"
+                        },
+                        "additionalProperties": {
+                          "type": "object",
+                          "properties": {
+                            "kind": {
+                              "anyOf": [
+                                {
+                                  "type": "string",
+                                  "const": "synthetic_historical"
+                                },
+                                {
+                                  "type": "string",
+                                  "const": "user_input"
+                                },
+                                {
+                                  "type": "string",
+                                  "const": "derived"
+                                },
+                                {
+                                  "type": "string",
+                                  "const": "assumed"
+                                },
+                                {
+                                  "type": "string",
+                                  "const": "simulated"
+                                }
+                              ]
+                            },
+                            "source": {
+                              "type": "string",
+                              "minLength": 1
+                            },
+                            "unit": {
+                              "type": "string",
+                              "minLength": 1
+                            }
+                          },
+                          "required": [
+                            "kind",
+                            "source",
+                            "unit"
+                          ],
+                          "additionalProperties": false
+                        }
+                      },
+                      "type": {
+                        "type": "string",
+                        "const": "purchase_asset"
+                      },
+                      "decision_version": {
+                        "type": "string",
+                        "const": "flexible-investment-1-candidate"
+                      },
+                      "name": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 100
+                      },
+                      "purchase_cost": {
+                        "type": "number",
+                        "minimum": 0
+                      },
+                      "in_service_delay_months": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 9007199254740991
+                      },
+                      "useful_life_months": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 600
+                      },
+                      "monthly_operating_cost": {
+                        "type": "number",
+                        "minimum": 0
+                      },
+                      "funding": {
+                        "type": "object",
+                        "properties": {
+                          "debt_fraction": {
+                            "type": "number",
+                            "minimum": 0,
+                            "maximum": 1
+                          },
+                          "annual_interest_rate": {
+                            "type": "number",
+                            "minimum": 0
+                          },
+                          "term_months": {
+                            "type": "integer",
+                            "exclusiveMinimum": 0,
+                            "maximum": 9007199254740991
+                          }
+                        },
+                        "required": [
+                          "debt_fraction",
+                          "annual_interest_rate",
+                          "term_months"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "stable_investment_key",
+                      "start_month",
+                      "provenance",
+                      "type",
+                      "decision_version",
+                      "name",
+                      "purchase_cost",
+                      "in_service_delay_months",
+                      "useful_life_months",
+                      "monthly_operating_cost",
+                      "funding"
                     ],
                     "additionalProperties": false
                   }
@@ -2300,6 +2778,10 @@
         "type": "number",
         "minimum": 0
       },
+      "custom_operating_expenses": {
+        "type": "number",
+        "minimum": 0
+      },
       "growth_capex": {
         "type": "number",
         "minimum": 0
@@ -2400,6 +2882,11 @@
             "category": {
               "type": "string",
               "const": "growth"
+            },
+            "depreciation_life_months": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 600
             }
           },
           "required": [
@@ -2479,6 +2966,10 @@
         "minimum": 0
       },
       "recruitment": {
+        "type": "number",
+        "minimum": 0
+      },
+      "custom_operating_expenses": {
         "type": "number",
         "minimum": 0
       },
@@ -2842,6 +3333,10 @@
             "minimum": 0
           },
           "recruitment": {
+            "type": "number",
+            "minimum": 0
+          },
+          "custom_operating_expenses": {
             "type": "number",
             "minimum": 0
           },
@@ -3289,6 +3784,10 @@
             "type": "number",
             "minimum": 0
           },
+          "custom_operating_expenses": {
+            "type": "number",
+            "minimum": 0
+          },
           "operating_overhead": {
             "type": "number",
             "minimum": 0
@@ -3587,6 +4086,18 @@
             },
             "kind": {
               "anyOf": [
+                {
+                  "type": "string",
+                  "const": "asset_purchase"
+                },
+                {
+                  "type": "string",
+                  "const": "asset_in_service"
+                },
+                {
+                  "type": "string",
+                  "const": "operating_expense"
+                },
                 {
                   "type": "string",
                   "const": "truck_purchase"
@@ -3951,6 +4462,11 @@
       "category": {
         "type": "string",
         "const": "growth"
+      },
+      "depreciation_life_months": {
+        "type": "integer",
+        "minimum": 1,
+        "maximum": 600
       }
     },
     "required": [
@@ -4456,6 +4972,18 @@
         "anyOf": [
           {
             "type": "string",
+            "const": "asset_purchase"
+          },
+          {
+            "type": "string",
+            "const": "asset_in_service"
+          },
+          {
+            "type": "string",
+            "const": "operating_expense"
+          },
+          {
+            "type": "string",
             "const": "truck_purchase"
           },
           {
@@ -4599,6 +5127,41 @@
         "items": false,
         "minItems": 3,
         "maxItems": 3
+      },
+      "decision_extensions": {
+        "type": "object",
+        "properties": {
+          "version": {
+            "type": "string",
+            "const": "flexible-investment-1-candidate"
+          },
+          "types": {
+            "type": "array",
+            "prefixItems": [
+              {
+                "type": "string",
+                "const": "operating_expense"
+              },
+              {
+                "type": "string",
+                "const": "purchase_asset"
+              }
+            ],
+            "items": false,
+            "minItems": 2,
+            "maxItems": 2
+          },
+          "status": {
+            "type": "string",
+            "const": "candidate"
+          }
+        },
+        "required": [
+          "version",
+          "types",
+          "status"
+        ],
+        "additionalProperties": false
       },
       "metrics": {
         "minItems": 9,
@@ -5144,6 +5707,245 @@
                       "extra_spend_per_month",
                       "lead_to_job_lag_months",
                       "incremental_cost_per_booked_job"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "stable_investment_key": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "start_month": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 60
+                      },
+                      "provenance": {
+                        "type": "object",
+                        "propertyNames": {
+                          "type": "string"
+                        },
+                        "additionalProperties": {
+                          "type": "object",
+                          "properties": {
+                            "kind": {
+                              "anyOf": [
+                                {
+                                  "type": "string",
+                                  "const": "synthetic_historical"
+                                },
+                                {
+                                  "type": "string",
+                                  "const": "user_input"
+                                },
+                                {
+                                  "type": "string",
+                                  "const": "derived"
+                                },
+                                {
+                                  "type": "string",
+                                  "const": "assumed"
+                                },
+                                {
+                                  "type": "string",
+                                  "const": "simulated"
+                                }
+                              ]
+                            },
+                            "source": {
+                              "type": "string",
+                              "minLength": 1
+                            },
+                            "unit": {
+                              "type": "string",
+                              "minLength": 1
+                            }
+                          },
+                          "required": [
+                            "kind",
+                            "source",
+                            "unit"
+                          ],
+                          "additionalProperties": false
+                        }
+                      },
+                      "type": {
+                        "type": "string",
+                        "const": "operating_expense"
+                      },
+                      "decision_version": {
+                        "type": "string",
+                        "const": "flexible-investment-1-candidate"
+                      },
+                      "name": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 100
+                      },
+                      "amount_per_month": {
+                        "type": "number",
+                        "minimum": 0
+                      },
+                      "duration_months": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 60
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "stable_investment_key",
+                      "start_month",
+                      "provenance",
+                      "type",
+                      "decision_version",
+                      "name",
+                      "amount_per_month",
+                      "duration_months"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "stable_investment_key": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "start_month": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 60
+                      },
+                      "provenance": {
+                        "type": "object",
+                        "propertyNames": {
+                          "type": "string"
+                        },
+                        "additionalProperties": {
+                          "type": "object",
+                          "properties": {
+                            "kind": {
+                              "anyOf": [
+                                {
+                                  "type": "string",
+                                  "const": "synthetic_historical"
+                                },
+                                {
+                                  "type": "string",
+                                  "const": "user_input"
+                                },
+                                {
+                                  "type": "string",
+                                  "const": "derived"
+                                },
+                                {
+                                  "type": "string",
+                                  "const": "assumed"
+                                },
+                                {
+                                  "type": "string",
+                                  "const": "simulated"
+                                }
+                              ]
+                            },
+                            "source": {
+                              "type": "string",
+                              "minLength": 1
+                            },
+                            "unit": {
+                              "type": "string",
+                              "minLength": 1
+                            }
+                          },
+                          "required": [
+                            "kind",
+                            "source",
+                            "unit"
+                          ],
+                          "additionalProperties": false
+                        }
+                      },
+                      "type": {
+                        "type": "string",
+                        "const": "purchase_asset"
+                      },
+                      "decision_version": {
+                        "type": "string",
+                        "const": "flexible-investment-1-candidate"
+                      },
+                      "name": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 100
+                      },
+                      "purchase_cost": {
+                        "type": "number",
+                        "minimum": 0
+                      },
+                      "in_service_delay_months": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 9007199254740991
+                      },
+                      "useful_life_months": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 600
+                      },
+                      "monthly_operating_cost": {
+                        "type": "number",
+                        "minimum": 0
+                      },
+                      "funding": {
+                        "type": "object",
+                        "properties": {
+                          "debt_fraction": {
+                            "type": "number",
+                            "minimum": 0,
+                            "maximum": 1
+                          },
+                          "annual_interest_rate": {
+                            "type": "number",
+                            "minimum": 0
+                          },
+                          "term_months": {
+                            "type": "integer",
+                            "exclusiveMinimum": 0,
+                            "maximum": 9007199254740991
+                          }
+                        },
+                        "required": [
+                          "debt_fraction",
+                          "annual_interest_rate",
+                          "term_months"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "stable_investment_key",
+                      "start_month",
+                      "provenance",
+                      "type",
+                      "decision_version",
+                      "name",
+                      "purchase_cost",
+                      "in_service_delay_months",
+                      "useful_life_months",
+                      "monthly_operating_cost",
+                      "funding"
                     ],
                     "additionalProperties": false
                   }
@@ -6802,6 +7604,10 @@
             "type": "number",
             "minimum": 0
           },
+          "custom_operating_expenses": {
+            "type": "number",
+            "minimum": 0
+          },
           "growth_capex": {
             "type": "number",
             "minimum": 0
@@ -6902,6 +7708,11 @@
                 "category": {
                   "type": "string",
                   "const": "growth"
+                },
+                "depreciation_life_months": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 600
                 }
               },
               "required": [
@@ -7150,6 +7961,18 @@
             },
             "kind": {
               "anyOf": [
+                {
+                  "type": "string",
+                  "const": "asset_purchase"
+                },
+                {
+                  "type": "string",
+                  "const": "asset_in_service"
+                },
+                {
+                  "type": "string",
+                  "const": "operating_expense"
+                },
                 {
                   "type": "string",
                   "const": "truck_purchase"
@@ -7410,6 +8233,108 @@
       "valuation",
       "events",
       "financials"
+    ],
+    "additionalProperties": false
+  },
+  "OperatingExpense": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "properties": {
+      "id": {
+        "type": "string",
+        "minLength": 1
+      },
+      "stable_investment_key": {
+        "type": "string",
+        "minLength": 1
+      },
+      "start_month": {
+        "type": "integer",
+        "minimum": 1,
+        "maximum": 60
+      },
+      "provenance": {
+        "type": "object",
+        "propertyNames": {
+          "type": "string"
+        },
+        "additionalProperties": {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "const": "synthetic_historical"
+                },
+                {
+                  "type": "string",
+                  "const": "user_input"
+                },
+                {
+                  "type": "string",
+                  "const": "derived"
+                },
+                {
+                  "type": "string",
+                  "const": "assumed"
+                },
+                {
+                  "type": "string",
+                  "const": "simulated"
+                }
+              ]
+            },
+            "source": {
+              "type": "string",
+              "minLength": 1
+            },
+            "unit": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "kind",
+            "source",
+            "unit"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "type": {
+        "type": "string",
+        "const": "operating_expense"
+      },
+      "decision_version": {
+        "type": "string",
+        "const": "flexible-investment-1-candidate"
+      },
+      "name": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 100
+      },
+      "amount_per_month": {
+        "type": "number",
+        "minimum": 0
+      },
+      "duration_months": {
+        "type": "integer",
+        "minimum": 1,
+        "maximum": 60
+      }
+    },
+    "required": [
+      "id",
+      "stable_investment_key",
+      "start_month",
+      "provenance",
+      "type",
+      "decision_version",
+      "name",
+      "amount_per_month",
+      "duration_months"
     ],
     "additionalProperties": false
   },
@@ -8442,6 +9367,145 @@
     ],
     "additionalProperties": false
   },
+  "PurchaseAsset": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "properties": {
+      "id": {
+        "type": "string",
+        "minLength": 1
+      },
+      "stable_investment_key": {
+        "type": "string",
+        "minLength": 1
+      },
+      "start_month": {
+        "type": "integer",
+        "minimum": 1,
+        "maximum": 60
+      },
+      "provenance": {
+        "type": "object",
+        "propertyNames": {
+          "type": "string"
+        },
+        "additionalProperties": {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "const": "synthetic_historical"
+                },
+                {
+                  "type": "string",
+                  "const": "user_input"
+                },
+                {
+                  "type": "string",
+                  "const": "derived"
+                },
+                {
+                  "type": "string",
+                  "const": "assumed"
+                },
+                {
+                  "type": "string",
+                  "const": "simulated"
+                }
+              ]
+            },
+            "source": {
+              "type": "string",
+              "minLength": 1
+            },
+            "unit": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "kind",
+            "source",
+            "unit"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "type": {
+        "type": "string",
+        "const": "purchase_asset"
+      },
+      "decision_version": {
+        "type": "string",
+        "const": "flexible-investment-1-candidate"
+      },
+      "name": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 100
+      },
+      "purchase_cost": {
+        "type": "number",
+        "minimum": 0
+      },
+      "in_service_delay_months": {
+        "type": "integer",
+        "minimum": 0,
+        "maximum": 9007199254740991
+      },
+      "useful_life_months": {
+        "type": "integer",
+        "minimum": 1,
+        "maximum": 600
+      },
+      "monthly_operating_cost": {
+        "type": "number",
+        "minimum": 0
+      },
+      "funding": {
+        "type": "object",
+        "properties": {
+          "debt_fraction": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "annual_interest_rate": {
+            "type": "number",
+            "minimum": 0
+          },
+          "term_months": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "maximum": 9007199254740991
+          }
+        },
+        "required": [
+          "debt_fraction",
+          "annual_interest_rate",
+          "term_months"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "required": [
+      "id",
+      "stable_investment_key",
+      "start_month",
+      "provenance",
+      "type",
+      "decision_version",
+      "name",
+      "purchase_cost",
+      "in_service_delay_months",
+      "useful_life_months",
+      "monthly_operating_cost",
+      "funding"
+    ],
+    "additionalProperties": false
+  },
   "PurchaseTransition": {
     "$schema": "https://json-schema.org/draft/2020-12/schema",
     "type": "object",
@@ -9021,6 +10085,245 @@
                 "incremental_cost_per_booked_job"
               ],
               "additionalProperties": false
+            },
+            {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "stable_investment_key": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "start_month": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 60
+                },
+                "provenance": {
+                  "type": "object",
+                  "propertyNames": {
+                    "type": "string"
+                  },
+                  "additionalProperties": {
+                    "type": "object",
+                    "properties": {
+                      "kind": {
+                        "anyOf": [
+                          {
+                            "type": "string",
+                            "const": "synthetic_historical"
+                          },
+                          {
+                            "type": "string",
+                            "const": "user_input"
+                          },
+                          {
+                            "type": "string",
+                            "const": "derived"
+                          },
+                          {
+                            "type": "string",
+                            "const": "assumed"
+                          },
+                          {
+                            "type": "string",
+                            "const": "simulated"
+                          }
+                        ]
+                      },
+                      "source": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "unit": {
+                        "type": "string",
+                        "minLength": 1
+                      }
+                    },
+                    "required": [
+                      "kind",
+                      "source",
+                      "unit"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "type": {
+                  "type": "string",
+                  "const": "operating_expense"
+                },
+                "decision_version": {
+                  "type": "string",
+                  "const": "flexible-investment-1-candidate"
+                },
+                "name": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 100
+                },
+                "amount_per_month": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "duration_months": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 60
+                }
+              },
+              "required": [
+                "id",
+                "stable_investment_key",
+                "start_month",
+                "provenance",
+                "type",
+                "decision_version",
+                "name",
+                "amount_per_month",
+                "duration_months"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "stable_investment_key": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "start_month": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 60
+                },
+                "provenance": {
+                  "type": "object",
+                  "propertyNames": {
+                    "type": "string"
+                  },
+                  "additionalProperties": {
+                    "type": "object",
+                    "properties": {
+                      "kind": {
+                        "anyOf": [
+                          {
+                            "type": "string",
+                            "const": "synthetic_historical"
+                          },
+                          {
+                            "type": "string",
+                            "const": "user_input"
+                          },
+                          {
+                            "type": "string",
+                            "const": "derived"
+                          },
+                          {
+                            "type": "string",
+                            "const": "assumed"
+                          },
+                          {
+                            "type": "string",
+                            "const": "simulated"
+                          }
+                        ]
+                      },
+                      "source": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "unit": {
+                        "type": "string",
+                        "minLength": 1
+                      }
+                    },
+                    "required": [
+                      "kind",
+                      "source",
+                      "unit"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "type": {
+                  "type": "string",
+                  "const": "purchase_asset"
+                },
+                "decision_version": {
+                  "type": "string",
+                  "const": "flexible-investment-1-candidate"
+                },
+                "name": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 100
+                },
+                "purchase_cost": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "in_service_delay_months": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 9007199254740991
+                },
+                "useful_life_months": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 600
+                },
+                "monthly_operating_cost": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "funding": {
+                  "type": "object",
+                  "properties": {
+                    "debt_fraction": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 1
+                    },
+                    "annual_interest_rate": {
+                      "type": "number",
+                      "minimum": 0
+                    },
+                    "term_months": {
+                      "type": "integer",
+                      "exclusiveMinimum": 0,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "debt_fraction",
+                    "annual_interest_rate",
+                    "term_months"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "required": [
+                "id",
+                "stable_investment_key",
+                "start_month",
+                "provenance",
+                "type",
+                "decision_version",
+                "name",
+                "purchase_cost",
+                "in_service_delay_months",
+                "useful_life_months",
+                "monthly_operating_cost",
+                "funding"
+              ],
+              "additionalProperties": false
             }
           ]
         }
@@ -9274,6 +10577,10 @@
                   "minimum": 0
                 },
                 "recruitment": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "custom_operating_expenses": {
                   "type": "number",
                   "minimum": 0
                 },
@@ -9575,6 +10882,18 @@
                   },
                   "kind": {
                     "anyOf": [
+                      {
+                        "type": "string",
+                        "const": "asset_purchase"
+                      },
+                      {
+                        "type": "string",
+                        "const": "asset_in_service"
+                      },
+                      {
+                        "type": "string",
+                        "const": "operating_expense"
+                      },
                       {
                         "type": "string",
                         "const": "truck_purchase"
@@ -10419,6 +11738,10 @@
                         "type": "number",
                         "minimum": 0
                       },
+                      "custom_operating_expenses": {
+                        "type": "number",
+                        "minimum": 0
+                      },
                       "operating_overhead": {
                         "type": "number",
                         "minimum": 0
@@ -10717,6 +12040,18 @@
                         },
                         "kind": {
                           "anyOf": [
+                            {
+                              "type": "string",
+                              "const": "asset_purchase"
+                            },
+                            {
+                              "type": "string",
+                              "const": "asset_in_service"
+                            },
+                            {
+                              "type": "string",
+                              "const": "operating_expense"
+                            },
                             {
                               "type": "string",
                               "const": "truck_purchase"
