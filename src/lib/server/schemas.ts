@@ -210,7 +210,7 @@ export const MonteCarloRequestSchema = z.strictObject({
   ...DeterministicRequestSchema.shape,
   monte_carlo: z.strictObject({
   enabled: z.literal(true),
-  runs: z.number().int().min(2000).max(5000),
+  runs: z.union([z.literal(100), z.number().int().min(2000).max(5000)]),
   seed: z.number().int().nonnegative(),
 }),
 }).superRefine(validateRequest);
@@ -439,7 +439,7 @@ export const MonteCarloScenarioSchema = z.strictObject({
 });
 
 export const MonteCarloSummarySchema = z.strictObject({
-  runs: z.number().int().min(2000).max(5000),
+  runs: z.union([z.literal(100), z.number().int().min(2000).max(5000)]),
   seed: z.number().int().nonnegative(),
   distribution_parameters: DistributionParametersSchema,
   model_version: z.literal('mvp-1.0'),

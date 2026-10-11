@@ -7,6 +7,7 @@
   let { request, enabled, month, scenarioId, metric }: { request: DeterministicRequest; enabled: boolean; month: number; scenarioId: string; metric: MetricKey } = $props();
   const riskMetrics: { key: MetricKey; label: string }[] = [...metrics, { key: 'ttm_ebitda', label: 'Trailing 12-month EBITDA' }, { key: 'enterprise_value', label: 'Enterprise value' }, { key: 'unlevered_fcf', label: 'Monthly unlevered FCF' }];
   let seed = $state(42);
+  let runs = $state<100 | 2000>(100);
   let otherId = $state('trucks_only');
   let otherPlans = $derived(request.scenarios.filter(s => s.id !== 'baseline' && s.id !== scenarioId));
   let selectedOther = $derived(otherPlans.find(s => s.id === otherId)?.id ?? otherPlans[0]?.id ?? '');
@@ -14,7 +15,7 @@
   let risk = $state(emptyRiskState());
   const controller = createRiskController(value => risk = value);
   onDestroy(() => controller.dispose());
-  let desired = $derived(JSON.stringify({ ...comparedRequest, monte_carlo: { enabled: true, runs: 2000, seed } }));
+  let desired = $derived(JSON.stringify({ ...comparedRequest, monte_carlo: { enabled: true, runs, seed } }));
   let stale = $derived(risk.result !== null && risk.resultInput !== desired);
   let submitted = $derived(risk.resultInput ? JSON.parse(risk.resultInput) as ReturnType<typeof riskRequest> : null);
   let selected = $derived(risk.result?.scenarios[scenarioId]);
@@ -32,13 +33,15 @@
     }).join(' ');
   }
   async function run() {
-    try { await controller.start(riskRequest($state.snapshot(comparedRequest), seed)); }
+    try { await controller.start(riskRequest($state.snapshot(comparedRequest), seed, runs)); }
     catch (error) { risk = { ...risk, error: error instanceof Error ? error.message : 'Invalid risk request.' }; }
   }
 </script>
 
 <section class="panel risk-panel" aria-labelledby="risk-title" aria-busy={risk.busy}>
-  <div class="panel-head"><div><p class="eyebrow">04 / EXPLORE UNCERTAINTY</p><h2 id="risk-title">Explore uncertainty</h2></div><span class="small-tag">2,000 outcomes per simulation</span></div>
+  <div class="panel-head"><div><p class="eyebrow">04 / EXPLORE UNCERTAINTY</p><h2 id="risk-title">Explore uncertainty</h2></div><span class="small-tag">{runs === 100 ? '100-path quick preview' : '2,000-path full run'}</span></div>
+  <label>Simulation size <select bind:value={runs} disabled={risk.busy || (risk.job !== null && ['queued','running'].includes(risk.job.state))}><option value={100}>Quick preview · 100 paths</option><option value={2000}>Full run · 2,000 paths</option></select></label>
+  {#if runs === 100}<p class="availability">Quick preview uses fewer paths. Percentiles and estimated probabilities are rough and may change substantially in a full run.</p>{/if}
   <p class="muted">Explore how this plan responds when demand, costs and timing vary together. These are results under synthetic assumptions, not measured odds for a real business.</p>
   {#if !enabled}<p class="availability">New risk simulations are unavailable in this session.</p>{/if}
   <div class="risk-controls"><label>Compare selected plan with<select value={selectedOther} onchange={event => otherId = event.currentTarget.value} disabled={risk.busy}>{#each otherPlans as plan}<option value={plan.id}>{plan.name}</option>{/each}</select></label><button class="primary" onclick={run} disabled={!enabled || risk.busy || (risk.job !== null && ['queued','running'].includes(risk.job.state))}>Run risk simulation</button>
@@ -47,10 +50,11 @@
     {#if risk.error && risk.job}<button onclick={() => controller.resume()} disabled={risk.busy}>Check progress</button>{/if}
   </div>
   <details><summary>Simulation settings</summary><label>Random seed <input aria-label="Monte Carlo random seed" type="number" min="0" max="4294967295" step="1" bind:value={seed} disabled={risk.busy} /></label><p class="muted">The same seed makes runs reproducible. Each run compares doing nothing, your selected plan and one other plan.</p></details>
-  <p class="muted">A full simulation can take about 24 minutes. Start it manually when you are ready; changing inputs does not launch another run.</p>
+  <p class="muted">The 100-path preview does one twentieth of the path calculations. A full 2,000-path simulation previously took about 24 minutes; timing varies by computer. Changing inputs does not launch another run.</p>
   {#if risk.job}<div class="job-status" aria-live="polite"><strong>{risk.job.state === 'queued' ? 'Waiting for a worker' : risk.job.state === 'running' ? 'Calculating outcomes' : risk.job.state === 'succeeded' ? 'Risk simulation complete' : risk.job.state === 'cancelled' ? 'Run cancelled' : 'Run failed'}</strong><span>{risk.job.completed_runs.toLocaleString()} / {risk.job.total_runs.toLocaleString()} completed runs</span><progress max={risk.job.total_runs} value={risk.job.completed_runs} aria-label="Completed aggregated Monte Carlo runs"></progress></div>{/if}
   {#if risk.error}<div class="error" role="alert"><p>{risk.error}</p>{#if !risk.job}<button onclick={run} disabled={risk.busy || !enabled}>Retry submission</button>{/if}</div>{/if}
   {#if risk.result}
+    {#if risk.result.runs === 100}<p class="availability"><strong>100-path preview result</strong> — exploratory estimates with limited sampling. Run 2,000 paths for a more stable comparison.</p>{/if}
     <p><strong>{risk.source === 'recorded' ? 'Example results · original plans and assumptions · seed 42' : 'New simulation results'}</strong></p>
     <p class:stale class="result-notice">{stale ? 'Previous risk result — inputs or seed changed. Run again to update.' : 'Risk result matches the selected comparison and seed.'}{risk.busy ? ' Previous successful result stays visible while the new job runs.' : ''}</p>
     {#if selected}

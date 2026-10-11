@@ -46,13 +46,13 @@ export class MonteCarloJobs {
     if (company.id.startsWith('profile:') && !profileContext) throw new Error('Profile MC transport binding required');
     if (profileContext) assertProfileMCContext(profileContext, profileMCContext(profileContext.company, company, request, config));
     if (company.id !== request.company_id) throw new JobError(422, 'VALIDATION_ERROR', 'Unknown company ID.');
-    if (request.monte_carlo.runs !== 2000) throw new JobError(422, 'UNSUPPORTED_RUN_COUNT', 'This review supports exactly 2,000 runs.');
+    if (![100, 2000].includes(request.monte_carlo.runs)) throw new JobError(422, 'UNSUPPORTED_RUN_COUNT', 'Choose a 100-path preview or a 2,000-path full run.');
     if (this.jobs.size >= LOCAL_MC_LIMITS.records || (this.busy && this.queue.length >= LOCAL_MC_LIMITS.waiting)) {
       throw new JobError(429, 'QUEUE_FULL', 'Simulation capacity is full; retry later.');
     }
     const id = randomUUID(), token = randomBytes(32).toString('hex');
     const status = MCJobStatusSchema.parse({ transport_version: MC_JOB_VERSION, job_id: id, state: 'queued',
-      completed_runs: 0, total_runs: 2000, created_at: new Date(this.now()).toISOString(), finished_at: null, expires_at: null, error: null });
+      completed_runs: 0, total_runs: request.monte_carlo.runs, created_at: new Date(this.now()).toISOString(), finished_at: null, expires_at: null, error: null });
     this.jobs.set(id, { status, tokenHash: hash(token), snapshot: { company, request, config, profileContext }, controller: new AbortController() });
     this.queue.push(id);
     const base = `/api/v1/simulate/monte-carlo/jobs/${id}`;
@@ -99,14 +99,14 @@ export class MonteCarloJobs {
     const options: WorkerOptions = { timeoutMs: LOCAL_MC_LIMITS.timeoutMs, signal: job.controller.signal,
       profileContext, runId: id, workerUrl: this.workerUrl, onProgress: completed => {
         if (job.status.state !== 'running') return;
-        if (completed !== job.status.completed_runs + 1 || completed > 2000) throw new Error('Invalid job progress');
+        if (completed !== job.status.completed_runs + 1 || completed > job.status.total_runs) throw new Error('Invalid job progress');
         job.status.completed_runs = completed;
       } };
     // Promise boundary also captures a synchronous executor failure.
     void Promise.resolve().then(() => this.execute(company, request, config, options)).then(value => {
       if (job.status.state !== 'running') return;
       const result = validateMonteCarloResult(value, company, request, APPROVED_POLICIES, config);
-      if (result.run_id !== id || job.status.completed_runs !== 2000) throw new Error('Job result identity/progress mismatch');
+      if (result.run_id !== id || job.status.completed_runs !== job.status.total_runs) throw new Error('Job result identity/progress mismatch');
       job.result = result;
       this.finish(job, 'succeeded');
     }).catch(error => {

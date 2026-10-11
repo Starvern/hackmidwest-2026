@@ -5,7 +5,7 @@ export const MCJobStatusSchema = z.strictObject({
   job_id: z.uuid(),
   state: z.enum(['queued', 'running', 'succeeded', 'failed', 'cancelled']),
   completed_runs: z.number().int().min(0).max(2000),
-  total_runs: z.literal(2000),
+  total_runs: z.union([z.literal(100), z.literal(2000)]),
   created_at: z.iso.datetime(),
   finished_at: z.iso.datetime().nullable(),
   expires_at: z.iso.datetime().nullable(),
