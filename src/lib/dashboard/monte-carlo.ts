@@ -2,7 +2,7 @@ import type { DeterministicRequest, MonteCarloRequest } from '../../../contracts
 import type { MCResultExtension } from '../../../contracts/monte-carlo.ts';
 import type { z } from 'zod';
 import type { MCJobReceiptSchema, MCJobStatusSchema } from '../server/monte-carlo/jobs-contracts.ts';
-import { requestJson } from './api.ts';
+import { requestJson, HttpError } from './api.ts';
 export type JobStatus = z.infer<typeof MCJobStatusSchema>;
 type Receipt = z.infer<typeof MCJobReceiptSchema>;
 export type RiskState = { source: 'job' | 'recorded'; busy: boolean; job: JobStatus | null; error: string; result: MCResultExtension | null; resultInput: string; activeInput: string };
@@ -21,6 +21,12 @@ export function createRiskController(update: (state: RiskState) => void, fetcher
   const headers = () => ({ 'x-mc-job-token': receipt!.access_token });
   const get = <T>(url: string, init?: RequestInit) => requestJson<T>(url, { ...init, signal: network.signal }, fetcher);
   const alive = (version: number) => !disposed && version === generation;
+  function releaseMissingJob(error: unknown): boolean {
+    if (!(error instanceof HttpError) || error.status !== 404) return false;
+    receipt = null;
+    publish({ job: null, busy: false, activeInput: '', error: 'This risk run is no longer available. The server may have restarted or the job expired. Your previous result is preserved. Run a new simulation to continue.' });
+    return true;
+  }
   async function poll(version: number) {
     try {
       while (alive(version) && receipt) {
@@ -43,7 +49,7 @@ export function createRiskController(update: (state: RiskState) => void, fetcher
         }
         await wait();
       }
-    } catch (error) { if (alive(version)) publish({ busy: false, error: `${error instanceof Error ? error.message : 'Could not check job.'} Resume checking to retry this job.` }); }
+    } catch (error) { if (alive(version) && !releaseMissingJob(error)) publish({ busy: false, error: `${error instanceof Error ? error.message : 'Could not check job.'} Resume checking to retry this job.` }); }
   }
   return {
     async start(input: MonteCarloRequest) {
@@ -90,7 +96,7 @@ export function createRiskController(update: (state: RiskState) => void, fetcher
         if (!alive(version)) return;
         publish({ job, busy: false });
         if (job.state === 'succeeded') { publish({ busy: true }); await poll(version); }
-      } catch (error) { if (alive(version)) publish({ busy: false, error: `${error instanceof Error ? error.message : 'Cancellation failed.'} Cancellation was not confirmed. Resume checking or try cancel again.` }); }
+      } catch (error) { if (alive(version) && !releaseMissingJob(error)) publish({ busy: false, error: `${error instanceof Error ? error.message : 'Cancellation failed.'} Cancellation was not confirmed. Resume checking or try cancel again.` }); }
     },
     dispose() {
       disposed = true; generation++; network.abort();

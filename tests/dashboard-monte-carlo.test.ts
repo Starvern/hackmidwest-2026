@@ -12,6 +12,35 @@ const status = (state = 'running') => ({ transport_version: 'mc-job-1-candidate'
 const receipt = () => ({ ...status('queued'), access_token: 'a'.repeat(64), status_url: base, result_url: `${base}/result` });
 const json = (value: unknown) => new Response(JSON.stringify(value));
 
+test('expired or restarted-server job releases controls and preserves prior results for a fresh submission', async () => {
+  let state = emptyRiskState(), posts = 0;
+  const controller = createRiskController(value => state = value, (async (url, init) => {
+    if (String(url).endsWith('/recorded')) return json({ request: request(), result: result() });
+    if (init?.method === 'POST') { posts++; return json(receipt()); }
+    return new Response(JSON.stringify({ error: { message: 'Job not found.' } }), { status: 404 });
+  }) as typeof fetch);
+  await controller.recorded(); const prior = state.result;
+  await controller.start(request());
+  assert.equal(state.job, null); assert.equal(state.busy, false);
+  assert.equal(state.result, prior); assert.match(state.error, /no longer available/);
+  await controller.resume(); assert.equal(posts, 1);
+  await controller.start(request()); assert.equal(posts, 2);
+  controller.dispose();
+});
+
+test('missing job during cancellation also releases the active job', async () => {
+  let state = emptyRiskState();
+  const controller = createRiskController(value => state = value, (async (_url, init) => {
+    if (init?.method === 'POST') return json(receipt());
+    if (init?.method === 'DELETE') return new Response('Not found', { status: 404 });
+    throw new Error('offline');
+  }) as typeof fetch);
+  await controller.start(request()); assert.equal(state.job?.state, 'queued');
+  await controller.cancel();
+  assert.equal(state.job, null); assert.equal(state.busy, false);
+  assert.match(state.error, /no longer available/); controller.dispose();
+});
+
 test('risk projection preserves actual unavailable denominators, zero probabilities, conditional null payback and paired results', () => {
   const s = result().scenarios.combined_expansion;
   assert.equal(probabilityLabel(s.path_risks.probability_cash_below_reserve_any_month), '18.10%');
