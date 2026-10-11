@@ -84,17 +84,17 @@
   onMount(() => { void initialize(); });
 </script>
 
-<svelte:head><title>OperatorOS · Investment workspace</title><meta name="description" content="Explore the operational and financial effects of decisions for a synthetic HVAC business." /></svelte:head>
+<svelte:head><title>Sapling · Investment workspace</title><meta name="description" content="Explore the operational and financial effects of business decisions with Sapling." /></svelte:head>
 
 <div class="workspace">
   <aside class="rail" aria-label="Workspace navigation">
-    <a class="brand" href="/" aria-label="OperatorOS home">O<span>↗</span></a>
-    <span class="rail-label">OS</span><a class="rail-active" href="#timeline" aria-label="Scenario timeline">▥</a>
+    <a class="brand" href="/" aria-label="Sapling home"><img src="/brand/sapling-symbol.png" alt="" /></a>
+    <span class="rail-label">SAPLING</span><a class="rail-active" href="#timeline" aria-label="Scenario timeline">▥</a>
     <a href="#assumptions" aria-label="Assumptions and model details">≡</a>
     <span class="rail-bottom">01</span>
   </aside>
   <main>
-    <header><div class="wordmark">Operator<span>OS</span><span class="divider">/</span><span class="workspace-name">Investment workspace</span></div><a href="/intake">Your business</a><span class="synthetic">{profileMode ? `● ${company?.name ?? 'Your business'} · revision ${binding?.revision ?? '—'}` : '● Fictional example business'}</span></header>
+    <header><div class="wordmark"><img class="sapling-wordmark" src="/brand/sapling-logo.png" alt="Sapling" /><span class="divider">/</span><span class="workspace-name">Investment workspace</span></div><a href="/intake">Your business</a><span class="synthetic">{profileMode ? `● ${company?.name ?? 'Your business'} · revision ${binding?.revision ?? '—'}` : '● Fictional example business'}</span></header>
     {#if profileMode && binding && latestRevision !== binding.revision}<p class="editor-note">Viewing confirmed revision {binding.revision}. A newer revision {latestRevision} exists. <a href="/intake">Review the latest draft</a>.</p>{/if}
     <section class="intro"><div><p class="eyebrow">OPERATING DECISIONS, OVER TIME</p><h1>Plan the next move.</h1><p class="subtitle">See what your investments change—and when they matter.</p></div><div class="company-tag"><span class="company-icon">⌁</span><div><strong>{company?.name ?? 'Loading company…'}</strong><small>HVAC services · USD · Five-year forecast</small></div></div></section>
     <div class="notice"><span>↗</span><p>Plan comparison <span>Five-year forecasts based on your inputs and assumptions.</span></p><span class="status">{pending ? 'Computing…' : stale ? 'Results need updating' : result ? 'Results current' : 'Ready to load'}</span></div>
@@ -148,7 +148,7 @@
     </div>
     {#if profileMode}<section class="panel"><h2>Risk analysis is not available for this business yet</h2><p>This comparison uses one set of assumptions. It does not estimate the likelihood of different outcomes.</p></section>{:else}<RiskPanel {request} enabled={metadata?.readiness.monte_carlo ?? false} {month} {scenarioId} {metric} />{/if}
     <section class="panel assumptions" id="assumptions"><details><summary><div><p class="eyebrow">CONTEXT MATTERS</p><h2>Assumptions & model notes</h2></div><span>View details +</span></summary><p>{profileMode ? 'This run uses the selected confirmed business revision, including its reviewed estimates. Results are modeled outcomes.' : metadata?.data_notice}</p><ul>{#each metadata?.limitations ?? [] as limitation}<li>{limitation}</li>{/each}</ul><p>Month 0 shows starting balances. An unavailable value is not zero. Payback compares the plan’s extra cash flow with doing nothing new, before financing; a later cash shortfall can reverse that recovery.</p><details><summary>Technical records</summary><pre>{JSON.stringify({ assumptions: result?.assumptions ?? company?.global_assumptions, provenance: company?.provenance }, null, 2)}</pre><p class="muted">Schema {metadata?.schema_version ?? '—'} · Model {metadata?.model_version ?? '—'} · Revision {metadata?.contract_revision ?? '—'} · Run {result?.run_id ?? 'not run'}</p><p class="fingerprint">Input fingerprint: {result?.input_fingerprint ?? 'not run'}</p></details></details></section>
-    <footer><span>OperatorOS / A clearer view of what comes next.</span><span>{profileMode ? 'Confirmed facts and reviewed estimates. Modeled outcomes.' : 'Synthetic inputs. Modeled outcomes.'}</span></footer>
+    <footer><span>Sapling / A clearer view of what comes next.</span><span>{profileMode ? 'Confirmed facts and reviewed estimates. Modeled outcomes.' : 'Synthetic inputs. Modeled outcomes.'}</span></footer>
     <div class="sr-only" aria-live="polite">{pending ? 'Simulation running' : error ? 'Request failed' : stale ? 'Inputs changed; results are stale' : result ? 'Simulation complete' : ''}</div>
   </main>
 </div>
