@@ -8,12 +8,20 @@ const fraction = finite.min(0).max(1);
 const monthIndex = z.number().int().min(0).max(60);
 const forwardMonth = z.number().int().min(1).max(60);
 
-export const ProvenanceKindSchema = z.union([z.literal('synthetic_historical'), z.literal('user_input'), z.literal('derived'), z.literal('assumed'), z.literal('simulated')]);
+export const ProvenanceKindSchema = z.union([z.literal('synthetic_historical'), z.literal('user_input'), z.literal('derived'), z.literal('assumed'), z.literal('simulated'), z.literal('profile_source')]);
 
 export const ProvenanceSchema = z.strictObject({
   kind: ProvenanceKindSchema,
   source: z.string().min(1),
   unit: z.string().min(1),
+  profile_ref: z.strictObject({
+    profile_id: z.uuid(), revision: z.number().int().positive(),
+    mapping_version: z.literal('company-mapping-2-draft'),
+    pointers: z.array(z.string().startsWith('/')).min(1), source_ids: z.array(z.string().min(1)),
+  }).optional(),
+}).superRefine((value, ctx) => {
+  if ((value.kind === 'profile_source') !== (value.profile_ref !== undefined))
+    ctx.addIssue({ code: 'custom', path: ['profile_ref'], message: 'Profile-source provenance requires an exact revision reference, exclusive to that kind' });
 });
 
 export const ProvenanceManifestSchema = z.record(z.string(), ProvenanceSchema);

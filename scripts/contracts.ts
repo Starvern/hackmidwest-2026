@@ -24,3 +24,5 @@ const intakeEntries = Object.entries(intake).filter(([name, value]) => name.ends
 artifact('contracts/intake.ts', `/** Generated intake types. Validation/review rules live in the authoritative runtime. */\nimport type { z } from 'zod';\nimport type * as Runtime from '../src/lib/server/intake/schemas.ts';\n\n${intakeEntries.map(([name]) => `export type ${name.slice(0, -6)} = z.infer<typeof Runtime.${name}>;`).join('\n')}\n`);
 // JSON Schema does not encode superRefine rules; consumers must use runtime validation.
 artifact('contracts/company-profile.schema.json', JSON.stringify(z.toJSONSchema(intake.ProfilePayloadSchema, { target: 'draft-2020-12' }), null, 2) + '\n');
+artifact('contracts/company-binding.schema.json', JSON.stringify(z.toJSONSchema(intake.CompanyBindingSchema, { target: 'draft-2020-12' }), null, 2) + '\n');
+artifact('contracts/profile-simulation.schema.json', JSON.stringify(z.toJSONSchema(intake.ProfileSimulationInputSchema, { target: 'draft-2020-12' }), null, 2) + '\n');

@@ -89,6 +89,10 @@
                               {
                                 "type": "string",
                                 "const": "simulated"
+                              },
+                              {
+                                "type": "string",
+                                "const": "profile_source"
                               }
                             ]
                           },
@@ -99,6 +103,49 @@
                           "unit": {
                             "type": "string",
                             "minLength": 1
+                          },
+                          "profile_ref": {
+                            "type": "object",
+                            "properties": {
+                              "profile_id": {
+                                "type": "string",
+                                "format": "uuid",
+                                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                              },
+                              "revision": {
+                                "type": "integer",
+                                "exclusiveMinimum": 0,
+                                "maximum": 9007199254740991
+                              },
+                              "mapping_version": {
+                                "type": "string",
+                                "const": "company-mapping-2-draft"
+                              },
+                              "pointers": {
+                                "minItems": 1,
+                                "type": "array",
+                                "items": {
+                                  "type": "string",
+                                  "format": "starts_with",
+                                  "pattern": "^\\/.*"
+                                }
+                              },
+                              "source_ids": {
+                                "type": "array",
+                                "items": {
+                                  "type": "string",
+                                  "minLength": 1
+                                }
+                              }
+                            },
+                            "required": [
+                              "profile_id",
+                              "revision",
+                              "mapping_version",
+                              "pointers",
+                              "source_ids"
+                            ],
+                            "additionalProperties": false
                           }
                         },
                         "required": [
@@ -216,6 +263,10 @@
                               {
                                 "type": "string",
                                 "const": "simulated"
+                              },
+                              {
+                                "type": "string",
+                                "const": "profile_source"
                               }
                             ]
                           },
@@ -226,6 +277,49 @@
                           "unit": {
                             "type": "string",
                             "minLength": 1
+                          },
+                          "profile_ref": {
+                            "type": "object",
+                            "properties": {
+                              "profile_id": {
+                                "type": "string",
+                                "format": "uuid",
+                                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                              },
+                              "revision": {
+                                "type": "integer",
+                                "exclusiveMinimum": 0,
+                                "maximum": 9007199254740991
+                              },
+                              "mapping_version": {
+                                "type": "string",
+                                "const": "company-mapping-2-draft"
+                              },
+                              "pointers": {
+                                "minItems": 1,
+                                "type": "array",
+                                "items": {
+                                  "type": "string",
+                                  "format": "starts_with",
+                                  "pattern": "^\\/.*"
+                                }
+                              },
+                              "source_ids": {
+                                "type": "array",
+                                "items": {
+                                  "type": "string",
+                                  "minLength": 1
+                                }
+                              }
+                            },
+                            "required": [
+                              "profile_id",
+                              "revision",
+                              "mapping_version",
+                              "pointers",
+                              "source_ids"
+                            ],
+                            "additionalProperties": false
                           }
                         },
                         "required": [
@@ -328,6 +422,10 @@
                               {
                                 "type": "string",
                                 "const": "simulated"
+                              },
+                              {
+                                "type": "string",
+                                "const": "profile_source"
                               }
                             ]
                           },
@@ -338,6 +436,49 @@
                           "unit": {
                             "type": "string",
                             "minLength": 1
+                          },
+                          "profile_ref": {
+                            "type": "object",
+                            "properties": {
+                              "profile_id": {
+                                "type": "string",
+                                "format": "uuid",
+                                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                              },
+                              "revision": {
+                                "type": "integer",
+                                "exclusiveMinimum": 0,
+                                "maximum": 9007199254740991
+                              },
+                              "mapping_version": {
+                                "type": "string",
+                                "const": "company-mapping-2-draft"
+                              },
+                              "pointers": {
+                                "minItems": 1,
+                                "type": "array",
+                                "items": {
+                                  "type": "string",
+                                  "format": "starts_with",
+                                  "pattern": "^\\/.*"
+                                }
+                              },
+                              "source_ids": {
+                                "type": "array",
+                                "items": {
+                                  "type": "string",
+                                  "minLength": 1
+                                }
+                              }
+                            },
+                            "required": [
+                              "profile_id",
+                              "revision",
+                              "mapping_version",
+                              "pointers",
+                              "source_ids"
+                            ],
+                            "additionalProperties": false
                           }
                         },
                         "required": [
@@ -434,6 +575,10 @@
                               {
                                 "type": "string",
                                 "const": "simulated"
+                              },
+                              {
+                                "type": "string",
+                                "const": "profile_source"
                               }
                             ]
                           },
@@ -444,6 +589,49 @@
                           "unit": {
                             "type": "string",
                             "minLength": 1
+                          },
+                          "profile_ref": {
+                            "type": "object",
+                            "properties": {
+                              "profile_id": {
+                                "type": "string",
+                                "format": "uuid",
+                                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                              },
+                              "revision": {
+                                "type": "integer",
+                                "exclusiveMinimum": 0,
+                                "maximum": 9007199254740991
+                              },
+                              "mapping_version": {
+                                "type": "string",
+                                "const": "company-mapping-2-draft"
+                              },
+                              "pointers": {
+                                "minItems": 1,
+                                "type": "array",
+                                "items": {
+                                  "type": "string",
+                                  "format": "starts_with",
+                                  "pattern": "^\\/.*"
+                                }
+                              },
+                              "source_ids": {
+                                "type": "array",
+                                "items": {
+                                  "type": "string",
+                                  "minLength": 1
+                                }
+                              }
+                            },
+                            "required": [
+                              "profile_id",
+                              "revision",
+                              "mapping_version",
+                              "pointers",
+                              "source_ids"
+                            ],
+                            "additionalProperties": false
                           }
                         },
                         "required": [
@@ -535,6 +723,10 @@
                               {
                                 "type": "string",
                                 "const": "simulated"
+                              },
+                              {
+                                "type": "string",
+                                "const": "profile_source"
                               }
                             ]
                           },
@@ -545,6 +737,49 @@
                           "unit": {
                             "type": "string",
                             "minLength": 1
+                          },
+                          "profile_ref": {
+                            "type": "object",
+                            "properties": {
+                              "profile_id": {
+                                "type": "string",
+                                "format": "uuid",
+                                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                              },
+                              "revision": {
+                                "type": "integer",
+                                "exclusiveMinimum": 0,
+                                "maximum": 9007199254740991
+                              },
+                              "mapping_version": {
+                                "type": "string",
+                                "const": "company-mapping-2-draft"
+                              },
+                              "pointers": {
+                                "minItems": 1,
+                                "type": "array",
+                                "items": {
+                                  "type": "string",
+                                  "format": "starts_with",
+                                  "pattern": "^\\/.*"
+                                }
+                              },
+                              "source_ids": {
+                                "type": "array",
+                                "items": {
+                                  "type": "string",
+                                  "minLength": 1
+                                }
+                              }
+                            },
+                            "required": [
+                              "profile_id",
+                              "revision",
+                              "mapping_version",
+                              "pointers",
+                              "source_ids"
+                            ],
+                            "additionalProperties": false
                           }
                         },
                         "required": [

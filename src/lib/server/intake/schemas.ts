@@ -1,8 +1,18 @@
 /** Revision-2 intake facts. Parsing never grants review, access or confirmation. */
 import { z } from 'zod';
+import { DeterministicRequestSchema, MonteCarloRequestSchema } from '../schemas.ts';
 
 export const PROFILE_VERSION = 'company-profile-2-draft' as const;
 export const MAPPING_VERSION = 'company-mapping-2-draft' as const;
+export const CompanyBindingSchema = z.strictObject({
+  profile_id: z.uuid(), revision: z.number().int().positive(),
+  profile_version: z.literal(PROFILE_VERSION), mapping_version: z.literal(MAPPING_VERSION),
+  profile_fingerprint: z.string().regex(/^[a-f0-9]{64}$/), compiled_company_fingerprint: z.string().regex(/^[a-f0-9]{64}$/),
+});
+export const ProfileSimulationInputSchema = z.strictObject({
+  simulation_version: z.literal('profile-simulation-2-draft'), company: CompanyBindingSchema,
+  request: z.union([DeterministicRequestSchema, MonteCarloRequestSchema]),
+}).refine(value => value.request.company_id === `profile:${value.company.profile_id}`, 'Request company does not match profile binding');
 const text = z.string().min(1);
 const nonnegative = z.number().nonnegative();
 const fraction = z.number().min(0).max(1);
