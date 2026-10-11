@@ -1,0 +1,2 @@
+# Keep shared contract artifacts reproducible on Windows and Unix checkouts.
+contracts/** text eol=lf

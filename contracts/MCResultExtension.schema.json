@@ -1,0 +1,1337 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "extension_version": {
+      "type": "string",
+      "const": "mc-result-1-proposed"
+    },
+    "schema_version": {
+      "type": "string",
+      "const": "1.0"
+    },
+    "model_version": {
+      "type": "string",
+      "const": "mvp-1.0"
+    },
+    "contract_revision": {
+      "type": "number",
+      "const": 1
+    },
+    "run_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "company_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "runs": {
+      "anyOf": [
+        {
+          "type": "number",
+          "const": 100
+        },
+        {
+          "type": "integer",
+          "minimum": 2000,
+          "maximum": 5000
+        }
+      ]
+    },
+    "seed": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 9007199254740991
+    },
+    "config_version": {
+      "type": "string",
+      "const": "mc-config-1-proposed"
+    },
+    "sampler_version": {
+      "type": "string",
+      "const": "sha256-mulberry32-boxmuller-1"
+    },
+    "execution_version": {
+      "type": "string",
+      "const": "mc-execution-1-proposed"
+    },
+    "config_fingerprint": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "input_fingerprint": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "configuration": {
+      "type": "object",
+      "properties": {
+        "config_version": {
+          "type": "string",
+          "const": "mc-config-1-proposed"
+        },
+        "sampler_version": {
+          "type": "string",
+          "const": "sha256-mulberry32-boxmuller-1"
+        },
+        "execution_version": {
+          "type": "string",
+          "const": "mc-execution-1-proposed"
+        },
+        "macro": {
+          "type": "object",
+          "properties": {
+            "family": {
+              "type": "string",
+              "const": "latent_ar1"
+            },
+            "initial_state": {
+              "type": "number"
+            },
+            "rho": {
+              "type": "number",
+              "exclusiveMinimum": -1,
+              "exclusiveMaximum": 1
+            },
+            "innovation_spread": {
+              "type": "number",
+              "minimum": 0
+            },
+            "lower": {
+              "type": "number"
+            },
+            "upper": {
+              "type": "number"
+            },
+            "update_months": {
+              "type": "array",
+              "prefixItems": [
+                {
+                  "type": "number",
+                  "const": 1
+                },
+                {
+                  "type": "number",
+                  "const": 13
+                },
+                {
+                  "type": "number",
+                  "const": 25
+                },
+                {
+                  "type": "number",
+                  "const": 37
+                },
+                {
+                  "type": "number",
+                  "const": 49
+                }
+              ],
+              "items": false,
+              "minItems": 5,
+              "maxItems": 5
+            }
+          },
+          "required": [
+            "family",
+            "initial_state",
+            "rho",
+            "innovation_spread",
+            "lower",
+            "upper",
+            "update_months"
+          ],
+          "additionalProperties": false
+        },
+        "mappings": {
+          "type": "object",
+          "properties": {
+            "demand": {
+              "type": "object",
+              "properties": {
+                "transform": {
+                  "type": "string",
+                  "const": "exp_loading"
+                },
+                "loading": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "lower": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                "upper": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                }
+              },
+              "required": [
+                "transform",
+                "loading",
+                "lower",
+                "upper"
+              ],
+              "additionalProperties": false
+            },
+            "ticket": {
+              "type": "object",
+              "properties": {
+                "transform": {
+                  "type": "string",
+                  "const": "exp_loading"
+                },
+                "loading": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "lower": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                "upper": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                }
+              },
+              "required": [
+                "transform",
+                "loading",
+                "lower",
+                "upper"
+              ],
+              "additionalProperties": false
+            },
+            "valuation_multiple": {
+              "type": "object",
+              "properties": {
+                "transform": {
+                  "type": "string",
+                  "const": "request_multiple_plus_loading"
+                },
+                "loading": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "lower": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                "upper": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                "expand_bounds_to_request": {
+                  "type": "boolean",
+                  "const": true
+                }
+              },
+              "required": [
+                "transform",
+                "loading",
+                "lower",
+                "upper",
+                "expand_bounds_to_request"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "demand",
+            "ticket",
+            "valuation_multiple"
+          ],
+          "additionalProperties": false
+        },
+        "shared": {
+          "type": "object",
+          "properties": {
+            "wage": {
+              "type": "object",
+              "properties": {
+                "family": {
+                  "type": "string",
+                  "const": "triangular"
+                },
+                "min": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                "mode": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                "max": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                }
+              },
+              "required": [
+                "family",
+                "min",
+                "mode",
+                "max"
+              ],
+              "additionalProperties": false
+            },
+            "vehicle_opex": {
+              "type": "object",
+              "properties": {
+                "family": {
+                  "type": "string",
+                  "const": "triangular"
+                },
+                "min": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                "mode": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                "max": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                }
+              },
+              "required": [
+                "family",
+                "min",
+                "mode",
+                "max"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "wage",
+            "vehicle_opex"
+          ],
+          "additionalProperties": false
+        },
+        "decision": {
+          "type": "object",
+          "properties": {
+            "marketing_effectiveness": {
+              "type": "object",
+              "properties": {
+                "family": {
+                  "type": "string",
+                  "const": "triangular"
+                },
+                "min": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                "mode": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                "max": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                }
+              },
+              "required": [
+                "family",
+                "min",
+                "mode",
+                "max"
+              ],
+              "additionalProperties": false
+            },
+            "truck_service_delay_offset": {
+              "type": "object",
+              "properties": {
+                "family": {
+                  "type": "string",
+                  "const": "discrete"
+                },
+                "values": {
+                  "minItems": 1,
+                  "type": "array",
+                  "items": {
+                    "type": "integer",
+                    "minimum": -9007199254740991,
+                    "maximum": 9007199254740991
+                  }
+                },
+                "probabilities": {
+                  "minItems": 1,
+                  "type": "array",
+                  "items": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1
+                  }
+                }
+              },
+              "required": [
+                "family",
+                "values",
+                "probabilities"
+              ],
+              "additionalProperties": false
+            },
+            "hiring_delay_offset": {
+              "type": "object",
+              "properties": {
+                "family": {
+                  "type": "string",
+                  "const": "discrete"
+                },
+                "values": {
+                  "minItems": 1,
+                  "type": "array",
+                  "items": {
+                    "type": "integer",
+                    "minimum": -9007199254740991,
+                    "maximum": 9007199254740991
+                  }
+                },
+                "probabilities": {
+                  "minItems": 1,
+                  "type": "array",
+                  "items": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1
+                  }
+                }
+              },
+              "required": [
+                "family",
+                "values",
+                "probabilities"
+              ],
+              "additionalProperties": false
+            },
+            "ramp_offset": {
+              "type": "object",
+              "properties": {
+                "family": {
+                  "type": "string",
+                  "const": "discrete"
+                },
+                "values": {
+                  "minItems": 1,
+                  "type": "array",
+                  "items": {
+                    "type": "integer",
+                    "minimum": -9007199254740991,
+                    "maximum": 9007199254740991
+                  }
+                },
+                "probabilities": {
+                  "minItems": 1,
+                  "type": "array",
+                  "items": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1
+                  }
+                }
+              },
+              "required": [
+                "family",
+                "values",
+                "probabilities"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "marketing_effectiveness",
+            "truck_service_delay_offset",
+            "hiring_delay_offset",
+            "ramp_offset"
+          ],
+          "additionalProperties": false
+        },
+        "fixed_market_factors": {
+          "type": "object",
+          "properties": {
+            "overhead_multiplier": {
+              "type": "number",
+              "const": 1
+            },
+            "service_variable_cost_multiplier": {
+              "type": "number",
+              "const": 1
+            },
+            "other_revenue_multiplier": {
+              "type": "number",
+              "const": 1
+            },
+            "other_direct_cost_multiplier": {
+              "type": "number",
+              "const": 1
+            }
+          },
+          "required": [
+            "overhead_multiplier",
+            "service_variable_cost_multiplier",
+            "other_revenue_multiplier",
+            "other_direct_cost_multiplier"
+          ],
+          "additionalProperties": false
+        },
+        "provenance": {
+          "type": "object",
+          "propertyNames": {
+            "type": "string"
+          },
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "kind": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "const": "synthetic_historical"
+                  },
+                  {
+                    "type": "string",
+                    "const": "user_input"
+                  },
+                  {
+                    "type": "string",
+                    "const": "derived"
+                  },
+                  {
+                    "type": "string",
+                    "const": "assumed"
+                  },
+                  {
+                    "type": "string",
+                    "const": "simulated"
+                  },
+                  {
+                    "type": "string",
+                    "const": "profile_source"
+                  }
+                ]
+              },
+              "source": {
+                "type": "string",
+                "minLength": 1
+              },
+              "unit": {
+                "type": "string",
+                "minLength": 1
+              },
+              "profile_ref": {
+                "type": "object",
+                "properties": {
+                  "profile_id": {
+                    "type": "string",
+                    "format": "uuid",
+                    "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                  },
+                  "revision": {
+                    "type": "integer",
+                    "exclusiveMinimum": 0,
+                    "maximum": 9007199254740991
+                  },
+                  "mapping_version": {
+                    "type": "string",
+                    "const": "company-mapping-2-draft"
+                  },
+                  "pointers": {
+                    "minItems": 1,
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "format": "starts_with",
+                      "pattern": "^\\/.*"
+                    }
+                  },
+                  "source_ids": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  }
+                },
+                "required": [
+                  "profile_id",
+                  "revision",
+                  "mapping_version",
+                  "pointers",
+                  "source_ids"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "kind",
+              "source",
+              "unit"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "config_version",
+        "sampler_version",
+        "execution_version",
+        "macro",
+        "mappings",
+        "shared",
+        "decision",
+        "fixed_market_factors",
+        "provenance"
+      ],
+      "additionalProperties": false
+    },
+    "scenarios": {
+      "type": "object",
+      "propertyNames": {
+        "type": "string",
+        "minLength": 1
+      },
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "monthly_percentiles": {
+            "type": "object",
+            "propertyNames": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "const": "cash_end"
+                },
+                {
+                  "type": "string",
+                  "const": "ebitda"
+                },
+                {
+                  "type": "string",
+                  "const": "revenue"
+                },
+                {
+                  "type": "string",
+                  "const": "debt_end"
+                },
+                {
+                  "type": "string",
+                  "const": "utilization"
+                },
+                {
+                  "type": "string",
+                  "const": "ttm_ebitda"
+                },
+                {
+                  "type": "string",
+                  "const": "enterprise_value"
+                },
+                {
+                  "type": "string",
+                  "const": "equity_value"
+                },
+                {
+                  "type": "string",
+                  "const": "unlevered_fcf"
+                }
+              ]
+            },
+            "additionalProperties": {
+              "minItems": 61,
+              "maxItems": 61,
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "p10": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "p50": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "p90": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "mean": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "valid_path_count": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 9007199254740991
+                  },
+                  "unavailable_path_count": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 9007199254740991
+                  }
+                },
+                "required": [
+                  "p10",
+                  "p50",
+                  "p90",
+                  "mean",
+                  "valid_path_count",
+                  "unavailable_path_count"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "cash_end",
+              "ebitda",
+              "revenue",
+              "debt_end",
+              "utilization",
+              "ttm_ebitda",
+              "enterprise_value",
+              "equity_value",
+              "unlevered_fcf"
+            ]
+          },
+          "monthly_probability_cash_below_reserve": {
+            "minItems": 61,
+            "maxItems": 61,
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "value": {
+                  "anyOf": [
+                    {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 1
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "valid_path_count": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 9007199254740991
+                },
+                "unavailable_path_count": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 9007199254740991
+                },
+                "unavailable_reason": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "const": "not_applicable"
+                    },
+                    {
+                      "type": "string",
+                      "const": "unavailable_valuation"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "value",
+                "valid_path_count",
+                "unavailable_path_count",
+                "unavailable_reason"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "path_risks": {
+            "type": "object",
+            "properties": {
+              "probability_cash_below_reserve_any_month": {
+                "type": "object",
+                "properties": {
+                  "value": {
+                    "anyOf": [
+                      {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "valid_path_count": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 9007199254740991
+                  },
+                  "unavailable_path_count": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 9007199254740991
+                  },
+                  "unavailable_reason": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "const": "not_applicable"
+                      },
+                      {
+                        "type": "string",
+                        "const": "unavailable_valuation"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  }
+                },
+                "required": [
+                  "value",
+                  "valid_path_count",
+                  "unavailable_path_count",
+                  "unavailable_reason"
+                ],
+                "additionalProperties": false
+              },
+              "probability_negative_exit_equity_delta": {
+                "type": "object",
+                "properties": {
+                  "value": {
+                    "anyOf": [
+                      {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "valid_path_count": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 9007199254740991
+                  },
+                  "unavailable_path_count": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 9007199254740991
+                  },
+                  "unavailable_reason": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "const": "not_applicable"
+                      },
+                      {
+                        "type": "string",
+                        "const": "unavailable_valuation"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  }
+                },
+                "required": [
+                  "value",
+                  "valid_path_count",
+                  "unavailable_path_count",
+                  "unavailable_reason"
+                ],
+                "additionalProperties": false
+              },
+              "probability_payback_by_month_60": {
+                "type": "object",
+                "properties": {
+                  "value": {
+                    "anyOf": [
+                      {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "valid_path_count": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 9007199254740991
+                  },
+                  "unavailable_path_count": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 9007199254740991
+                  },
+                  "unavailable_reason": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "const": "not_applicable"
+                      },
+                      {
+                        "type": "string",
+                        "const": "unavailable_valuation"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  }
+                },
+                "required": [
+                  "value",
+                  "valid_path_count",
+                  "unavailable_path_count",
+                  "unavailable_reason"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "probability_cash_below_reserve_any_month",
+              "probability_negative_exit_equity_delta",
+              "probability_payback_by_month_60"
+            ],
+            "additionalProperties": false
+          },
+          "terminal_distributions": {
+            "type": "object",
+            "properties": {
+              "exit_equity_value": {
+                "type": "object",
+                "properties": {
+                  "p10": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "p50": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "p90": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "mean": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "valid_path_count": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 9007199254740991
+                  },
+                  "unavailable_path_count": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 9007199254740991
+                  }
+                },
+                "required": [
+                  "p10",
+                  "p50",
+                  "p90",
+                  "mean",
+                  "valid_path_count",
+                  "unavailable_path_count"
+                ],
+                "additionalProperties": false
+              },
+              "incremental_exit_equity_value": {
+                "type": "object",
+                "properties": {
+                  "p10": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "p50": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "p90": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "mean": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "valid_path_count": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 9007199254740991
+                  },
+                  "unavailable_path_count": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 9007199254740991
+                  }
+                },
+                "required": [
+                  "p10",
+                  "p50",
+                  "p90",
+                  "mean",
+                  "valid_path_count",
+                  "unavailable_path_count"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "exit_equity_value",
+              "incremental_exit_equity_value"
+            ],
+            "additionalProperties": false
+          },
+          "payback": {
+            "type": "object",
+            "properties": {
+              "probability_within_horizon": {
+                "type": "object",
+                "properties": {
+                  "value": {
+                    "anyOf": [
+                      {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "valid_path_count": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 9007199254740991
+                  },
+                  "unavailable_path_count": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 9007199254740991
+                  },
+                  "unavailable_reason": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "const": "not_applicable"
+                      },
+                      {
+                        "type": "string",
+                        "const": "unavailable_valuation"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  }
+                },
+                "required": [
+                  "value",
+                  "valid_path_count",
+                  "unavailable_path_count",
+                  "unavailable_reason"
+                ],
+                "additionalProperties": false
+              },
+              "median_month_conditional_on_payback_or_null": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 1,
+                    "maximum": 60
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "not_reached_count": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              },
+              "not_applicable_count": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              }
+            },
+            "required": [
+              "probability_within_horizon",
+              "median_month_conditional_on_payback_or_null",
+              "not_reached_count",
+              "not_applicable_count"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "monthly_percentiles",
+          "monthly_probability_cash_below_reserve",
+          "path_risks",
+          "terminal_distributions",
+          "payback"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "comparisons": {
+      "type": "object",
+      "propertyNames": {
+        "type": "string"
+      },
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "paired_monthly_delta_percentiles": {
+            "type": "object",
+            "propertyNames": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "const": "cash_end"
+                },
+                {
+                  "type": "string",
+                  "const": "ebitda"
+                },
+                {
+                  "type": "string",
+                  "const": "revenue"
+                },
+                {
+                  "type": "string",
+                  "const": "debt_end"
+                },
+                {
+                  "type": "string",
+                  "const": "utilization"
+                },
+                {
+                  "type": "string",
+                  "const": "ttm_ebitda"
+                },
+                {
+                  "type": "string",
+                  "const": "enterprise_value"
+                },
+                {
+                  "type": "string",
+                  "const": "equity_value"
+                },
+                {
+                  "type": "string",
+                  "const": "unlevered_fcf"
+                }
+              ]
+            },
+            "additionalProperties": {
+              "minItems": 61,
+              "maxItems": 61,
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "p10": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "p50": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "p90": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "mean": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "valid_path_count": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 9007199254740991
+                  },
+                  "unavailable_path_count": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 9007199254740991
+                  }
+                },
+                "required": [
+                  "p10",
+                  "p50",
+                  "p90",
+                  "mean",
+                  "valid_path_count",
+                  "unavailable_path_count"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "cash_end",
+              "ebitda",
+              "revenue",
+              "debt_end",
+              "utilization",
+              "ttm_ebitda",
+              "enterprise_value",
+              "equity_value",
+              "unlevered_fcf"
+            ]
+          },
+          "paired_terminal_delta_percentiles": {
+            "type": "object",
+            "properties": {
+              "p10": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "p50": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "p90": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "mean": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "valid_path_count": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              },
+              "unavailable_path_count": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              }
+            },
+            "required": [
+              "p10",
+              "p50",
+              "p90",
+              "mean",
+              "valid_path_count",
+              "unavailable_path_count"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "paired_monthly_delta_percentiles",
+          "paired_terminal_delta_percentiles"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "payback_counts": {
+      "type": "object",
+      "propertyNames": {
+        "type": "string",
+        "minLength": 1
+      },
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "reached_count": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "subsequent_reversal_count": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          }
+        },
+        "required": [
+          "reached_count",
+          "subsequent_reversal_count"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "extension_version",
+    "schema_version",
+    "model_version",
+    "contract_revision",
+    "run_id",
+    "company_id",
+    "runs",
+    "seed",
+    "config_version",
+    "sampler_version",
+    "execution_version",
+    "config_fingerprint",
+    "input_fingerprint",
+    "configuration",
+    "scenarios",
+    "comparisons",
+    "payback_counts"
+  ],
+  "additionalProperties": false
+}

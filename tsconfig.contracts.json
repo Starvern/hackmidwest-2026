@@ -1,0 +1,28 @@
+{
+  "compilerOptions": {
+    "target": "ES2023",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "strict": true,
+    "noEmit": true,
+    "allowImportingTsExtensions": true,
+    "skipLibCheck": true,
+    "types": [
+      "node"
+    ],
+    "resolveJsonModule": true
+  },
+  "include": [
+    "contracts/**/*.ts",
+    "src/lib/server/**/*.ts",
+    "scripts/contracts.ts",
+    "scripts/validate_contract_fixture.ts",
+    "tests/**/*.ts",
+    "scripts/example_request.ts",
+    "scripts/check_api.ts",
+    "scripts/monte_carlo_contracts.ts",
+    "scripts/mc_job_contracts.ts",
+    "scripts/check_mc_worker.ts",
+    "scripts/check_mc_jobs_api.ts"
+  ]
+}

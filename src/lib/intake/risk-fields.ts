@@ -1,0 +1,18 @@
+/** Editor labels only. MCConfig remains the authoritative configuration contract. */
+export const riskGroups = [
+  ['macro', 'Common demand and ticket driver', 'Explain time scale, persistence, annual updates and dependence. Completed jobs can hide unmet demand; one year does not establish persistence.', ['macro.initial_state','macro.rho','macro.innovation_spread','macro.lower','macro.upper','mappings.demand.loading','mappings.demand.lower','mappings.demand.upper','mappings.ticket.loading','mappings.ticket.lower','mappings.ticket.upper']],
+  ['valuation', 'Valuation sensitivity', 'Source valuation assumptions separately from sales history. Bounds expand to include the requested exit multiple.', ['mappings.valuation_multiple.loading','mappings.valuation_multiple.lower','mappings.valuation_multiple.upper']],
+  ['wage', 'Shared payroll uncertainty', 'Explain payroll coverage, normalization, triangular endpoints and mode, shared dependence and omitted categories.', ['shared.wage.min','shared.wage.mode','shared.wage.max']],
+  ['fleet', 'Shared fleet operating uncertainty', 'Explain fleet cost coverage, normalization, triangular endpoints and mode, shared dependence and omitted categories.', ['shared.vehicle_opex.min','shared.vehicle_opex.mode','shared.vehicle_opex.max']],
+  ['marketing', 'Campaign effectiveness', 'Describe cohorts, lag, spend, attribution and confounding. Sales growth alone does not establish campaign effectiveness.', ['decision.marketing_effectiveness.min','decision.marketing_effectiveness.mode','decision.marketing_effectiveness.max']],
+  ['delivery', 'Truck delivery timing', 'Offsets are integer months relative to the planned delay. The resulting delay is floored at zero; explain observations or operator estimates.', ['decision.truck_service_delay_offset.values','decision.truck_service_delay_offset.probabilities']],
+  ['hiring', 'Recruitment timing', 'Offsets are integer months relative to the planned hiring delay. Explain observations or operator estimates.', ['decision.hiring_delay_offset.values','decision.hiring_delay_offset.probabilities']],
+  ['ramp', 'Productivity ramp timing', 'Offsets are integer months relative to the planned ramp. Explain observations or operator estimates.', ['decision.ramp_offset.values','decision.ramp_offset.probabilities']],
+  ['fixed', 'Uncertainty left out', 'Overhead, service variable costs, other revenue and other direct costs stay fixed at 1. Acknowledge that this omits their uncertainty.', []],
+] as const;
+export const riskFieldLabel = (path: string) => {
+  const parts = path.split('.');
+  const names: Record<string, string> = { rho: 'Persistence from year to year', min: 'Minimum', max: 'Maximum', mode: 'Most likely', values: 'Possible month changes', probabilities: 'Probability of each change', lower: 'Lower limit', upper: 'Upper limit', loading: 'Sensitivity to the shared driver', initial_state: 'Starting driver value', innovation_spread: 'Size of annual changes' };
+  const prefix = parts[0] === 'mappings' ? ({ demand: 'Demand', ticket: 'Price per job', valuation_multiple: 'Valuation multiple' }[parts[1]] ?? '') : '';
+  return [prefix, names[parts.at(-1)!] ?? parts.at(-1)!.replaceAll('_', ' ')].filter(Boolean).join(' · ');
+};

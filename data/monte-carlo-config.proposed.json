@@ -1,0 +1,442 @@
+{
+  "config_version": "mc-config-1-proposed",
+  "sampler_version": "sha256-mulberry32-boxmuller-1",
+  "execution_version": "mc-execution-1-proposed",
+  "macro": {
+    "family": "latent_ar1",
+    "initial_state": 0,
+    "rho": 0.6,
+    "innovation_spread": 1,
+    "lower": -3,
+    "upper": 3,
+    "update_months": [
+      1,
+      13,
+      25,
+      37,
+      49
+    ]
+  },
+  "mappings": {
+    "demand": {
+      "transform": "exp_loading",
+      "loading": 0.08,
+      "lower": 0.7,
+      "upper": 1.3
+    },
+    "ticket": {
+      "transform": "exp_loading",
+      "loading": 0.02,
+      "lower": 0.9,
+      "upper": 1.1
+    },
+    "valuation_multiple": {
+      "transform": "request_multiple_plus_loading",
+      "loading": 0.5,
+      "lower": 4,
+      "upper": 8,
+      "expand_bounds_to_request": true
+    }
+  },
+  "shared": {
+    "wage": {
+      "family": "triangular",
+      "min": 0.95,
+      "mode": 1,
+      "max": 1.05
+    },
+    "vehicle_opex": {
+      "family": "triangular",
+      "min": 0.9,
+      "mode": 1,
+      "max": 1.2
+    }
+  },
+  "decision": {
+    "marketing_effectiveness": {
+      "family": "triangular",
+      "min": 0.6,
+      "mode": 1,
+      "max": 1.4
+    },
+    "truck_service_delay_offset": {
+      "family": "discrete",
+      "values": [
+        -1,
+        0,
+        1
+      ],
+      "probabilities": [
+        0.2,
+        0.6,
+        0.2
+      ]
+    },
+    "hiring_delay_offset": {
+      "family": "discrete",
+      "values": [
+        -1,
+        0,
+        1,
+        2
+      ],
+      "probabilities": [
+        0.15,
+        0.5,
+        0.25,
+        0.1
+      ]
+    },
+    "ramp_offset": {
+      "family": "discrete",
+      "values": [
+        -1,
+        0,
+        1
+      ],
+      "probabilities": [
+        0.2,
+        0.6,
+        0.2
+      ]
+    }
+  },
+  "fixed_market_factors": {
+    "overhead_multiplier": 1,
+    "service_variable_cost_multiplier": 1,
+    "other_revenue_multiplier": 1,
+    "other_direct_cost_multiplier": 1
+  },
+  "provenance": {
+    "/config_version": {
+      "kind": "assumed",
+      "source": "Synthetic MC sensitivity assumptions approved by P1 in issue #2 comment 6102447792; executable representation proposed for P3 review",
+      "unit": "label"
+    },
+    "/sampler_version": {
+      "kind": "assumed",
+      "source": "Synthetic MC sensitivity assumptions approved by P1 in issue #2 comment 6102447792; executable representation proposed for P3 review",
+      "unit": "label"
+    },
+    "/execution_version": {
+      "kind": "assumed",
+      "source": "Synthetic MC sensitivity assumptions approved by P1 in issue #2 comment 6102447792; executable representation proposed for P3 review",
+      "unit": "label"
+    },
+    "/macro/family": {
+      "kind": "assumed",
+      "source": "Synthetic MC sensitivity assumptions approved by P1 in issue #2 comment 6102447792; executable representation proposed for P3 review",
+      "unit": "label"
+    },
+    "/macro/initial_state": {
+      "kind": "assumed",
+      "source": "Synthetic MC sensitivity assumptions approved by P1 in issue #2 comment 6102447792; executable representation proposed for P3 review",
+      "unit": "dimensionless"
+    },
+    "/macro/rho": {
+      "kind": "assumed",
+      "source": "Synthetic MC sensitivity assumptions approved by P1 in issue #2 comment 6102447792; executable representation proposed for P3 review",
+      "unit": "dimensionless"
+    },
+    "/macro/innovation_spread": {
+      "kind": "assumed",
+      "source": "Synthetic MC sensitivity assumptions approved by P1 in issue #2 comment 6102447792; executable representation proposed for P3 review",
+      "unit": "dimensionless"
+    },
+    "/macro/lower": {
+      "kind": "assumed",
+      "source": "Synthetic MC sensitivity assumptions approved by P1 in issue #2 comment 6102447792; executable representation proposed for P3 review",
+      "unit": "dimensionless"
+    },
+    "/macro/upper": {
+      "kind": "assumed",
+      "source": "Synthetic MC sensitivity assumptions approved by P1 in issue #2 comment 6102447792; executable representation proposed for P3 review",
+      "unit": "dimensionless"
+    },
+    "/macro/update_months/0": {
+      "kind": "assumed",
+      "source": "Synthetic MC sensitivity assumptions approved by P1 in issue #2 comment 6102447792; executable representation proposed for P3 review",
+      "unit": "forecast_month_index"
+    },
+    "/macro/update_months/1": {
+      "kind": "assumed",
+      "source": "Synthetic MC sensitivity assumptions approved by P1 in issue #2 comment 6102447792; executable representation proposed for P3 review",
+      "unit": "forecast_month_index"
+    },
+    "/macro/update_months/2": {
+      "kind": "assumed",
+      "source": "Synthetic MC sensitivity assumptions approved by P1 in issue #2 comment 6102447792; executable representation proposed for P3 review",
+      "unit": "forecast_month_index"
+    },
+    "/macro/update_months/3": {
+      "kind": "assumed",
+      "source": "Synthetic MC sensitivity assumptions approved by P1 in issue #2 comment 6102447792; executable representation proposed for P3 review",
+      "unit": "forecast_month_index"
+    },
+    "/macro/update_months/4": {
+      "kind": "assumed",
+      "source": "Synthetic MC sensitivity assumptions approved by P1 in issue #2 comment 6102447792; executable representation proposed for P3 review",
+      "unit": "forecast_month_index"
+    },
+    "/mappings/demand/transform": {
+      "kind": "assumed",
+      "source": "Synthetic MC sensitivity assumptions approved by P1 in issue #2 comment 6102447792; executable representation proposed for P3 review",
+      "unit": "label"
+    },
+    "/mappings/demand/loading": {
+      "kind": "assumed",
+      "source": "Synthetic MC sensitivity assumptions approved by P1 in issue #2 comment 6102447792; executable representation proposed for P3 review",
+      "unit": "multiple"
+    },
+    "/mappings/demand/lower": {
+      "kind": "assumed",
+      "source": "Synthetic MC sensitivity assumptions approved by P1 in issue #2 comment 6102447792; executable representation proposed for P3 review",
+      "unit": "multiple"
+    },
+    "/mappings/demand/upper": {
+      "kind": "assumed",
+      "source": "Synthetic MC sensitivity assumptions approved by P1 in issue #2 comment 6102447792; executable representation proposed for P3 review",
+      "unit": "multiple"
+    },
+    "/mappings/ticket/transform": {
+      "kind": "assumed",
+      "source": "Synthetic MC sensitivity assumptions approved by P1 in issue #2 comment 6102447792; executable representation proposed for P3 review",
+      "unit": "label"
+    },
+    "/mappings/ticket/loading": {
+      "kind": "assumed",
+      "source": "Synthetic MC sensitivity assumptions approved by P1 in issue #2 comment 6102447792; executable representation proposed for P3 review",
+      "unit": "multiple"
+    },
+    "/mappings/ticket/lower": {
+      "kind": "assumed",
+      "source": "Synthetic MC sensitivity assumptions approved by P1 in issue #2 comment 6102447792; executable representation proposed for P3 review",
+      "unit": "multiple"
+    },
+    "/mappings/ticket/upper": {
+      "kind": "assumed",
+      "source": "Synthetic MC sensitivity assumptions approved by P1 in issue #2 comment 6102447792; executable representation proposed for P3 review",
+      "unit": "multiple"
+    },
+    "/mappings/valuation_multiple/transform": {
+      "kind": "assumed",
+      "source": "Synthetic MC sensitivity assumptions approved by P1 in issue #2 comment 6102447792; executable representation proposed for P3 review",
+      "unit": "label"
+    },
+    "/mappings/valuation_multiple/loading": {
+      "kind": "assumed",
+      "source": "Synthetic MC sensitivity assumptions approved by P1 in issue #2 comment 6102447792; executable representation proposed for P3 review",
+      "unit": "multiple"
+    },
+    "/mappings/valuation_multiple/lower": {
+      "kind": "assumed",
+      "source": "Synthetic MC sensitivity assumptions approved by P1 in issue #2 comment 6102447792; executable representation proposed for P3 review",
+      "unit": "multiple"
+    },
+    "/mappings/valuation_multiple/upper": {
+      "kind": "assumed",
+      "source": "Synthetic MC sensitivity assumptions approved by P1 in issue #2 comment 6102447792; executable representation proposed for P3 review",
+      "unit": "multiple"
+    },
+    "/mappings/valuation_multiple/expand_bounds_to_request": {
+      "kind": "assumed",
+      "source": "Synthetic MC sensitivity assumptions approved by P1 in issue #2 comment 6102447792; executable representation proposed for P3 review",
+      "unit": "label"
+    },
+    "/shared/wage/family": {
+      "kind": "assumed",
+      "source": "Synthetic MC sensitivity assumptions approved by P1 in issue #2 comment 6102447792; executable representation proposed for P3 review",
+      "unit": "label"
+    },
+    "/shared/wage/min": {
+      "kind": "assumed",
+      "source": "Synthetic MC sensitivity assumptions approved by P1 in issue #2 comment 6102447792; executable representation proposed for P3 review",
+      "unit": "multiple"
+    },
+    "/shared/wage/mode": {
+      "kind": "assumed",
+      "source": "Synthetic MC sensitivity assumptions approved by P1 in issue #2 comment 6102447792; executable representation proposed for P3 review",
+      "unit": "multiple"
+    },
+    "/shared/wage/max": {
+      "kind": "assumed",
+      "source": "Synthetic MC sensitivity assumptions approved by P1 in issue #2 comment 6102447792; executable representation proposed for P3 review",
+      "unit": "multiple"
+    },
+    "/shared/vehicle_opex/family": {
+      "kind": "assumed",
+      "source": "Synthetic MC sensitivity assumptions approved by P1 in issue #2 comment 6102447792; executable representation proposed for P3 review",
+      "unit": "label"
+    },
+    "/shared/vehicle_opex/min": {
+      "kind": "assumed",
+      "source": "Synthetic MC sensitivity assumptions approved by P1 in issue #2 comment 6102447792; executable representation proposed for P3 review",
+      "unit": "multiple"
+    },
+    "/shared/vehicle_opex/mode": {
+      "kind": "assumed",
+      "source": "Synthetic MC sensitivity assumptions approved by P1 in issue #2 comment 6102447792; executable representation proposed for P3 review",
+      "unit": "multiple"
+    },
+    "/shared/vehicle_opex/max": {
+      "kind": "assumed",
+      "source": "Synthetic MC sensitivity assumptions approved by P1 in issue #2 comment 6102447792; executable representation proposed for P3 review",
+      "unit": "multiple"
+    },
+    "/decision/marketing_effectiveness/family": {
+      "kind": "assumed",
+      "source": "Synthetic MC sensitivity assumptions approved by P1 in issue #2 comment 6102447792; executable representation proposed for P3 review",
+      "unit": "label"
+    },
+    "/decision/marketing_effectiveness/min": {
+      "kind": "assumed",
+      "source": "Synthetic MC sensitivity assumptions approved by P1 in issue #2 comment 6102447792; executable representation proposed for P3 review",
+      "unit": "multiple"
+    },
+    "/decision/marketing_effectiveness/mode": {
+      "kind": "assumed",
+      "source": "Synthetic MC sensitivity assumptions approved by P1 in issue #2 comment 6102447792; executable representation proposed for P3 review",
+      "unit": "multiple"
+    },
+    "/decision/marketing_effectiveness/max": {
+      "kind": "assumed",
+      "source": "Synthetic MC sensitivity assumptions approved by P1 in issue #2 comment 6102447792; executable representation proposed for P3 review",
+      "unit": "multiple"
+    },
+    "/decision/truck_service_delay_offset/family": {
+      "kind": "assumed",
+      "source": "Synthetic MC sensitivity assumptions approved by P1 in issue #2 comment 6102447792; executable representation proposed for P3 review",
+      "unit": "label"
+    },
+    "/decision/truck_service_delay_offset/values/0": {
+      "kind": "assumed",
+      "source": "Synthetic MC sensitivity assumptions approved by P1 in issue #2 comment 6102447792; executable representation proposed for P3 review",
+      "unit": "months"
+    },
+    "/decision/truck_service_delay_offset/values/1": {
+      "kind": "assumed",
+      "source": "Synthetic MC sensitivity assumptions approved by P1 in issue #2 comment 6102447792; executable representation proposed for P3 review",
+      "unit": "months"
+    },
+    "/decision/truck_service_delay_offset/values/2": {
+      "kind": "assumed",
+      "source": "Synthetic MC sensitivity assumptions approved by P1 in issue #2 comment 6102447792; executable representation proposed for P3 review",
+      "unit": "months"
+    },
+    "/decision/truck_service_delay_offset/probabilities/0": {
+      "kind": "assumed",
+      "source": "Synthetic MC sensitivity assumptions approved by P1 in issue #2 comment 6102447792; executable representation proposed for P3 review",
+      "unit": "probability"
+    },
+    "/decision/truck_service_delay_offset/probabilities/1": {
+      "kind": "assumed",
+      "source": "Synthetic MC sensitivity assumptions approved by P1 in issue #2 comment 6102447792; executable representation proposed for P3 review",
+      "unit": "probability"
+    },
+    "/decision/truck_service_delay_offset/probabilities/2": {
+      "kind": "assumed",
+      "source": "Synthetic MC sensitivity assumptions approved by P1 in issue #2 comment 6102447792; executable representation proposed for P3 review",
+      "unit": "probability"
+    },
+    "/decision/hiring_delay_offset/family": {
+      "kind": "assumed",
+      "source": "Synthetic MC sensitivity assumptions approved by P1 in issue #2 comment 6102447792; executable representation proposed for P3 review",
+      "unit": "label"
+    },
+    "/decision/hiring_delay_offset/values/0": {
+      "kind": "assumed",
+      "source": "Synthetic MC sensitivity assumptions approved by P1 in issue #2 comment 6102447792; executable representation proposed for P3 review",
+      "unit": "months"
+    },
+    "/decision/hiring_delay_offset/values/1": {
+      "kind": "assumed",
+      "source": "Synthetic MC sensitivity assumptions approved by P1 in issue #2 comment 6102447792; executable representation proposed for P3 review",
+      "unit": "months"
+    },
+    "/decision/hiring_delay_offset/values/2": {
+      "kind": "assumed",
+      "source": "Synthetic MC sensitivity assumptions approved by P1 in issue #2 comment 6102447792; executable representation proposed for P3 review",
+      "unit": "months"
+    },
+    "/decision/hiring_delay_offset/values/3": {
+      "kind": "assumed",
+      "source": "Synthetic MC sensitivity assumptions approved by P1 in issue #2 comment 6102447792; executable representation proposed for P3 review",
+      "unit": "months"
+    },
+    "/decision/hiring_delay_offset/probabilities/0": {
+      "kind": "assumed",
+      "source": "Synthetic MC sensitivity assumptions approved by P1 in issue #2 comment 6102447792; executable representation proposed for P3 review",
+      "unit": "probability"
+    },
+    "/decision/hiring_delay_offset/probabilities/1": {
+      "kind": "assumed",
+      "source": "Synthetic MC sensitivity assumptions approved by P1 in issue #2 comment 6102447792; executable representation proposed for P3 review",
+      "unit": "probability"
+    },
+    "/decision/hiring_delay_offset/probabilities/2": {
+      "kind": "assumed",
+      "source": "Synthetic MC sensitivity assumptions approved by P1 in issue #2 comment 6102447792; executable representation proposed for P3 review",
+      "unit": "probability"
+    },
+    "/decision/hiring_delay_offset/probabilities/3": {
+      "kind": "assumed",
+      "source": "Synthetic MC sensitivity assumptions approved by P1 in issue #2 comment 6102447792; executable representation proposed for P3 review",
+      "unit": "probability"
+    },
+    "/decision/ramp_offset/family": {
+      "kind": "assumed",
+      "source": "Synthetic MC sensitivity assumptions approved by P1 in issue #2 comment 6102447792; executable representation proposed for P3 review",
+      "unit": "label"
+    },
+    "/decision/ramp_offset/values/0": {
+      "kind": "assumed",
+      "source": "Synthetic MC sensitivity assumptions approved by P1 in issue #2 comment 6102447792; executable representation proposed for P3 review",
+      "unit": "months"
+    },
+    "/decision/ramp_offset/values/1": {
+      "kind": "assumed",
+      "source": "Synthetic MC sensitivity assumptions approved by P1 in issue #2 comment 6102447792; executable representation proposed for P3 review",
+      "unit": "months"
+    },
+    "/decision/ramp_offset/values/2": {
+      "kind": "assumed",
+      "source": "Synthetic MC sensitivity assumptions approved by P1 in issue #2 comment 6102447792; executable representation proposed for P3 review",
+      "unit": "months"
+    },
+    "/decision/ramp_offset/probabilities/0": {
+      "kind": "assumed",
+      "source": "Synthetic MC sensitivity assumptions approved by P1 in issue #2 comment 6102447792; executable representation proposed for P3 review",
+      "unit": "probability"
+    },
+    "/decision/ramp_offset/probabilities/1": {
+      "kind": "assumed",
+      "source": "Synthetic MC sensitivity assumptions approved by P1 in issue #2 comment 6102447792; executable representation proposed for P3 review",
+      "unit": "probability"
+    },
+    "/decision/ramp_offset/probabilities/2": {
+      "kind": "assumed",
+      "source": "Synthetic MC sensitivity assumptions approved by P1 in issue #2 comment 6102447792; executable representation proposed for P3 review",
+      "unit": "probability"
+    },
+    "/fixed_market_factors/overhead_multiplier": {
+      "kind": "assumed",
+      "source": "Synthetic MC sensitivity assumptions approved by P1 in issue #2 comment 6102447792; executable representation proposed for P3 review",
+      "unit": "multiple"
+    },
+    "/fixed_market_factors/service_variable_cost_multiplier": {
+      "kind": "assumed",
+      "source": "Synthetic MC sensitivity assumptions approved by P1 in issue #2 comment 6102447792; executable representation proposed for P3 review",
+      "unit": "multiple"
+    },
+    "/fixed_market_factors/other_revenue_multiplier": {
+      "kind": "assumed",
+      "source": "Synthetic MC sensitivity assumptions approved by P1 in issue #2 comment 6102447792; executable representation proposed for P3 review",
+      "unit": "multiple"
+    },
+    "/fixed_market_factors/other_direct_cost_multiplier": {
+      "kind": "assumed",
+      "source": "Synthetic MC sensitivity assumptions approved by P1 in issue #2 comment 6102447792; executable representation proposed for P3 review",
+      "unit": "multiple"
+    }
+  }
+}

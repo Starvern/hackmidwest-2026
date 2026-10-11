@@ -1,0 +1,23 @@
+/** Synthetic rehearsal only. Run in an integrated tree containing P3 358bdb1. */
+import assert from 'node:assert/strict';
+import { eligibleFixture } from '../../tests/intake-fixture.ts';
+import { compileProfile } from '../../src/lib/server/intake/compiler.ts';
+import { simulate_deterministic } from '../../src/lib/server/engine/scenarios.ts';
+import { DeterministicRequestSchema } from '../../src/lib/server/schemas.ts';
+import { addFlexibleDecision, editDecision } from '../../src/lib/dashboard/model.ts';
+const compiled=compileProfile(eligibleFixture(),{profile_id:'ac70439a-c9ec-4200-959a-6917b28d56f4',revision:1});
+let request=DeterministicRequestSchema.parse({schema_version:'1.0',company_id:compiled.company.id,horizon_months:60,reserve_floor_usd:1000,exit_multiple:4,scenarios:[{id:'baseline',name:'Current business',decisions:[]},{id:'software',name:'Software cost only',decisions:[]},{id:'equipment',name:'Equipment cost only',decisions:[]}]});
+request=addFlexibleDecision(request,'software','operating_expense','demo-software');
+request=editDecision(request,'demo-software','amount_per_month',1000);
+request=editDecision(request,'demo-software','duration_months',12);
+request=addFlexibleDecision(request,'equipment','purchase_asset','demo-equipment');
+for(const [field,value] of Object.entries({purchase_cost:6000,in_service_delay_months:2,useful_life_months:2,monthly_operating_cost:100,'funding.debt_fraction':.5,'funding.annual_interest_rate':.12,'funding.term_months':3})) request=editDecision(request,'demo-equipment',field,value);
+const result=simulate_deterministic(compiled.company,request);
+const first=result.scenarios.baseline.months[1];
+assert.equal(first.financials.revenue,84000);
+assert.equal(first.financials.ebitda,43600);
+assert.equal(first.financials.cash_end,19300);
+assert.equal(result.scenarios.software.months[1].financials.cash_end,18550);
+assert.equal(result.scenarios.equipment.months[1].financials.cash_end,16300);
+for(const id of ['software','equipment']) for(let m=1;m<=60;m++) assert.equal(result.scenarios[id].months[m].financials.revenue,result.scenarios.baseline.months[m].financials.revenue);
+console.log(JSON.stringify({candidate:'358bdb1',synthetic_rehearsal_only:true,input_fingerprint:result.input_fingerprint,request,expected:Object.fromEntries(Object.entries(result.scenarios).map(([id,path])=>[id,{months:[0,1,2,3,4,6,12,13,60].map(m=>({month:m,revenue:path.months[m].financials.revenue,ebitda:path.months[m].financials.ebitda,cash:path.months[m].financials.cash_end,principal:path.months[m].financials.debt_principal,depreciation:path.months[m].financials.depreciation})),metrics:path.metrics}]))},null,2));

@@ -1,0 +1,268 @@
+{
+  "schema_version": "1.0",
+  "company_id": "synthetic-hvac-001",
+  "horizon_months": 60,
+  "reserve_floor_usd": 150000,
+  "exit_multiple": 6,
+  "scenarios": [
+    {
+      "id": "baseline",
+      "name": "Baseline",
+      "decisions": []
+    },
+    {
+      "id": "trucks_only",
+      "name": "Buy two trucks",
+      "decisions": [
+        {
+          "id": "truck-01",
+          "stable_investment_key": "demo-trucks",
+          "start_month": 1,
+          "provenance": {
+            "/id": {
+              "kind": "assumed",
+              "source": "Illustrative scenario input from specification §4; not calibrated",
+              "unit": "label"
+            },
+            "/type": {
+              "kind": "assumed",
+              "source": "Illustrative scenario input from specification §4; not calibrated",
+              "unit": "label"
+            },
+            "/stable_investment_key": {
+              "kind": "assumed",
+              "source": "Illustrative scenario input from specification §4; not calibrated",
+              "unit": "label"
+            },
+            "/start_month": {
+              "kind": "assumed",
+              "source": "Illustrative scenario input from specification §4; not calibrated",
+              "unit": "months"
+            },
+            "/quantity": {
+              "kind": "assumed",
+              "source": "Illustrative scenario input from specification §4; not calibrated",
+              "unit": "count"
+            },
+            "/cost_per_unit": {
+              "kind": "assumed",
+              "source": "Illustrative scenario input from specification §4; not calibrated",
+              "unit": "USD"
+            },
+            "/in_service_delay_months": {
+              "kind": "assumed",
+              "source": "Illustrative scenario input from specification §4; not calibrated",
+              "unit": "months"
+            },
+            "/funding/debt_fraction": {
+              "kind": "assumed",
+              "source": "Illustrative scenario input from specification §4; not calibrated",
+              "unit": "decimal_rate"
+            },
+            "/funding/annual_interest_rate": {
+              "kind": "assumed",
+              "source": "Illustrative scenario input from specification §4; not calibrated",
+              "unit": "decimal_rate"
+            },
+            "/funding/term_months": {
+              "kind": "assumed",
+              "source": "Illustrative scenario input from specification §4; not calibrated",
+              "unit": "months"
+            }
+          },
+          "type": "purchase_trucks",
+          "quantity": 2,
+          "cost_per_unit": 60000,
+          "in_service_delay_months": 1,
+          "funding": {
+            "debt_fraction": 0.5,
+            "annual_interest_rate": 0.08,
+            "term_months": 48
+          }
+        }
+      ]
+    },
+    {
+      "id": "combined_expansion",
+      "name": "Trucks + technicians + marketing",
+      "decisions": [
+        {
+          "id": "truck-01b",
+          "stable_investment_key": "demo-trucks",
+          "start_month": 1,
+          "provenance": {
+            "/id": {
+              "kind": "assumed",
+              "source": "Illustrative scenario input from specification §4; not calibrated",
+              "unit": "label"
+            },
+            "/type": {
+              "kind": "assumed",
+              "source": "Illustrative scenario input from specification §4; not calibrated",
+              "unit": "label"
+            },
+            "/stable_investment_key": {
+              "kind": "assumed",
+              "source": "Illustrative scenario input from specification §4; not calibrated",
+              "unit": "label"
+            },
+            "/start_month": {
+              "kind": "assumed",
+              "source": "Illustrative scenario input from specification §4; not calibrated",
+              "unit": "months"
+            },
+            "/quantity": {
+              "kind": "assumed",
+              "source": "Illustrative scenario input from specification §4; not calibrated",
+              "unit": "count"
+            },
+            "/cost_per_unit": {
+              "kind": "assumed",
+              "source": "Illustrative scenario input from specification §4; not calibrated",
+              "unit": "USD"
+            },
+            "/in_service_delay_months": {
+              "kind": "assumed",
+              "source": "Illustrative scenario input from specification §4; not calibrated",
+              "unit": "months"
+            },
+            "/funding/debt_fraction": {
+              "kind": "assumed",
+              "source": "Illustrative scenario input from specification §4; not calibrated",
+              "unit": "decimal_rate"
+            },
+            "/funding/annual_interest_rate": {
+              "kind": "assumed",
+              "source": "Illustrative scenario input from specification §4; not calibrated",
+              "unit": "decimal_rate"
+            },
+            "/funding/term_months": {
+              "kind": "assumed",
+              "source": "Illustrative scenario input from specification §4; not calibrated",
+              "unit": "months"
+            }
+          },
+          "type": "purchase_trucks",
+          "quantity": 2,
+          "cost_per_unit": 60000,
+          "in_service_delay_months": 1,
+          "funding": {
+            "debt_fraction": 0.5,
+            "annual_interest_rate": 0.08,
+            "term_months": 48
+          }
+        },
+        {
+          "id": "hire-01",
+          "stable_investment_key": "demo-hires",
+          "start_month": 2,
+          "provenance": {
+            "/id": {
+              "kind": "assumed",
+              "source": "Illustrative scenario input from specification §4; not calibrated",
+              "unit": "label"
+            },
+            "/stable_investment_key": {
+              "kind": "assumed",
+              "source": "Illustrative scenario input from specification §4; not calibrated",
+              "unit": "label"
+            },
+            "/type": {
+              "kind": "assumed",
+              "source": "Illustrative scenario input from specification §4; not calibrated",
+              "unit": "label"
+            },
+            "/start_month": {
+              "kind": "assumed",
+              "source": "Illustrative scenario input from specification §4; not calibrated",
+              "unit": "months"
+            },
+            "/quantity": {
+              "kind": "assumed",
+              "source": "Illustrative scenario input from specification §4; not calibrated",
+              "unit": "count"
+            },
+            "/fully_loaded_annual_cost_per_person": {
+              "kind": "assumed",
+              "source": "Illustrative scenario input from specification §4; not calibrated",
+              "unit": "USD/year"
+            },
+            "/hiring_delay_months": {
+              "kind": "assumed",
+              "source": "Illustrative scenario input from specification §4; not calibrated",
+              "unit": "months"
+            },
+            "/ramp_months": {
+              "kind": "assumed",
+              "source": "Illustrative scenario input from specification §4; not calibrated",
+              "unit": "months"
+            },
+            "/one_time_hiring_cost_per_person": {
+              "kind": "assumed",
+              "source": "Illustrative scenario input from specification §4; not calibrated",
+              "unit": "USD"
+            }
+          },
+          "type": "hire_technicians",
+          "quantity": 2,
+          "fully_loaded_annual_cost_per_person": 95000,
+          "hiring_delay_months": 1,
+          "ramp_months": 4,
+          "one_time_hiring_cost_per_person": 3000
+        },
+        {
+          "id": "marketing-01",
+          "stable_investment_key": "demo-marketing",
+          "start_month": 3,
+          "provenance": {
+            "/id": {
+              "kind": "assumed",
+              "source": "Illustrative scenario input from specification §4; not calibrated",
+              "unit": "label"
+            },
+            "/stable_investment_key": {
+              "kind": "assumed",
+              "source": "Illustrative scenario input from specification §4; not calibrated",
+              "unit": "label"
+            },
+            "/type": {
+              "kind": "assumed",
+              "source": "Illustrative scenario input from specification §4; not calibrated",
+              "unit": "label"
+            },
+            "/start_month": {
+              "kind": "assumed",
+              "source": "Illustrative scenario input from specification §4; not calibrated",
+              "unit": "months"
+            },
+            "/duration_months": {
+              "kind": "assumed",
+              "source": "Illustrative scenario input from specification §4; not calibrated",
+              "unit": "months"
+            },
+            "/extra_spend_per_month": {
+              "kind": "assumed",
+              "source": "Illustrative scenario input from specification §4; not calibrated",
+              "unit": "USD/month"
+            },
+            "/lead_to_job_lag_months": {
+              "kind": "assumed",
+              "source": "Illustrative scenario input from specification §4; not calibrated",
+              "unit": "months"
+            },
+            "/incremental_cost_per_booked_job": {
+              "kind": "assumed",
+              "source": "Illustrative scenario input from specification §4; not calibrated",
+              "unit": "USD"
+            }
+          },
+          "type": "increase_marketing",
+          "duration_months": 12,
+          "extra_spend_per_month": 4000,
+          "lead_to_job_lag_months": 2,
+          "incremental_cost_per_booked_job": 100
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,430 @@
+{
+  "candidate": "358bdb1",
+  "synthetic_rehearsal_only": true,
+  "input_fingerprint": "536a5838d74f0a1fae5484a9c626059f0adf4183164bcedadd8856c21dbd20a3",
+  "request": {
+    "schema_version": "1.0",
+    "company_id": "profile:ac70439a-c9ec-4200-959a-6917b28d56f4",
+    "horizon_months": 60,
+    "reserve_floor_usd": 1000,
+    "exit_multiple": 4,
+    "scenarios": [
+      {
+        "id": "baseline",
+        "name": "Current business",
+        "decisions": []
+      },
+      {
+        "id": "software",
+        "name": "Software cost only",
+        "decisions": [
+          {
+            "id": "demo-software",
+            "stable_investment_key": "demo-software",
+            "start_month": 1,
+            "type": "operating_expense",
+            "decision_version": "flexible-investment-1-candidate",
+            "name": "New expense",
+            "amount_per_month": 1000,
+            "duration_months": 12,
+            "provenance": {
+              "/id": {
+                "kind": "user_input",
+                "source": "OperatorOS flexible decision editor",
+                "unit": "label"
+              },
+              "/stable_investment_key": {
+                "kind": "user_input",
+                "source": "OperatorOS flexible decision editor",
+                "unit": "label"
+              },
+              "/start_month": {
+                "kind": "user_input",
+                "source": "OperatorOS flexible decision editor",
+                "unit": "months"
+              },
+              "/type": {
+                "kind": "user_input",
+                "source": "OperatorOS flexible decision editor",
+                "unit": "label"
+              },
+              "/decision_version": {
+                "kind": "user_input",
+                "source": "OperatorOS flexible decision editor",
+                "unit": "label"
+              },
+              "/name": {
+                "kind": "user_input",
+                "source": "OperatorOS flexible decision editor",
+                "unit": "label"
+              },
+              "/amount_per_month": {
+                "kind": "user_input",
+                "source": "OperatorOS decision editor",
+                "unit": "USD/month"
+              },
+              "/duration_months": {
+                "kind": "user_input",
+                "source": "OperatorOS decision editor",
+                "unit": "months"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "id": "equipment",
+        "name": "Equipment cost only",
+        "decisions": [
+          {
+            "id": "demo-equipment",
+            "stable_investment_key": "demo-equipment",
+            "start_month": 1,
+            "type": "purchase_asset",
+            "decision_version": "flexible-investment-1-candidate",
+            "name": "New asset",
+            "purchase_cost": 6000,
+            "in_service_delay_months": 2,
+            "useful_life_months": 2,
+            "monthly_operating_cost": 100,
+            "funding": {
+              "debt_fraction": 0.5,
+              "annual_interest_rate": 0.12,
+              "term_months": 3
+            },
+            "provenance": {
+              "/id": {
+                "kind": "user_input",
+                "source": "OperatorOS flexible decision editor",
+                "unit": "label"
+              },
+              "/stable_investment_key": {
+                "kind": "user_input",
+                "source": "OperatorOS flexible decision editor",
+                "unit": "label"
+              },
+              "/start_month": {
+                "kind": "user_input",
+                "source": "OperatorOS flexible decision editor",
+                "unit": "months"
+              },
+              "/type": {
+                "kind": "user_input",
+                "source": "OperatorOS flexible decision editor",
+                "unit": "label"
+              },
+              "/decision_version": {
+                "kind": "user_input",
+                "source": "OperatorOS flexible decision editor",
+                "unit": "label"
+              },
+              "/name": {
+                "kind": "user_input",
+                "source": "OperatorOS flexible decision editor",
+                "unit": "label"
+              },
+              "/purchase_cost": {
+                "kind": "user_input",
+                "source": "OperatorOS decision editor",
+                "unit": "USD"
+              },
+              "/in_service_delay_months": {
+                "kind": "user_input",
+                "source": "OperatorOS decision editor",
+                "unit": "months"
+              },
+              "/useful_life_months": {
+                "kind": "user_input",
+                "source": "OperatorOS decision editor",
+                "unit": "months"
+              },
+              "/monthly_operating_cost": {
+                "kind": "user_input",
+                "source": "OperatorOS decision editor",
+                "unit": "USD/month"
+              },
+              "/funding/debt_fraction": {
+                "kind": "user_input",
+                "source": "OperatorOS decision editor",
+                "unit": "decimal_rate"
+              },
+              "/funding/annual_interest_rate": {
+                "kind": "user_input",
+                "source": "OperatorOS decision editor",
+                "unit": "decimal_rate"
+              },
+              "/funding/term_months": {
+                "kind": "user_input",
+                "source": "OperatorOS decision editor",
+                "unit": "months"
+              }
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "expected": {
+    "baseline": {
+      "months": [
+        {
+          "month": 0,
+          "cash": -100
+        },
+        {
+          "month": 1,
+          "revenue": 84000,
+          "ebitda": 43600,
+          "cash": 19300,
+          "principal": 0,
+          "depreciation": 0
+        },
+        {
+          "month": 2,
+          "revenue": 84000,
+          "ebitda": 43600,
+          "cash": 52000,
+          "principal": 0,
+          "depreciation": 0
+        },
+        {
+          "month": 3,
+          "revenue": 84000,
+          "ebitda": 43600,
+          "cash": 84700,
+          "principal": 0,
+          "depreciation": 0
+        },
+        {
+          "month": 4,
+          "revenue": 84000,
+          "ebitda": 43600,
+          "cash": 117400,
+          "principal": 0,
+          "depreciation": 0
+        },
+        {
+          "month": 6,
+          "revenue": 84000,
+          "ebitda": 43600,
+          "cash": 182800,
+          "principal": 0,
+          "depreciation": 0
+        },
+        {
+          "month": 12,
+          "revenue": 84000,
+          "ebitda": 43600,
+          "cash": 379000,
+          "principal": 0,
+          "depreciation": 0
+        },
+        {
+          "month": 13,
+          "revenue": 84000,
+          "ebitda": 43600,
+          "cash": 411700,
+          "principal": 0,
+          "depreciation": 0
+        },
+        {
+          "month": 60,
+          "revenue": 84000,
+          "ebitda": 43600,
+          "cash": 1948600,
+          "principal": 0,
+          "depreciation": 0
+        }
+      ],
+      "metrics": {
+        "minimum_cash": -100,
+        "cash_trough_month": 0,
+        "reserve_breach_months": [],
+        "debt_peak": 0,
+        "debt_peak_month": 0,
+        "exit_equity_value": 4041400,
+        "exit_valuation_status": "meaningful",
+        "payback": {
+          "status": "not_applicable",
+          "month": null,
+          "first_investment_month": null,
+          "subsequent_reversal_month": null
+        }
+      }
+    },
+    "equipment": {
+      "months": [
+        {
+          "month": 0,
+          "cash": -100
+        },
+        {
+          "month": 1,
+          "revenue": 84000,
+          "ebitda": 43600,
+          "cash": 16300,
+          "principal": 0,
+          "depreciation": 0
+        },
+        {
+          "month": 2,
+          "revenue": 84000,
+          "ebitda": 43600,
+          "cash": 47977.5,
+          "principal": 1000,
+          "depreciation": 0
+        },
+        {
+          "month": 3,
+          "revenue": 84000,
+          "ebitda": 43500,
+          "cash": 80337.5,
+          "principal": 1000,
+          "depreciation": 3000
+        },
+        {
+          "month": 4,
+          "revenue": 84000,
+          "ebitda": 43500,
+          "cash": 112705,
+          "principal": 1000,
+          "depreciation": 3000
+        },
+        {
+          "month": 6,
+          "revenue": 84000,
+          "ebitda": 43500,
+          "cash": 177955,
+          "principal": 0,
+          "depreciation": 0
+        },
+        {
+          "month": 12,
+          "revenue": 84000,
+          "ebitda": 43500,
+          "cash": 373705,
+          "principal": 0,
+          "depreciation": 0
+        },
+        {
+          "month": 13,
+          "revenue": 84000,
+          "ebitda": 43500,
+          "cash": 406330,
+          "principal": 0,
+          "depreciation": 0
+        },
+        {
+          "month": 60,
+          "revenue": 84000,
+          "ebitda": 43500,
+          "cash": 1939705,
+          "principal": 0,
+          "depreciation": 0
+        }
+      ],
+      "metrics": {
+        "minimum_cash": -100,
+        "cash_trough_month": 0,
+        "reserve_breach_months": [],
+        "debt_peak": 3000,
+        "debt_peak_month": 1,
+        "exit_equity_value": 4027705,
+        "exit_valuation_status": "meaningful",
+        "payback": {
+          "status": "not_reached",
+          "month": null,
+          "first_investment_month": 1,
+          "subsequent_reversal_month": null
+        }
+      }
+    },
+    "software": {
+      "months": [
+        {
+          "month": 0,
+          "cash": -100
+        },
+        {
+          "month": 1,
+          "revenue": 84000,
+          "ebitda": 42600,
+          "cash": 18550,
+          "principal": 0,
+          "depreciation": 0
+        },
+        {
+          "month": 2,
+          "revenue": 84000,
+          "ebitda": 42600,
+          "cash": 50500,
+          "principal": 0,
+          "depreciation": 0
+        },
+        {
+          "month": 3,
+          "revenue": 84000,
+          "ebitda": 42600,
+          "cash": 82450,
+          "principal": 0,
+          "depreciation": 0
+        },
+        {
+          "month": 4,
+          "revenue": 84000,
+          "ebitda": 42600,
+          "cash": 114400,
+          "principal": 0,
+          "depreciation": 0
+        },
+        {
+          "month": 6,
+          "revenue": 84000,
+          "ebitda": 42600,
+          "cash": 178300,
+          "principal": 0,
+          "depreciation": 0
+        },
+        {
+          "month": 12,
+          "revenue": 84000,
+          "ebitda": 42600,
+          "cash": 370000,
+          "principal": 0,
+          "depreciation": 0
+        },
+        {
+          "month": 13,
+          "revenue": 84000,
+          "ebitda": 43600,
+          "cash": 402700,
+          "principal": 0,
+          "depreciation": 0
+        },
+        {
+          "month": 60,
+          "revenue": 84000,
+          "ebitda": 43600,
+          "cash": 1939600,
+          "principal": 0,
+          "depreciation": 0
+        }
+      ],
+      "metrics": {
+        "minimum_cash": -100,
+        "cash_trough_month": 0,
+        "reserve_breach_months": [],
+        "debt_peak": 0,
+        "debt_peak_month": 0,
+        "exit_equity_value": 4032400,
+        "exit_valuation_status": "meaningful",
+        "payback": {
+          "status": "not_reached",
+          "month": null,
+          "first_investment_month": 1,
+          "subsequent_reversal_month": null
+        }
+      }
+    }
+  }
+}

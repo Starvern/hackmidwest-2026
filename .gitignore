@@ -1,5 +1,13 @@
 node_modules
 
+# Local artifacts left from the retired Python setup
+.venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+
 # Output
 .output
 .vercel
@@ -21,3 +29,6 @@ Thumbs.db
 # Vite
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
+
+# Separately packaged Node MC worker (rebuild with npm run build:mc-worker)
+/.mc-worker
