@@ -28,8 +28,8 @@
   }
 </script>
 <details class="risk"><summary>Company risk assumptions · {field.value === null ? 'not yet supplied' : field.state.replaceAll('_',' ')}</summary>
-  <p>Prepare sensitivity assumptions for review. Fitted and operator-estimated parameters remain estimates. Saving or reviewing these inputs does not approve calibrated risk probabilities or enable a risk run.</p>
-  <p>Use company evidence for each group. Blank parameters stay unknown; no demo settings are copied. Annual common-driver updates occur in months 1, 13, 25, 37 and 49.</p>
+  <p>Explore assumptions about changes in demand, costs and timing. These inputs remain estimates; risk simulations are not available for this business yet.</p>
+  <p>Provide a source and explanation for each group. Leave unknown values blank. The shared demand and price driver changes once a year.</p>
   {#if message}<p role="alert">{message}</p>{/if}
   <form onsubmit={e => { e.preventDefault(); void apply(); }}>
     <div class="grid"><label>Evidence coverage starts<input required type="date" bind:value={start} /></label><label>Evidence coverage ends<input required type="date" bind:value={end} /></label></div>
@@ -44,6 +44,6 @@
     <label class="check"><input type="checkbox" required bind:checked={omitted} />I acknowledge the fixed factors omit uncertainty, and these settings remain estimates pending parameter and evidence review.</label>
     <button disabled={busy}>Save risk assumptions as an unreviewed draft</button>
   </form>
-  <p>After saving, use “Review entered inputs” and confirm a new starting picture. P1/P2 acceptance must identify the exact revision and configuration fingerprint before activation. Workbook risk configuration remains unsupported.</p>
+  <p>After saving, review your inputs and confirm a new starting forecast. These assumptions need a separate evidence review before risk simulations can be enabled. Enter risk assumptions here rather than in the workbook.</p>
 </details>
 <style>.risk{background:white;padding:1.5rem;border:1px solid #d5dfd9;border-radius:12px;margin:1rem 0}summary,legend{font-weight:600}summary{cursor:pointer}p{line-height:1.6;font-size:.9rem;color:#536b69}fieldset{border:1px solid #d5dfd9;border-radius:8px;margin:1.5rem 0;padding:1rem}.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1rem}label{display:grid;gap:.4rem;font-size:.85rem;margin:.8rem 0}input,textarea,select{width:100%;box-sizing:border-box;font:inherit;padding:.6rem;border:1px solid #b9c8c9;border-radius:6px;background:white}textarea{min-height:75px}.check{display:flex;align-items:center;gap:.7rem}.check input{width:auto}button{padding:.7rem 1rem;border:0;border-radius:7px;background:#176d60;color:white;font:inherit;cursor:pointer}button:disabled{opacity:.5}@media(max-width:700px){.grid{grid-template-columns:1fr}}</style>

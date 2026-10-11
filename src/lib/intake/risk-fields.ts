@@ -10,4 +10,9 @@ export const riskGroups = [
   ['ramp', 'Productivity ramp timing', 'Offsets are integer months relative to the planned ramp. Explain observations or operator estimates.', ['decision.ramp_offset.values','decision.ramp_offset.probabilities']],
   ['fixed', 'Uncertainty left out', 'Overhead, service variable costs, other revenue and other direct costs stay fixed at 1. Acknowledge that this omits their uncertainty.', []],
 ] as const;
-export const riskFieldLabel = (path: string) => path.split('.').map(p => ({ rho: 'Persistence', min: 'Minimum', max: 'Maximum', mode: 'Most likely', values: 'Month offsets', probabilities: 'Probabilities', lower: 'Lower bound', upper: 'Upper bound', loading: 'Sensitivity', initial_state: 'Initial state', innovation_spread: 'Innovation spread' }[p] ?? p.replaceAll('_',' '))).join(' · ');
+export const riskFieldLabel = (path: string) => {
+  const parts = path.split('.');
+  const names: Record<string, string> = { rho: 'Persistence from year to year', min: 'Minimum', max: 'Maximum', mode: 'Most likely', values: 'Possible month changes', probabilities: 'Probability of each change', lower: 'Lower limit', upper: 'Upper limit', loading: 'Sensitivity to the shared driver', initial_state: 'Starting driver value', innovation_spread: 'Size of annual changes' };
+  const prefix = parts[0] === 'mappings' ? ({ demand: 'Demand', ticket: 'Price per job', valuation_multiple: 'Valuation multiple' }[parts[1]] ?? '') : '';
+  return [prefix, names[parts.at(-1)!] ?? parts.at(-1)!.replaceAll('_', ' ')].filter(Boolean).join(' · ');
+};
