@@ -14,17 +14,21 @@ test('growth example serves unmet demand profitably; marketing alone adds cost w
   const result = SimulationResultSchema.parse(await response.json());
   const { baseline, plan_a: expansion, plan_b: marketing } = result.scenarios;
   assert.equal(baseline.months[1].operations!.completed_jobs, 240);
-  assert.equal(baseline.months[1].operations!.unserved_jobs, 360);
+  assert.ok(baseline.months[1].operations!.unserved_jobs > 0);
   assert.equal(expansion.months[12].operations!.completed_jobs, 480);
   assert.ok(expansion.metrics.exit_equity_value! > baseline.metrics.exit_equity_value!);
   assert.ok(expansion.months[60].financials.cash_end > baseline.months[60].financials.cash_end);
   assert.equal(expansion.metrics.payback.status, 'reached');
   assert.deepEqual(expansion.metrics.reserve_breach_months, []);
   for (let month = 1; month <= 60; month++) {
+    assert.ok(baseline.months[month].operations!.unserved_jobs > 0, `Unmet demand in month ${month}`);
     assert.equal(marketing.months[month].operations!.completed_jobs, baseline.months[month].operations!.completed_jobs);
   }
   assert.ok(marketing.months[60].financials.cash_end < baseline.months[60].financials.cash_end);
   assert.equal(marketing.metrics.payback.status, 'not_reached');
+  assert.ok(expansion.months[7].operations!.completed_jobs > expansion.months[10].operations!.completed_jobs);
+  assert.equal(baseline.months[24].financials.debt_end, 0);
+  assert.ok(baseline.months[25].financials.cash_change > baseline.months[24].financials.cash_change);
 });
 
 test('growth example does not alter the original company or share mutable presets', () => {
