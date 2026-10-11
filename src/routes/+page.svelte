@@ -47,17 +47,17 @@
   onMount(() => { void initialize(); });
 </script>
 
-<svelte:head><title>OperatorOS · Investment workspace</title><meta name="description" content="Explore the operational and financial effects of decisions for a synthetic HVAC business." /></svelte:head>
+<svelte:head><title>Sapling · Investment workspace</title><meta name="description" content="Explore the operational and financial effects of business decisions with Sapling." /></svelte:head>
 
 <div class="workspace">
   <aside class="rail" aria-label="Workspace navigation">
-    <a class="brand" href="/" aria-label="OperatorOS home">O<span>↗</span></a>
-    <span class="rail-label">OS</span><a class="rail-active" href="#timeline" aria-label="Scenario timeline">▥</a>
+    <a class="brand" href="/" aria-label="Sapling home"><img src="/brand/sapling-symbol.png" alt="" /></a>
+    <span class="rail-label">SAPLING</span><a class="rail-active" href="#timeline" aria-label="Scenario timeline">▥</a>
     <a href="#assumptions" aria-label="Assumptions and model details">≡</a>
     <span class="rail-bottom">01</span>
   </aside>
   <main>
-    <header><div class="wordmark">Operator<span>OS</span><span class="divider">/</span><span class="workspace-name">Investment workspace</span></div><span class="synthetic">● Synthetic company</span></header>
+    <header><div class="wordmark"><img class="sapling-wordmark" src="/brand/sapling-logo.png" alt="Sapling" /><span class="divider">/</span><span class="workspace-name">Investment workspace</span></div><span class="synthetic">● Synthetic company</span></header>
     <section class="intro"><div><p class="eyebrow">OPERATING DECISIONS, OVER TIME</p><h1>Plan the next move.</h1><p class="subtitle">See what your investments change—and when they matter.</p></div><div class="company-tag"><span class="company-icon">⌁</span><div><strong>{company?.name ?? 'Loading company…'}</strong><small>HVAC services · USD · 60-month horizon</small></div></div></section>
     <div class="notice"><span>↗</span><p>Deterministic workspace <span>One set of disclosed assumptions. Risk simulations are shown separately below.</span></p><span class="status">{pending ? 'Computing…' : stale ? 'Results need updating' : result ? 'Results current' : 'Ready to load'}</span></div>
     {#if error}<div class="error" role="alert"><strong>We couldn’t complete that request.</strong><p>{error}</p><button onclick={() => company ? run() : initialize()} disabled={pending}>Retry</button></div>{/if}
@@ -103,7 +103,7 @@
     {#if result}<ResultsExplanation {result} {scenarioId} {stale} />{/if}
     <RiskPanel {request} enabled={metadata?.readiness.monte_carlo ?? false} {month} {scenarioId} {metric} />
     <section class="panel assumptions" id="assumptions"><details><summary><div><p class="eyebrow">CONTEXT MATTERS</p><h2>Assumptions & model notes</h2></div><span>View details +</span></summary><p>{metadata?.data_notice}</p><ul>{#each metadata?.limitations ?? [] as limitation}<li>{limitation}</li>{/each}</ul><p>Month 0 contains opening balances only. Null valuation means unavailable. Project payback uses paired incremental unlevered cash flow and may reverse. Utilization differences are percentage-point differences.</p><details><summary>Resolved run assumptions and company input provenance</summary><pre>{JSON.stringify({ assumptions: result?.assumptions ?? company?.global_assumptions, provenance: company?.provenance }, null, 2)}</pre></details><p class="muted">Schema {metadata?.schema_version ?? '—'} · Model {metadata?.model_version ?? '—'} · Revision {metadata?.contract_revision ?? '—'} · Run {result?.run_id ?? 'not run'}</p><p class="fingerprint">Input fingerprint: {result?.input_fingerprint ?? 'not run'}</p></details></section>
-    <footer><span>OperatorOS / A clearer view of what comes next.</span><span>Synthetic inputs. Modeled outcomes.</span></footer>
+    <footer><span>Sapling / A clearer view of what comes next.</span><span>Synthetic inputs. Modeled outcomes.</span></footer>
     <div class="sr-only" aria-live="polite">{pending ? 'Simulation running' : error ? 'Request failed' : stale ? 'Inputs changed; results are stale' : result ? 'Simulation complete' : ''}</div>
   </main>
 </div>
