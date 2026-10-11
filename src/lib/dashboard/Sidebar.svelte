@@ -2,12 +2,12 @@
   import { page } from '$app/state';
   let { intake = false, workspaceHref = '/' }: { intake?: boolean; workspaceHref?: string } = $props();
   const links = $derived([
-    { label: 'Your businesses', href: '/intake#businesses' },
+    { label: 'Businesses', href: '/intake#businesses' },
     { label: 'Import company', href: '/intake#import' },
-    { label: 'Build a plan', href: `${intake ? workspaceHref : ''}#plans` },
+    { label: 'Plan builder', href: `${intake ? workspaceHref : ''}#plans` },
     { label: 'Timeline', href: `${intake ? workspaceHref : ''}#timeline` },
     { label: 'Results', href: `${intake ? workspaceHref : ''}#outcomes` },
-    { label: 'Risk analysis', href: `${intake ? workspaceHref : ''}#risk` },
+    { label: 'Risk', href: `${intake ? workspaceHref : ''}#risk` },
     { label: 'Assumptions', href: `${intake ? workspaceHref : ''}#assumptions` },
   ]);
   function isCurrent(href: string) {
