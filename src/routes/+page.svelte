@@ -4,6 +4,7 @@
   import type { CompanyInput, DeterministicRequest, MetricKey, ModelMetadata, SimulationResult } from '../../contracts/contracts.ts';
   import example from '../../contracts/example-request.json';
   import RiskPanel from '../lib/dashboard/RiskPanel.svelte';
+  import ResultsExplanation from '../lib/dashboard/ResultsExplanation.svelte';
   import Timeline from '../lib/dashboard/Timeline.svelte';
   import { metrics, metricValue, formatValue, paybackLabel, decisionFields, fieldValue, editDecision, addFlexibleDecision, removeDecision } from '../lib/dashboard/model.ts';
   let request = $state<DeterministicRequest>(structuredClone(example) as unknown as DeterministicRequest);
@@ -102,6 +103,7 @@
         {#if result?.warnings.length}<section class="panel warnings"><h2>Model warnings</h2><ul>{#each result.warnings as warning}<li>{warning.message}</li>{/each}</ul></section>{/if}
       </div>
     </div>
+    {#if result}<ResultsExplanation {result} {scenarioId} {stale} />{/if}
     <RiskPanel {request} enabled={metadata?.readiness.monte_carlo ?? false} {month} {scenarioId} {metric} />
     <section class="panel assumptions" id="assumptions"><details><summary><div><p class="eyebrow">CONTEXT MATTERS</p><h2>Assumptions & model notes</h2></div><span>View details +</span></summary><p>{metadata?.data_notice}</p><ul>{#each metadata?.limitations ?? [] as limitation}<li>{limitation}</li>{/each}</ul><p>Month 0 contains opening balances only. Null valuation means unavailable. Project payback uses paired incremental unlevered cash flow and may reverse. Utilization differences are percentage-point differences.</p><details><summary>Resolved run assumptions and company input provenance</summary><pre>{JSON.stringify({ assumptions: result?.assumptions ?? company?.global_assumptions, provenance: company?.provenance }, null, 2)}</pre></details><p class="muted">Schema {metadata?.schema_version ?? '—'} · Model {metadata?.model_version ?? '—'} · Revision {metadata?.contract_revision ?? '—'} · Run {result?.run_id ?? 'not run'}</p><p class="fingerprint">Input fingerprint: {result?.input_fingerprint ?? 'not run'}</p></details></section>
     <footer><span>OperatorOS / A clearer view of what comes next.</span><span>Synthetic inputs. Modeled outcomes.</span></footer>
