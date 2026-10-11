@@ -2,8 +2,28 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import requestFixture from '../contracts/example-request.json' with { type: 'json' };
 import { submitJob, jobAction } from '../src/lib/server/monte-carlo/jobs-api.ts';
+import { createPlanningRequest } from '../src/lib/dashboard/plans.ts';
 const url = new URL('http://127.0.0.1:4173/api/v1/simulate/monte-carlo');
 const post = (body: string, target = url) => submitJob({ url: target, request: new Request(target, { method: 'POST', body }) });
+
+test('Prairie risk submission accepts its own company and rejects unknown identities', async () => {
+  const before = process.env.OPERATOROS_MC_REVIEW;
+  process.env.OPERATOROS_MC_REVIEW = '1';
+  try {
+    const input = { ...createPlanningRequest('synthetic-growth-hvac-002', 150000, 4), monte_carlo: { enabled: true, runs: 100, seed: 42 } };
+    assert.equal((await post(JSON.stringify({ ...input, company_id: 'unknown-example' }))).status, 422);
+    const response = await post(JSON.stringify(input));
+    assert.equal(response.status, 202);
+    const receipt = await response.json();
+    assert.equal(receipt.total_runs, 100);
+    const cancelled = await jobAction('cancel', { url, params: { id: receipt.job_id },
+      request: new Request(url, { headers: { 'x-mc-job-token': receipt.access_token } }) });
+    assert.equal((await cancelled.json()).state, 'cancelled');
+  } finally {
+    if (before === undefined) delete process.env.OPERATOROS_MC_REVIEW;
+    else process.env.OPERATOROS_MC_REVIEW = before;
+  }
+});
 
 test('job HTTP review gate, bounded input, validation, token isolation and cancellation use structured no-store responses', async () => {
   const before = process.env.OPERATOROS_MC_REVIEW;

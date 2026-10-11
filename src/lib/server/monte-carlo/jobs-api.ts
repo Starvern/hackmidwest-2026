@@ -2,7 +2,7 @@ import { existsSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { json } from '@sveltejs/kit';
-import { loadDemoCompany } from '../api/company.ts';
+import { loadExampleCompany } from '../api/company.ts';
 import { apiError, apiResponse, readApiInput } from '../api/http.ts';
 import { MonteCarloRequestSchema } from '../schemas.ts';
 import { localMonteCarloAvailable } from './availability.ts';
@@ -54,7 +54,7 @@ export function submitJob({ request, url }: { request: Request; url: URL }) {
       }
     } finally { reader.releaseLock(); }
     const input = await readApiInput(new Request(request.url, { method: 'POST', body: Buffer.concat(chunks) }), MonteCarloRequestSchema);
-    return jobs.submit(loadDemoCompany(), input, loadMonteCarloConfig());
+    return jobs.submit(loadExampleCompany(input.company_id), input, loadMonteCarloConfig());
   }, 202);
 }
 export function jobAction(kind: 'status' | 'result' | 'cancel', { request, url, params }: { request: Request; url: URL; params: { id: string } }) {

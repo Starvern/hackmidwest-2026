@@ -4,7 +4,7 @@
   import { createRiskController, emptyRiskState, riskRequest, probabilityLabel, eligibilityLabel, pairedExit } from './monte-carlo.ts';
   import { riskComparison } from './plans.ts';
   import { formatValue, metrics } from './model.ts';
-  let { request, enabled, month, scenarioId, metric }: { request: DeterministicRequest; enabled: boolean; month: number; scenarioId: string; metric: MetricKey } = $props();
+  let { request, enabled, month, scenarioId, metric, allowRecorded = true }: { request: DeterministicRequest; enabled: boolean; month: number; scenarioId: string; metric: MetricKey; allowRecorded?: boolean } = $props();
   const riskMetrics: { key: MetricKey; label: string }[] = [...metrics, { key: 'ttm_ebitda', label: 'Trailing 12-month EBITDA' }, { key: 'enterprise_value', label: 'Enterprise value' }, { key: 'unlevered_fcf', label: 'Monthly unlevered FCF' }];
   let seed = $state(42);
   let runs = $state<100 | 2000>(100);
@@ -48,7 +48,7 @@
   <p class="muted">Explore how this plan responds when demand, costs and timing vary together. These are results under synthetic assumptions, not measured odds for a real business.</p>
   {#if !enabled}<p class="availability">New risk simulations are unavailable in this session.</p>{/if}
   <div class="risk-controls"><label>Compare selected plan with<select value={selectedOther} onchange={event => otherId = event.currentTarget.value} disabled={risk.busy}>{#each otherPlans as plan}<option value={plan.id}>{plan.name}</option>{/each}</select></label><button class="primary" onclick={run} disabled={!enabled || risk.busy || (risk.job !== null && ['queued','running'].includes(risk.job.state))}>Run risk simulation</button>
-    <button onclick={() => controller.recorded()} disabled={!enabled || risk.busy || (risk.job !== null && ['queued','running'].includes(risk.job.state))}>View example risk results</button>
+    {#if allowRecorded}<button onclick={() => controller.recorded()} disabled={!enabled || risk.busy || (risk.job !== null && ['queued','running'].includes(risk.job.state))}>View example risk results</button>{/if}
     {#if risk.job && ['queued','running'].includes(risk.job.state)}<button onclick={() => controller.cancel()}>Cancel run</button>{/if}
     {#if risk.error && risk.job}<button onclick={() => controller.resume()} disabled={risk.busy}>Check progress</button>{/if}
   </div>
