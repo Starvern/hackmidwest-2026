@@ -1,7 +1,20 @@
 # Person 2 workbook importer review
 
 Reviewed P3 commit `aeebd00`, integrated on `will` through `abe676a`.
-Disposition: acceptance pending the internal blank-row finding below.
+Initial disposition: acceptance pending the internal blank-row finding below.
+
+## Correction recheck: accepted within importer review scope
+
+P3 correction `0177fd0` independently rechecked on Windows Node 22.20.
+All 11 focused tests pass: eight P3 importer tests, two independent P2 tests,
+and the original Business gap reproduction. Field/source/detail gaps and orphan
+detail records reject with bounded locations; blank/populated templates still
+import. `npm run check` reports zero errors and warnings.
+
+The original silent-truncation finding is closed. P2's focused importer review is
+accepted at this correction; the scope limits below still apply. This is not
+acceptance of the separately integrated internal company risk binding candidate.
+The following finding and failing result describe the original `aeebd00` review.
 
 ## Independent evidence
 
@@ -29,14 +42,14 @@ read subsequent keyed records within the declared table bounds. Preserve the
 separation between field, source, notes and linked-detail tables. Add coverage for
 field-table gaps and the corresponding named-source/detail-table cases.
 
-Run the deliberately failing expected-behavior reproduction separately:
+Run the original expected-behavior reproduction separately (now passing):
 
 ```powershell
 node --test docs/review-cases/intake-p2-gap.test.ts
 ```
 
-At the reviewed commit this fails with `Missing expected exception`. It is kept
-outside the default passing test glob until P3 incorporates the fix and regression.
+At the original reviewed commit this fails with `Missing expected exception`.
+It now passes at `0177fd0`; P3's equivalent regression is in the default suite.
 Run the nine normal importer tests with:
 
 ```powershell

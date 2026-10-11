@@ -1,4 +1,4 @@
-// Expected behavior reproduction for P3; deliberately outside default passing suite until fixed.
+// Original P2 reproduction; now passes at 0177fd0. Equivalent P3 coverage is in the default suite.
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { importWorkbook } from '../../src/lib/server/intake/import.ts';
