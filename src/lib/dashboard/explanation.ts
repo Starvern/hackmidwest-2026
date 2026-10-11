@@ -34,12 +34,16 @@ export function explainResults(result: SimulationResult, id: string) {
     : ['Compare adding capacity in smaller steps as customer demand grows.', 'Compare changing the timing of hiring, truck purchases, and marketing so they support one another.'];
   if (temporary) choices.push('Compare a longer or repeat marketing campaign, including its ongoing cost. Extra sales are not guaranteed.');
   if (finalCash < -.01) choices.push('Keep your current plan as an option. In this forecast it preserves more cash than this expansion.');
+  const firstBelowReserve = rows.find(row => row.financials.cash_end < result.assumptions.cash_reserve_floor);
+  const startsBelowReserve = path.months[0].financials.cash_end < result.assumptions.cash_reserve_floor;
   return { name: path.metadata.name, cash, reasons, choices,
     value: exit === null ? 'The model cannot estimate a meaningful difference in business value for this plan. That does not mean the business is worth zero.'
       : exit < -.01 ? `Its estimated business value is also about ${formatValue(Math.abs(exit))} lower at the end of five years.`
       : exit > .01 ? `Its estimated business value is about ${formatValue(exit)} higher at the end of five years.`
       : 'Its estimated business value is about the same at the end of five years.',
-    reserve: path.metrics.minimum_cash < result.assumptions.cash_reserve_floor
-      ? 'At some point, cash falls below the safety cushion you chose. Review when bills and loan payments come due before committing.'
-      : 'Cash stays above your chosen safety cushion in this forecast. Real results can still differ.' };
+    reserve: firstBelowReserve
+      ? `Month ${firstBelowReserve.month} ends below your chosen safety cushion. Review when bills and loan payments come due before committing.`
+      : startsBelowReserve
+        ? 'Cash starts below your chosen safety cushion, but every forecast month ends at or above it. The model does not add funding automatically.'
+        : 'Cash stays at or above your chosen safety cushion in this forecast. Real results can still differ.' };
 }

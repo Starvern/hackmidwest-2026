@@ -20,5 +20,5 @@
 {/if}
 
 <style>
-  .plain-results{padding:24px;margin-top:24px;line-height:1.65;max-width:100%}.plain-results li{margin:8px 0}.takeaway{font-size:16px;color:#244a40}.previous{padding:12px;background:#fff1d8;border-radius:8px}@media(max-width:850px){.plain-results{padding:16px}}
+  .plain-results{padding:24px;margin-top:24px;line-height:1.65;max-width:100%}.plain-results ul{list-style:disc;padding-left:22px}.plain-results li{margin:8px 0}.takeaway{font-size:16px;color:#244a40}.previous{padding:12px;background:#fff1d8;border-radius:8px}@media(max-width:850px){.plain-results{padding:16px}}
 </style>

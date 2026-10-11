@@ -24,3 +24,16 @@ test('explanation handles unavailable value, improved cash and reversed recovery
   assert.ok(text.reasons.some(r => r.includes('later lost in month 20')));
   assert.equal(explainResults(result, 'baseline'), null);
 });
+test('reserve explanation distinguishes opening shortfall from future month-end shortfalls', () => {
+  const changed = structuredClone(result);
+  const path = changed.scenarios.trucks_only;
+  changed.assumptions.cash_reserve_floor = 1000;
+  path.months[0].financials.cash_end = -100;
+  for (const row of path.months.slice(1)) row.financials.cash_end = 1000;
+  assert.match(explainResults(changed, 'trucks_only')!.reserve, /starts below.*every forecast month ends at or above/);
+  path.months[7].financials.cash_end = 999;
+  assert.match(explainResults(changed, 'trucks_only')!.reserve, /^Month 7 ends below/);
+  path.months[0].financials.cash_end = 1000;
+  path.months[7].financials.cash_end = 1000;
+  assert.match(explainResults(changed, 'trucks_only')!.reserve, /stays at or above/);
+});

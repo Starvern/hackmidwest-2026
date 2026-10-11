@@ -40,7 +40,10 @@
 
 <section class="panel risk-panel" aria-labelledby="risk-title" aria-busy={risk.busy}>
   <div class="panel-head"><div><p class="eyebrow">04 / EXPLORE UNCERTAINTY</p><h2 id="risk-title">Explore uncertainty</h2></div><span class="small-tag">{runs === 100 ? '100-path quick preview' : '2,000-path full run'}</span></div>
-  <label>Simulation size <select bind:value={runs} disabled={risk.busy || (risk.job !== null && ['queued','running'].includes(risk.job.state))}><option value={100}>Quick preview · 100 paths</option><option value={2000}>Full run · 2,000 paths</option></select></label>
+  <div class="risk-options">
+    <label>Simulation size<select bind:value={runs} disabled={risk.busy || (risk.job !== null && ['queued','running'].includes(risk.job.state))}><option value={100}>Quick preview · 100 paths</option><option value={2000}>Full run · 2,000 paths</option></select></label>
+    <div class="selected-plan"><span>Selected plan</span><strong>{request.scenarios.find(s => s.id === scenarioId)?.name ?? 'Select a plan'}</strong><a href="#plans">Edit plan</a></div>
+  </div>
   {#if runs === 100}<p class="availability">Quick preview uses fewer paths. Percentiles and estimated probabilities are rough and may change substantially in a full run.</p>{/if}
   <p class="muted">Explore how this plan responds when demand, costs and timing vary together. These are results under synthetic assumptions, not measured odds for a real business.</p>
   {#if !enabled}<p class="availability">New risk simulations are unavailable in this session.</p>{/if}
@@ -49,20 +52,26 @@
     {#if risk.job && ['queued','running'].includes(risk.job.state)}<button onclick={() => controller.cancel()}>Cancel run</button>{/if}
     {#if risk.error && risk.job}<button onclick={() => controller.resume()} disabled={risk.busy}>Check progress</button>{/if}
   </div>
-  <details><summary>Simulation settings</summary><label>Random seed <input aria-label="Monte Carlo random seed" type="number" min="0" max="4294967295" step="1" bind:value={seed} disabled={risk.busy} /></label><p class="muted">The same seed makes runs reproducible. Each run compares doing nothing, your selected plan and one other plan.</p></details>
+  <details class="simulation-settings"><summary>Simulation settings</summary><label>Random seed<input aria-label="Monte Carlo random seed" type="number" min="0" max="4294967295" step="1" bind:value={seed} disabled={risk.busy} /></label><p class="muted">The same seed makes runs reproducible. Each run compares doing nothing, your selected plan and one other plan.</p></details>
   <p class="muted">The 100-path preview does one twentieth of the path calculations. A full 2,000-path simulation previously took about 24 minutes; timing varies by computer. Changing inputs does not launch another run.</p>
   {#if risk.job}<div class="job-status" aria-live="polite"><strong>{risk.job.state === 'queued' ? 'Waiting for a worker' : risk.job.state === 'running' ? 'Calculating outcomes' : risk.job.state === 'succeeded' ? 'Risk simulation complete' : risk.job.state === 'cancelled' ? 'Run cancelled' : 'Run failed'}</strong><span>{risk.job.completed_runs.toLocaleString()} / {risk.job.total_runs.toLocaleString()} completed runs</span><progress max={risk.job.total_runs} value={risk.job.completed_runs} aria-label="Completed aggregated Monte Carlo runs"></progress></div>{/if}
   {#if risk.error}<div class="error" role="alert"><p>{risk.error}</p>{#if !risk.job}<button onclick={run} disabled={risk.busy || !enabled}>Retry submission</button>{/if}</div>{/if}
   {#if risk.result}
     {#if risk.result.runs === 100}<p class="availability"><strong>100-path preview result</strong> — exploratory estimates with limited sampling. Run 2,000 paths for a more stable comparison.</p>{/if}
     <p><strong>{risk.source === 'recorded' ? 'Example results · original plans and assumptions · seed 42' : 'New simulation results'}</strong></p>
-    <p class:stale class="result-notice">{stale ? 'Previous risk result — inputs or seed changed. Run again to update.' : 'Risk result matches the selected comparison and seed.'}{risk.busy ? ' Previous successful result stays visible while the new job runs.' : ''}</p>
+    <p class:stale class="result-notice">{stale ? 'Previous risk result — the plans, simulation size or seed changed. Run again to update.' : 'Risk result matches the selected comparison and seed.'}{risk.busy ? ' Previous successful result stays visible while the new job runs.' : ''}</p>
     {#if selected}
       <h3>{submitted?.scenarios.find(s => s.id === scenarioId)?.name ?? scenarioId}</h3>
       <div class="risk-summary">
         <article><h4>Could cash fall below the reserve?</h4><strong>{probabilityLabel(selected.path_risks.probability_cash_below_reserve_any_month)}</strong><p>of eligible modeled outcomes fall below {formatValue(submitted?.reserve_floor_usd)} at least once in the next five years.</p><small>{eligibilityLabel(selected.path_risks.probability_cash_below_reserve_any_month)}</small></article>
         <article><h4>Could it finish worse than doing nothing?</h4><strong>{probabilityLabel(selected.path_risks.probability_negative_exit_equity_delta)}</strong><p>of eligible outcomes have a lower modeled owner value at year five than their matching baseline.</p><small>{eligibilityLabel(selected.path_risks.probability_negative_exit_equity_delta)}</small></article>
-        <article><h4>Could the investment earn its money back?</h4><strong>{probabilityLabel(selected.payback.probability_within_horizon)}</strong><p>of eligible outcomes first recover the investment within five years. Recovery can reverse; this uses project cash flow before financing.</p><small>{eligibilityLabel(selected.payback.probability_within_horizon)}</small></article>
+        <article><h4>Could the investment earn its money back?</h4>
+          {#if selected.payback.probability_within_horizon.unavailable_reason === 'not_applicable'}
+            <strong>Not applicable</strong><p>This plan has no qualifying investment outlay to earn back. Cash risk and owner value are still simulated.</p><small>{selected.payback.not_applicable_count} paths with no applicable investment payback</small>
+          {:else}
+            <strong>{probabilityLabel(selected.payback.probability_within_horizon)}</strong><p>of eligible outcomes first recover the investment within five years. Recovery can reverse; this uses project cash flow before financing.</p><small>{eligibilityLabel(selected.payback.probability_within_horizon)}</small>
+          {/if}
+        </article>
       </div>
       <div class="value-range"><h4>What could the owner’s stake be worth in year five?</h4><p><strong>{formatValue(selected.terminal_distributions.exit_equity_value.p10)} – {formatValue(selected.terminal_distributions.exit_equity_value.p90)}</strong></p><p>The 10th–90th percentile range across eligible modeled outcomes, with a median of {formatValue(selected.terminal_distributions.exit_equity_value.p50)}. Outcomes can fall outside this range.</p><small>{eligibilityLabel(selected.terminal_distributions.exit_equity_value)}</small></div>
     {:else}<p class="availability">These results do not include the selected plan. Run a new comparison to evaluate it.</p>{/if}
@@ -96,6 +105,13 @@
 .risk-controls button{min-height:42px;border:1px solid #d7e0d4;border-radius:6px;background:white;color:#365342;font-size:13px;line-height:1.4;padding:10px 14px}
 .risk-controls .primary{background:#204e3c;color:white;border-color:#204e3c}
 .risk-panel .panel-head{align-items:flex-start}
+.risk-options{display:grid;grid-template-columns:minmax(220px,1fr) minmax(0,1fr);gap:24px;margin-bottom:16px;align-items:start}
+.risk-options label,.simulation-settings label{display:grid;gap:8px;font-size:13px;color:#607366;line-height:1.5}
+.risk-options select,.simulation-settings input{width:100%;min-height:42px;padding:10px 12px;border:1px solid #d7e0d4;border-radius:6px;background:white;color:#233e3c;font-size:13px}
+.selected-plan{display:grid;gap:8px;min-width:0;font-size:13px;line-height:1.5}.selected-plan span{color:#607366}.selected-plan strong{font-weight:600;overflow-wrap:anywhere}.selected-plan a{font-size:12px;color:#204e3c;text-underline-offset:3px}
+.simulation-settings{border-top:1px solid #e5ebe2;padding-top:16px}.simulation-settings summary{font-size:13px;font-weight:600}.simulation-settings label{max-width:180px;margin-top:16px}
+.availability{font-size:13px;line-height:1.65;border-radius:6px;margin:12px 0}
+.job-status{border-radius:6px;font-size:13px;line-height:1.5}.risk-summary strong{line-height:1.2;overflow-wrap:anywhere}
 @media(max-width:1000px){.risk-controls{grid-template-columns:1fr 1fr}.risk-controls label{grid-column:1/-1}}
-@media(max-width:600px){.risk-controls{grid-template-columns:1fr}.risk-controls label{grid-column:auto}.risk-controls button{width:100%}.risk-panel .panel-head{flex-wrap:wrap}}
+@media(max-width:600px){.risk-options{grid-template-columns:1fr;gap:16px}.risk-controls{grid-template-columns:1fr}.risk-controls label{grid-column:auto}.risk-controls button{width:100%}.risk-panel .panel-head{flex-wrap:wrap}}
 </style>

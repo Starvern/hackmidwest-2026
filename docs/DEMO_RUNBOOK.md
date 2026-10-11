@@ -1,6 +1,6 @@
 # Local deterministic showcase rehearsal
 
-Runtime: `luke d72f765`, including Sapling branding and concise results. Selected package integrated from `will d3948d0` at `outputs/showcase-demo`. Rehearsal host: Luke's current macOS checkout, Node v24.4.0. This is a verified presentation-host candidate; final host still needs team agreement. The selected workbook describes a fictional business.
+Current screenshot rehearsal: `luke bea8415`, including Sapling branding, polished layout, blank customizable Plan A/B defaults and concise results with an explicit opening-cash distinction. Selected package integrated from `will d3948d0` at `outputs/showcase-demo`. Rehearsal host: Luke's current macOS checkout, Node v24.4.0. This is a verified presentation-host candidate; final host still needs team agreement. The selected workbook describes a fictional business. [Presenter fallback and checked-in screenshots](DEMO_FALLBACK.md) record exact plans, displayed checkpoints and restart behavior.
 
 ## Selected package rehearsal completed
 
@@ -19,6 +19,14 @@ This completes P3 selected-package integration and implementation-owner browser 
 To update an existing teammate checkout, first preserve/commit local work. Fetch `origin`, then integrate `origin/luke` into the working branch (or use a clean checkout of `luke`). Pulling only `main`, `gavin` or `will` does not guarantee the latest P3 UI is present. Record `git log -1 --oneline` when reporting a problem.
 
 Stop the previous dev/preview process with Ctrl-C before starting. A running preview serves its previous build; pulling code alone does not refresh it. `npm run demo` always rebuilds and uses port 4182 with `--strictPort`, so an occupied port fails rather than silently opening a different server. Open the URL printed by this process. After the rebuild/restart, refresh the browser. Plan edits reset on refresh; recreate the selected settings. Do not delete profile storage or browser cookies as a cache fix.
+
+P2's fictional-business risk work (`will 550de02`, including 100-path preview `41425f2`) is integrated at `5126a02`. To enable new risk runs on a local review host, add `OPERATOROS_MC_REVIEW=1` when starting the server, for example:
+
+```sh
+OPERATOROS_MC_REVIEW=1 OPERATOROS_INTAKE_REVIEW=1 OPERATOROS_INTAKE_DIRECTORY=/absolute/private/profile-directory npm run demo
+```
+
+Use your existing private profile directory. This flag must be present in the running server environment; setting it in a separate terminal or refreshing an old server does not enable simulations. The fictional workspace at `/` defaults to Quick preview (100 paths), with Full run (2,000 paths) available explicitly. A no-action plan has no investment payback to measure; “Not applicable” does not mean the risk simulator failed. Imported-company comparisons remain deterministic and do not expose risk execution. Restart clears in-memory fictional risk jobs; keep a running job's browser/server alive.
 
 From the repository, with dependencies installed:
 
@@ -52,4 +60,4 @@ The built app on port 4182 reopened the same persisted confirmed snapshot and ra
 
 ## Remaining handoff
 
-P2's selected workbook/plans are integrated and the exact browser rehearsal is complete. P1: independently verify the selected displayed financial values. P2: independently check operating results and help with browser acceptance. P3: address review findings and capture final presentation fallback evidence after acceptance. The current Mac is available as the supported host candidate; final presentation-host decision and submission target/submitter are still pending. No new company risk parameters or full company Monte Carlo aggregate are claimed.
+P2's selected workbook/plans are integrated and the implementation-owner browser rehearsal is complete. P1's financial package and reported-display reconciliation are recorded in issue #2; that is distinct from independent browser observation. The fallback screenshot set now provides selected-workbook display evidence for P1/P2 review. P2 owns the reported fictional-risk-simulator failures; integrate their final fix before checking risk controls. Independent combined browser acceptance, projector rehearsal, final presentation-host decision, submission target/submitter and joint release decision remain open. No new company risk parameters or full company Monte Carlo aggregate are claimed.
