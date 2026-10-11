@@ -15,7 +15,7 @@ platforms and implement Windows access control or an explicit unsupported-platfo
 boundary; do not merely remove the privacy check. Durable reopen/deletion did not
 execute here. In-memory confirmation/isolation checks passed.
 
-Three additional P1 known-answer tests passed. Reusable source is
+Five additional P1 known-answer/rejection tests passed. Reusable source is
 `docs/review-cases/intake-financial.test.ts`; run with Node's `--test` against an
 integration tree containing P3 `adbb458` and its intake fixture, not the older P1
 runtime tree. This file is deliberately outside the default test glob pending
@@ -35,6 +35,12 @@ integration and does not introduce competing intake schemas.
    rows unchanged. Replacing that total with only $1,000 blocks compilation;
    a reconciled $10,000 replacement preserves the original financial outputs.
    Material irregular annual payment blocks compilation instead of cash smoothing.
+4. A one-cent raw-source conflict blocks compilation, marks the historical ticket
+   conflicted and leaves inputs unchanged. A one-cent normalized revenue identity
+   mismatch also blocks instead of inventing a balancing expense or profit.
+5. Marketing exceeding its containing overhead bucket blocks. Loan schedules that
+   cannot retire principal in the supplied term, equal-payment amortization and a
+   first payment outside the supported January boundary each block compilation.
 
 Source review confirms profile-specific provenance references/immutable sidecar,
 no demo risk defaults, and exact revision/compiled/preview binding direction.

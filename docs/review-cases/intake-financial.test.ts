@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import { eligibleFixture, f } from '../../tests/intake-fixture.ts';
 import { ProfilePayloadSchema } from '../../src/lib/server/intake/schemas.ts';
 import { compileProfile, previewProfile } from '../../src/lib/server/intake/compiler.ts';
+import { assessIntake } from '../../src/lib/server/intake/eligibility.ts';
 const identity={profile_id:'ac70439a-c9ec-4200-959a-6917b28d56f4',revision:1};
 test('P1 exact first-month financial bridge and source snapshot',()=>{
  const p=eligibleFixture(), before=structuredClone(p);
@@ -43,5 +44,38 @@ test('P1 included and replacement expense details never add twice; annual cash b
  row.normalized_recognition_amount.value=10000;
  assert.deepEqual(previewProfile(compileProfile(p,identity)).baseline.months.map(r=>r.financials),b.baseline.months.map(r=>r.financials));
  row.frequency.value='annual';row.raw_amount.value=120000;row.irregular_payment.value=true;
+ assert.throws(()=>compileProfile(p,identity),/blocking/);
+});
+
+test('P1 conflicting source cents and normalized totals block without mutation',()=>{
+ const p=eligibleFixture();
+ p.history[0].revenue.raw={text:'70000.01',unit:'USD',precision:'0.01'};
+ const before=structuredClone(p);
+ const report=assessIntake(p);
+ assert.ok(report.issues.some(i=>i.code==='SOURCE_CONFLICT' && i.pointer==='/history/0/revenue'));
+ assert.equal(report.historical_tickets[0].reason,'source_conflict');
+ assert.throws(()=>compileProfile(p,identity),/blocking/);
+ assert.deepEqual(p,before);
+ // Normalized arithmetic is inconsistent too: do not plug the extra cent into EBITDA.
+ p.history[0].revenue.raw=null;
+ p.history[0].revenue.value=70000.01;
+ assert.throws(()=>compileProfile(p,identity),/blocking/);
+});
+
+test('P1 unsupported loan terms and duplicated marketing block before execution',()=>{
+ const p=eligibleFixture();
+ p.operations.baseline_marketing_in_overhead.value=10000.01;
+ assert.ok(assessIntake(p).issues.some(i=>i.code==='DUPLICATE_COST_MAPPING'));
+ assert.throws(()=>compileProfile(p,identity),/blocking/);
+ p.operations.baseline_marketing_in_overhead.value=2000;
+ p.opening.debt_declaration.value='itemized';
+ p.opening.loans=[ProfilePayloadSchema.shape.opening.shape.loans.element.parse({row_id:'bad-loan',lender:f('Bank','text'),name:f('Loan','text'),amortization_policy:f('level_principal','text'),terms_source:f('source','text'),outstanding_principal:f(250,'USD'),monthly_principal:f(100,'USD'),annual_rate:f(.12,'annual_fraction'),remaining_term:f(2,'months'),next_payment_date:f('2027-01-15','ISO_date')})];
+ assert.ok(assessIntake(p).issues.some(i=>i.code==='UNSUPPORTED_DEBT'));
+ assert.throws(()=>compileProfile(p,identity),/blocking/);
+ p.opening.loans[0].remaining_term.value=3;
+ p.opening.loans[0].amortization_policy.value='equal_payment';
+ assert.throws(()=>compileProfile(p,identity),/blocking/);
+ p.opening.loans[0].amortization_policy.value='level_principal';
+ p.opening.loans[0].next_payment_date.value='2027-02-15';
  assert.throws(()=>compileProfile(p,identity),/blocking/);
 });
