@@ -35,3 +35,45 @@ test('decision edits preserve paired economic actions, provenance units and inpu
   assert.deepEqual(edited.scenarios[2].decisions.slice(1), request.scenarios[2].decisions.slice(1));
   assert.equal(JSON.stringify(request), before);
 });
+
+import { addPlan, addAction, editPlanAction, riskComparison, timelineValue, revenueWindows } from '../src/lib/dashboard/plans.ts';
+test('independent plan edits preserve the original economics, pairing identity and provenance', () => {
+  const copied = addPlan(request, 'my-plan', 'combined_expansion');
+  const edited = editPlanAction(copied, 'my-plan', 'truck-01b', 'quantity', 4, 'my-trucks');
+  DeterministicRequestSchema.parse(edited);
+  assert.deepEqual(edited.scenarios.slice(0, 3), request.scenarios);
+  const action = edited.scenarios[3].decisions[0];
+  assert.equal(action.stable_investment_key, 'my-trucks');
+  assert.equal(action.provenance['/quantity'].kind, 'user_input');
+  assert.equal(action.provenance['/quantity'].unit, 'count');
+  assert.equal(copied.scenarios[3].decisions[0].stable_investment_key, 'demo-trucks');
+  assert.equal(request.scenarios.length, 3);
+});
+test('empty plans can compose all supported actions with valid unique identities', () => {
+  let next = addPlan(request, 'custom');
+  for (const type of ['increase_marketing', 'purchase_trucks', 'hire_technicians'] as const) next = addAction(next, 'custom', type, `custom-${type}`);
+  DeterministicRequestSchema.parse(next);
+  assert.equal(next.scenarios[3].decisions.length, 3);
+  assert.equal(next.scenarios[3].decisions[0].provenance['/extra_spend_per_month'].kind, 'assumed');
+  const subset = riskComparison(next, 'custom', 'combined_expansion');
+  DeterministicRequestSchema.parse(subset);
+  assert.deepEqual(subset.scenarios.map(s => s.id), ['baseline', 'combined_expansion', 'custom']);
+  assert.equal(riskComparison(next, 'custom', 'deleted-plan').scenarios.length, 3);
+  assert.deepEqual(riskComparison(request, 'combined_expansion', 'trucks_only'), request);
+});
+test('chart changes reconcile revenue uplift and return to baseline without replacing backend deltas', () => {
+  const path = result.scenarios.combined_expansion;
+  assert.equal(revenueWindows(result, 'combined_expansion'), '5–16');
+  assert.equal(revenueWindows(result, 'trucks_only'), '');
+  for (const month of [5, 12, 13, 16]) {
+    assert.equal(timelineValue(path, 'revenue', month, result, true), result.comparisons.combined_expansion.monthly_deltas[month].values.revenue);
+    assert.ok(timelineValue(path, 'revenue', month, result, true)! > 26000);
+    const row = path.months[month];
+    assert.equal(row.is_opening_state, false);
+    if (row.is_opening_state) throw new Error('Expected forecast month');
+    assert.equal(timelineValue(path, 'revenue', month, result, false), row.financials.revenue);
+  }
+  assert.equal(timelineValue(path, 'revenue', 17, result, true), 0);
+  assert.equal(timelineValue(path, 'revenue', 0, result, true), null);
+  assert.equal(timelineValue(result.scenarios.trucks_only, 'revenue', 5, result, true), 0);
+});

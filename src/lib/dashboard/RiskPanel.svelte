@@ -2,14 +2,19 @@
   import { onDestroy } from 'svelte';
   import type { DeterministicRequest, MetricKey } from '../../../contracts/contracts.ts';
   import { createRiskController, emptyRiskState, riskRequest, probabilityLabel, eligibilityLabel, pairedExit } from './monte-carlo.ts';
+  import { riskComparison } from './plans.ts';
   import { formatValue, metrics } from './model.ts';
   let { request, enabled, month, scenarioId, metric }: { request: DeterministicRequest; enabled: boolean; month: number; scenarioId: string; metric: MetricKey } = $props();
   const riskMetrics: { key: MetricKey; label: string }[] = [...metrics, { key: 'ttm_ebitda', label: 'Trailing 12-month EBITDA' }, { key: 'enterprise_value', label: 'Enterprise value' }, { key: 'unlevered_fcf', label: 'Monthly unlevered FCF' }];
   let seed = $state(42);
+  let otherId = $state('trucks_only');
+  let otherPlans = $derived(request.scenarios.filter(s => s.id !== 'baseline' && s.id !== scenarioId));
+  let selectedOther = $derived(otherPlans.find(s => s.id === otherId)?.id ?? otherPlans[0]?.id ?? '');
+  let comparedRequest = $derived(riskComparison(request, scenarioId, selectedOther));
   let risk = $state(emptyRiskState());
   const controller = createRiskController(value => risk = value);
   onDestroy(() => controller.dispose());
-  let desired = $derived(JSON.stringify({ ...request, monte_carlo: { enabled: true, runs: 2000, seed } }));
+  let desired = $derived(JSON.stringify({ ...comparedRequest, monte_carlo: { enabled: true, runs: 2000, seed } }));
   let stale = $derived(risk.result !== null && risk.resultInput !== desired);
   let submitted = $derived(risk.resultInput ? JSON.parse(risk.resultInput) as ReturnType<typeof riskRequest> : null);
   let selected = $derived(risk.result?.scenarios[scenarioId]);
@@ -27,26 +32,37 @@
     }).join(' ');
   }
   async function run() {
-    try { await controller.start(riskRequest($state.snapshot(request), seed)); }
+    try { await controller.start(riskRequest($state.snapshot(comparedRequest), seed)); }
     catch (error) { risk = { ...risk, error: error instanceof Error ? error.message : 'Invalid risk request.' }; }
   }
 </script>
 
 <section class="panel risk-panel" aria-labelledby="risk-title" aria-busy={risk.busy}>
-  <div class="panel-head"><div><p class="eyebrow">04 / EXPLORE UNCERTAINTY</p><h2 id="risk-title">Risk & resilience</h2></div><span class="small-tag">2,000 paired paths</span></div>
-  <p class="muted">Synthetic sensitivity assumptions. These modeled frequencies are not calibrated business probabilities.</p>
-  {#if !enabled}<p class="availability">Risk runs are available in the accepted local workflow. Enable local Monte Carlo review and build the worker to use these controls.</p>{/if}
-  <div class="risk-controls"><label>Random seed<input aria-label="Monte Carlo random seed" type="number" min="0" max="4294967295" step="1" bind:value={seed} disabled={risk.busy} /></label><button class="primary" onclick={run} disabled={!enabled || risk.busy || (risk.job !== null && ['queued','running'].includes(risk.job.state))}>Run risk simulation</button>
-    <button onclick={() => controller.recorded()} disabled={!enabled || risk.busy || (risk.job !== null && ['queued','running'].includes(risk.job.state))}>View recorded benchmark</button>
+  <div class="panel-head"><div><p class="eyebrow">04 / EXPLORE UNCERTAINTY</p><h2 id="risk-title">How much risk are you taking?</h2></div><span class="small-tag">2,000 modeled outcomes</span></div>
+  <p class="muted">Explore how this plan responds when demand, costs and timing vary together. These are results under synthetic assumptions, not measured odds for a real business.</p>
+  {#if !enabled}<p class="availability">New risk simulations are unavailable in this session.</p>{/if}
+  <div class="risk-controls"><label>Compare selected plan with<select value={selectedOther} onchange={event => otherId = event.currentTarget.value} disabled={risk.busy}>{#each otherPlans as plan}<option value={plan.id}>{plan.name}</option>{/each}</select></label><button class="primary" onclick={run} disabled={!enabled || risk.busy || (risk.job !== null && ['queued','running'].includes(risk.job.state))}>Run risk simulation</button>
+    <button onclick={() => controller.recorded()} disabled={!enabled || risk.busy || (risk.job !== null && ['queued','running'].includes(risk.job.state))}>View example risk results</button>
     {#if risk.job && ['queued','running'].includes(risk.job.state)}<button onclick={() => controller.cancel()}>Cancel run</button>{/if}
     {#if risk.error && risk.job}<button onclick={() => controller.resume()} disabled={risk.busy}>Resume checking this job</button>{/if}
   </div>
+  <details><summary>Simulation settings</summary><label>Random seed <input aria-label="Monte Carlo random seed" type="number" min="0" max="4294967295" step="1" bind:value={seed} disabled={risk.busy} /></label><p class="muted">The same seed makes runs reproducible. Each run compares doing nothing, your selected plan and one other plan.</p></details>
   <p class="muted">A recorded workstation run took about 24 minutes. Your runtime may differ. Runs are manual; editing inputs does not start another job.</p>
   {#if risk.job}<div class="job-status" aria-live="polite"><strong>{risk.job.state === 'queued' ? 'Waiting for a worker' : risk.job.state === 'running' ? 'Simulating paired paths' : risk.job.state === 'succeeded' ? 'Risk simulation complete' : risk.job.state === 'cancelled' ? 'Run cancelled' : 'Run failed'}</strong><span>{risk.job.completed_runs.toLocaleString()} / {risk.job.total_runs.toLocaleString()} completed runs</span><progress max={risk.job.total_runs} value={risk.job.completed_runs} aria-label="Completed aggregated Monte Carlo runs"></progress></div>{/if}
   {#if risk.error}<div class="error" role="alert"><p>{risk.error}</p>{#if !risk.job}<button onclick={run} disabled={risk.busy || !enabled}>Retry submission</button>{/if}</div>{/if}
   {#if risk.result}
-    <p><strong>{risk.source === 'recorded' ? 'Recorded benchmark · original example inputs · seed 42' : 'Completed live job'}</strong></p>
-    <p class:stale class="result-notice">{stale ? 'Previous risk result — inputs or seed changed. Run again to update.' : 'Risk result matches current inputs and seed.'}{risk.busy ? ' Previous successful result stays visible while the new job runs.' : ''}</p>
+    <p><strong>{risk.source === 'recorded' ? 'Example results · original plans and assumptions · seed 42' : 'Completed live job'}</strong></p>
+    <p class:stale class="result-notice">{stale ? 'Previous risk result — inputs or seed changed. Run again to update.' : 'Risk result matches the selected comparison and seed.'}{risk.busy ? ' Previous successful result stays visible while the new job runs.' : ''}</p>
+    {#if selected}
+      <h3>{submitted?.scenarios.find(s => s.id === scenarioId)?.name ?? scenarioId}</h3>
+      <div class="risk-summary">
+        <article><h4>Could cash fall below the reserve?</h4><strong>{probabilityLabel(selected.path_risks.probability_cash_below_reserve_any_month)}</strong><p>of eligible modeled outcomes fall below {formatValue(submitted?.reserve_floor_usd)} at least once in the next five years.</p><small>{eligibilityLabel(selected.path_risks.probability_cash_below_reserve_any_month)}</small></article>
+        <article><h4>Could it finish worse than doing nothing?</h4><strong>{probabilityLabel(selected.path_risks.probability_negative_exit_equity_delta)}</strong><p>of eligible outcomes have a lower modeled owner value at year five than their matching baseline.</p><small>{eligibilityLabel(selected.path_risks.probability_negative_exit_equity_delta)}</small></article>
+        <article><h4>Could the investment earn its money back?</h4><strong>{probabilityLabel(selected.payback.probability_within_horizon)}</strong><p>of eligible outcomes first recover the investment within five years. Recovery can reverse; this uses project cash flow before financing.</p><small>{eligibilityLabel(selected.payback.probability_within_horizon)}</small></article>
+      </div>
+      <div class="value-range"><h4>What could the owner’s stake be worth in year five?</h4><p><strong>{formatValue(selected.terminal_distributions.exit_equity_value.p10)} – {formatValue(selected.terminal_distributions.exit_equity_value.p90)}</strong></p><p>The 10th–90th percentile range across eligible modeled outcomes, with a median of {formatValue(selected.terminal_distributions.exit_equity_value.p50)}. Outcomes can fall outside this range.</p><small>{eligibilityLabel(selected.terminal_distributions.exit_equity_value)}</small></div>
+    {:else}<p class="availability">These results do not include the selected plan. Run a new comparison to evaluate it.</p>{/if}
+    <details class="technical-results"><summary>Explore all plans, uncertainty charts and calculation details</summary>
     <div class="risk-cards">{#each Object.entries(risk.result.scenarios) as [id, scenario]}<article><h3>{submitted?.scenarios.find(s => s.id === id)?.name ?? id}</h3>
       <dl><dt>Any reserve shortfall · months 1–60</dt><dd>{probabilityLabel(scenario.path_risks.probability_cash_below_reserve_any_month)}</dd><dd class="counts">{eligibilityLabel(scenario.path_risks.probability_cash_below_reserve_any_month)}</dd>
       <dt>Negative paired exit Δ vs baseline</dt><dd>{probabilityLabel(scenario.path_risks.probability_negative_exit_equity_delta)}</dd><dd class="counts">{eligibilityLabel(scenario.path_risks.probability_negative_exit_equity_delta)}</dd>
@@ -64,8 +80,9 @@
       <div class="table-wrap"><table><caption class="sr-only">Pointwise percentile and paired delta values for selected month</caption><thead><tr><th>Metric</th><th>P10</th><th>P50</th><th>P90</th><th>Mean</th><th>Eligible / unavailable</th><th>Paired Δ P50</th></tr></thead><tbody>{#each riskMetrics as item}{@const q = selected.monthly_percentiles[item.key][month]}{@const delta = risk.result.comparisons[scenarioId].paired_monthly_delta_percentiles[item.key][month]}<tr><th>{item.label}</th><td>{formatValue(q.p10, item.key === 'utilization')}</td><td>{formatValue(q.p50, item.key === 'utilization')}</td><td>{formatValue(q.p90, item.key === 'utilization')}</td><td>{formatValue(q.mean, item.key === 'utilization')}</td><td>{eligibilityLabel(q)}</td><td>{item.key === 'utilization' ? formatValue(delta.p50, true).replace('%', ' pp') : formatValue(delta.p50)}<small>{eligibilityLabel(delta)}</small></td></tr>{/each}</tbody></table></div>
     {/if}
     <details><summary>Risk assumptions & run identity</summary><p>Reserve {formatValue(submitted?.reserve_floor_usd)} · seed {risk.result.seed} · {risk.result.runs} runs · model {risk.result.model_version} · schema {risk.result.schema_version} · config {risk.result.config_version} · sampler {risk.result.sampler_version} · execution {risk.result.execution_version}</p><p class="fingerprint">Run {risk.result.run_id}<br />Input {risk.result.input_fingerprint}<br />Configuration {risk.result.config_fingerprint}</p><pre>{JSON.stringify(risk.result.configuration, null, 2)}</pre></details>
+    </details>
   {:else}<p class="muted">No risk simulation has completed in this workspace. Deterministic results above use one disclosed set of assumptions.</p>{/if}
 </section>
 <style>
-  .risk-panel{margin-top:24px;padding:24px}.risk-controls{display:flex;gap:12px;align-items:end;flex-wrap:wrap}.risk-controls label{display:grid;gap:6px;font-size:12px}.risk-controls input{padding:10px;max-width:170px}.risk-controls button{padding:12px}.risk-controls .primary{width:auto;margin:0;flex:none}.job-status{display:grid;gap:8px;padding:16px;background:#eef4f1;margin:16px 0}.job-status progress{width:100%;accent-color:#208c7c}.risk-cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}.risk-cards article{border:1px solid #dce5df;border-radius:12px;padding:16px;min-width:0}.risk-cards h3{font-size:16px}.risk-cards h4{font-size:12px;margin:16px 0 8px}.risk-cards dt{font-size:12px;margin-top:16px}.risk-cards dd{margin:4px 0;font-weight:600}.risk-cards p{font-size:12px;line-height:1.6}.counts,small{font-size:11px!important;color:#65766c;font-weight:400!important;line-height:1.5}small{display:block}.result-notice{padding:12px;background:#eaf3ed}.result-notice.stale{background:#fff1d8}.availability{padding:12px;background:#f0f2ef}svg{width:100%;max-height:300px;margin:12px 0}svg text{font-size:10px;fill:#65766c}.fingerprint,pre{overflow-wrap:anywhere;white-space:pre-wrap;font-size:11px}details{margin-top:18px}h3{margin-top:20px}@media(max-width:850px){.risk-cards{grid-template-columns:1fr}.risk-panel{padding:16px}}
+  .risk-summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-top:20px}.risk-summary article,.value-range{padding:20px;background:#f4f7f1;border-radius:8px}.risk-summary h4,.value-range h4{font-size:14px;margin:0 0 14px}.risk-summary strong{font-size:30px;font-weight:500}.risk-summary p,.value-range p{font-size:13px;line-height:1.65}.value-range{margin-top:16px}.value-range strong{font-size:24px}.technical-results>summary{padding:16px 0;font-size:14px}.risk-panel{margin-top:24px;padding:24px}.risk-controls{display:flex;gap:12px;align-items:end;flex-wrap:wrap}.risk-controls label{display:grid;gap:6px;font-size:12px}.risk-controls select{max-width:100%;padding:10px;border:1px solid #dce5df;border-radius:5px}.risk-controls label{min-width:0;max-width:100%}input{padding:10px;max-width:170px}.risk-controls button{padding:12px}.risk-controls .primary{width:auto;margin:0;flex:none}.job-status{display:grid;gap:8px;padding:16px;background:#eef4f1;margin:16px 0}.job-status progress{width:100%;accent-color:#208c7c}.risk-cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}.risk-cards article{border:1px solid #dce5df;border-radius:12px;padding:16px;min-width:0}.risk-cards h3{font-size:16px}.risk-cards h4{font-size:12px;margin:16px 0 8px}.risk-cards dt{font-size:12px;margin-top:16px}.risk-cards dd{margin:4px 0;font-weight:600}.risk-cards p{font-size:12px;line-height:1.6}.counts,small{font-size:11px!important;color:#65766c;font-weight:400!important;line-height:1.5}small{display:block}.result-notice{padding:12px;background:#eaf3ed}.result-notice.stale{background:#fff1d8}.availability{padding:12px;background:#f0f2ef}svg{width:100%;max-height:300px;margin:12px 0}svg text{font-size:10px;fill:#65766c}.fingerprint,pre{overflow-wrap:anywhere;white-space:pre-wrap;font-size:11px}details{margin-top:18px}h3{margin-top:20px}@media(max-width:850px){.risk-summary{grid-template-columns:1fr}.risk-cards{grid-template-columns:1fr}.risk-panel{padding:16px}}
 </style>
