@@ -1400,9 +1400,17 @@
           "type": "object",
           "properties": {
             "runs": {
-              "type": "integer",
-              "minimum": 2000,
-              "maximum": 5000
+              "anyOf": [
+                {
+                  "type": "number",
+                  "const": 100
+                },
+                {
+                  "type": "integer",
+                  "minimum": 2000,
+                  "maximum": 5000
+                }
+              ]
             },
             "seed": {
               "type": "integer",

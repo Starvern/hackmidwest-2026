@@ -81,7 +81,7 @@ export const MCPaybackCountsSchema = z.strictObject({
 export const MCResultExtensionSchema = z.strictObject({
   extension_version: z.literal(MC_RESULT_VERSION), schema_version: z.literal('1.0'),
   model_version: z.literal('mvp-1.0'), contract_revision: z.literal(1),
-  run_id: z.string().min(1), company_id: z.string().min(1), runs: z.number().int().min(2000).max(5000), seed: count,
+  run_id: z.string().min(1), company_id: z.string().min(1), runs: z.union([z.literal(100), z.number().int().min(2000).max(5000)]), seed: count,
   config_version: z.literal(MC_CONFIG_VERSION), sampler_version: z.literal(MC_SAMPLER_VERSION), execution_version: z.literal(MC_EXECUTION_VERSION),
   config_fingerprint: z.string().regex(/^[a-f0-9]{64}$/), input_fingerprint: z.string().regex(/^[a-f0-9]{64}$/),
   configuration: MCConfigSchema,

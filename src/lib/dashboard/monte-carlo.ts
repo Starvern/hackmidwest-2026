@@ -7,9 +7,10 @@ export type JobStatus = z.infer<typeof MCJobStatusSchema>;
 type Receipt = z.infer<typeof MCJobReceiptSchema>;
 export type RiskState = { source: 'job' | 'recorded'; busy: boolean; job: JobStatus | null; error: string; result: MCResultExtension | null; resultInput: string; activeInput: string };
 export const emptyRiskState = (): RiskState => ({ source: 'job', busy: false, job: null, error: '', result: null, resultInput: '', activeInput: '' });
-export function riskRequest(request: DeterministicRequest, seed: number): MonteCarloRequest {
+export function riskRequest(request: DeterministicRequest, seed: number, runs: 100 | 2000 = 2000): MonteCarloRequest {
   if (!Number.isSafeInteger(seed) || seed < 0 || seed > 4294967295) throw new Error('Seed must be an integer from 0 to 4,294,967,295.');
-  return { ...structuredClone(request), monte_carlo: { enabled: true, runs: 2000, seed } };
+  if (![100, 2000].includes(runs)) throw new Error('Choose 100 preview paths or 2,000 full paths.');
+  return { ...structuredClone(request), monte_carlo: { enabled: true, runs, seed } };
 }
 /** Explicit user submission; polling failures resume the same job rather than duplicate work. */
 export function createRiskController(update: (state: RiskState) => void, fetcher: typeof fetch = fetch,
@@ -25,13 +26,13 @@ export function createRiskController(update: (state: RiskState) => void, fetcher
       while (alive(version) && receipt) {
         const status = await get<JobStatus>(receipt.status_url, { headers: headers() });
         if (!alive(version)) return;
-        if (status.job_id !== receipt.job_id) throw new Error('Server returned a different job.');
+        if (status.job_id !== receipt.job_id || status.total_runs !== JSON.parse(state.activeInput).monte_carlo.runs || status.completed_runs > status.total_runs) throw new Error('Server returned a different job or run count.');
         publish({ job: status });
         if (status.state === 'succeeded') {
           const result = await get<MCResultExtension>(receipt.result_url, { headers: headers() });
           if (!alive(version)) return;
           const input = JSON.parse(state.activeInput) as MonteCarloRequest;
-          if (result.run_id !== receipt.job_id || result.company_id !== input.company_id || result.seed !== input.monte_carlo.seed || result.runs !== 2000 ||
+          if (result.run_id !== receipt.job_id || result.company_id !== input.company_id || result.seed !== input.monte_carlo.seed || result.runs !== input.monte_carlo.runs ||
             JSON.stringify(Object.keys(result.scenarios).sort()) !== JSON.stringify(input.scenarios.map(s => s.id).sort())) throw new Error('Result does not match the submitted job.');
           publish({ source: 'job', result, resultInput: state.activeInput, busy: false, error: '' });
           return;
