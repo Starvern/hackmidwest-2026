@@ -1,6 +1,18 @@
 # Local deterministic showcase rehearsal
 
-Candidate: `luke e5d29a0`. Rehearsal host: Luke's current macOS checkout, Node v24.4.0. This is a verified presentation-host candidate; final host and P2's selected workbook/story still need team agreement. Use synthetic data during local candidate review.
+Runtime: `luke d72f765`, including Sapling branding and concise results. Selected package integrated from `will d3948d0` at `outputs/showcase-demo`. Rehearsal host: Luke's current macOS checkout, Node v24.4.0. This is a verified presentation-host candidate; final host still needs team agreement. The selected workbook describes a fictional business.
+
+## Selected package rehearsal completed
+
+Workbook SHA256 `11db0060e763103f84188be7fcd8731692dbed3d96f6ad0c1f914349776f32da` matches P2's handoff. `node scripts/prepare_demo.ts verify` passed against this checkout, checking the actual exported XLSX, review/preview/confirmation and all 60 forecast months. The supplied verification script rewrites generated plans/checkpoints with disposable import identities; the checked-in P2 originals were preserved after verification.
+
+The built browser flow on port 4182 imported this exact workbook, explicitly reviewed inputs/sources, calculated the baseline and confirmed **profile `b01847d9-c6fe-4536-87b0-bd42204f734a`, revision 2**. This ID is local to the rehearsal browser and database, not a portable account or submission link.
+
+Baseline is empty. Plan A is empty and named “Hold current operations”. Plan B is “Software subscription (cost only)” with only a $1,000/month operating expense starting month 1 for 60 months. Reserve $1,000 and exit multiple 4 were verified in the browser. Results became stale after edits and current after recalculation.
+
+Displayed month-one sales $84,000 for every plan; EBITDA $43,600 baseline/Plan A vs $42,600 software; cash $19,300 vs $18,550, delta -$750. Demand/capacity 600/480, completed jobs 480, productive technicians 10, active trucks 8. Year-five owner value $4,041,400 vs $3,948,400, delta -$93,000. Starting/minimum cash -$100 at month 0. Empty plan payback not applicable; software payback not reached. Five-year explanation reports $45,000 less ending cash, $93,000 less estimated value and three concise bullets. No browser console errors captured. Company risk stays unavailable.
+
+This completes P3 selected-package integration and implementation-owner browser rehearsal. P1/P2 independent selected-result/browser review and joint D/E acceptance remain outstanding. Keep the comparison tab open; plan settings reset on reload.
 
 ## Start the built app
 
@@ -35,4 +47,4 @@ The built app on port 4182 reopened the same persisted confirmed snapshot and ra
 
 ## Remaining handoff
 
-P2: publish selected populated workbook/hash, final plans and operating expectations. P1: independently verify the selected displayed financial values once that artifact is available. P3: repeat this browser flow with the selected workbook, fix demo blockers and capture fallback evidence. The current Mac is available as the supported host candidate; final presentation-host decision is still pending. No new company risk parameters or full company Monte Carlo aggregate are claimed.
+P2's selected workbook/plans are integrated and the exact browser rehearsal is complete. P1: independently verify the selected displayed financial values. P2: independently check operating results and help with browser acceptance. P3: address review findings and capture final presentation fallback evidence after acceptance. The current Mac is available as the supported host candidate; final presentation-host decision and submission target/submitter are still pending. No new company risk parameters or full company Monte Carlo aggregate are claimed.
