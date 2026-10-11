@@ -1,4 +1,4 @@
-# OperatorOS
+# Sapling
 
 Operational and financial scenario modeling for a synthetic HVAC business,
 built on the existing SvelteKit + TypeScript app.
