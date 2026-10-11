@@ -3,6 +3,17 @@ import example from '../../../contracts/example-request.json' with { type: 'json
 import { editDecision, metricValue, addFlexibleDecision } from './model.ts';
 
 const userLabel = { kind: 'user_input' as const, source: 'OperatorOS plan editor', unit: 'label' };
+export function createPlanningRequest(companyId = '', reserveFloor = 0, exitMultiple = 1): DeterministicRequest {
+  return {
+    schema_version: '1.0', company_id: companyId, horizon_months: 60,
+    reserve_floor_usd: reserveFloor, exit_multiple: exitMultiple,
+    scenarios: [
+      { id: 'baseline', name: 'Do nothing new', decisions: [] },
+      { id: 'plan_a', name: 'Plan A', decisions: [] },
+      { id: 'plan_b', name: 'Plan B', decisions: [] },
+    ],
+  };
+}
 export function addPlan(request: DeterministicRequest, id: string, copyId?: string): DeterministicRequest {
   const next = structuredClone(request);
   const source = next.scenarios.find(s => s.id === copyId);
