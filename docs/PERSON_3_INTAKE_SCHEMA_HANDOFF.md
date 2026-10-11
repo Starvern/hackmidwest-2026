@@ -57,6 +57,8 @@ draft risk envelope grants no MC eligibility. Manual/import inputs must converge
 on this same payload. Reconciliation/review record spellings newly encoded here
 are runtime candidates for focused integration review, not prior workbook claims.
 
-P2's owner-guidance follow-up from P1 remains theirs: explain both mapping modes
-and recognized monthly expense versus irregular cash beside the expense inputs.
+P2's owner-guidance follow-up from P1 was completed at `f95e09e` and integrated:
+both mapping modes and recognized monthly expense versus irregular cash are
+explained beside the expense inputs. The next input-check slice is documented in
+`PERSON_3_INTAKE_PREFLIGHT.md`; compilation/authorization remain pending.
 Gate D independent browser acceptance and Gate E remain separate and open.
