@@ -8,7 +8,6 @@
     { label: 'Plan builder', href: `${intake ? workspaceHref : ''}#plans` },
     { label: 'Results', href: `${intake ? workspaceHref : ''}#outcomes` },
     { label: 'Risk', href: `${intake ? workspaceHref : ''}#risk` },
-    { label: 'Assumptions', href: `${intake ? workspaceHref : ''}#assumptions` },
   ]);
   function isCurrent(href: string) {
     const target = new URL(href, page.url.href);
