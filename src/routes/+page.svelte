@@ -7,6 +7,7 @@
   import type { Decision, CompanyInput, DeterministicRequest, MetricKey, ModelMetadata, SimulationResult } from '../../contracts/contracts.ts';
   import example from '../../contracts/example-request.json';
   import PlanExplanation from '../lib/dashboard/PlanExplanation.svelte';
+  import Sidebar from '../lib/dashboard/Sidebar.svelte';
   import { addPlan, addAction, editPlanAction } from '../lib/dashboard/plans.ts';
   import RiskPanel from '../lib/dashboard/RiskPanel.svelte';
   import ResultsExplanation from '../lib/dashboard/ResultsExplanation.svelte';
@@ -87,12 +88,7 @@
 <svelte:head><title>Sapling · Investment workspace</title><meta name="description" content="Explore the operational and financial effects of business decisions with Sapling." /></svelte:head>
 
 <div class="workspace">
-  <aside class="rail" aria-label="Workspace navigation">
-    <a class="brand" href="/" aria-label="Sapling home"><img src="/brand/sapling-symbol.png" alt="" /></a>
-    <span class="rail-label">SAPLING</span><a class="rail-active" href="#timeline" aria-label="Scenario timeline">▥</a>
-    <a href="#assumptions" aria-label="Assumptions and model details">≡</a>
-    <span class="rail-bottom">01</span>
-  </aside>
+  <Sidebar />
   <main>
     <header><div class="wordmark"><img class="sapling-wordmark" src="/brand/sapling-logo.png" alt="Sapling" /><span class="divider">/</span><span class="workspace-name">Investment workspace</span></div><a href="/intake">Your business</a><span class="synthetic">{profileMode ? `● ${company?.name ?? 'Your business'} · revision ${binding?.revision ?? '—'}` : '● Fictional example business'}</span></header>
     {#if profileMode && binding && latestRevision !== binding.revision}<p class="editor-note">Viewing confirmed revision {binding.revision}. A newer revision {latestRevision} exists. <a href="/intake">Review the latest draft</a>.</p>{/if}
@@ -100,7 +96,7 @@
     <div class="notice"><span>↗</span><p>Plan comparison <span>Five-year forecasts based on your inputs and assumptions.</span></p><span class="status">{pending ? 'Computing…' : stale ? 'Results need updating' : result ? 'Results current' : 'Ready to load'}</span></div>
     {#if error}<div class="error" role="alert"><strong>We couldn’t complete that request.</strong><p>{error}</p><button onclick={() => company ? run() : initialize()} disabled={pending}>Retry</button></div>{/if}
     <div class="main-grid">
-      <section class="panel editor" aria-labelledby="editor-title">
+      <section id="plans" class="panel editor" aria-labelledby="editor-title">
         <div class="panel-head"><div><p class="eyebrow">01 / CONFIGURE</p><h2 id="editor-title">Build your plan</h2></div><span class="small-tag">{request.scenarios.length} plans</span></div>
         <form bind:this={editorForm} onsubmit={event => { event.preventDefault(); void run(); }}>
           <label class="full-label">Selected plan<select bind:value={scenarioId} disabled={pending}>{#each request.scenarios.filter(s => s.id !== 'baseline') as s}<option value={s.id}>{s.name}</option>{/each}</select></label>
@@ -129,7 +125,7 @@
           {#if result}<Timeline {paths} {metric} {month} {result} {changes} reserve={result.assumptions.cash_reserve_floor} onselect={value => month = value} />{:else}<div class="empty">{pending ? 'Building your 60-month comparison…' : 'Run a comparison to explore the timeline.'}</div>{/if}
         </section>
         {#if result}<PlanExplanation {result} {scenarioId} {month} {stale} /><details class="panel"><summary class="inspector-summary">What the five-year result means for this plan</summary><ResultsExplanation {result} {scenarioId} {stale} /></details>{/if}
-        <section class="cards" aria-label="Scenario outcomes">{#each paths as path, i}<article class="panel outcome" style:--scenario-color={['#72828e','#208c7c','#d17742','#7b65ad','#3175b0','#b44d6b'][i % 6]}><p class="scenario-name">{path.metadata.name}</p><p class="card-label">Estimated owner value · year 5</p><h3>{formatValue(path.metrics.exit_equity_value)}</h3><p class="delta">{path.metadata.scenario_id === 'baseline' ? 'Reference scenario' : `${formatValue(result?.comparisons[path.metadata.scenario_id].incremental_exit_equity_value)} vs baseline`}</p><dl><div><dt>Minimum cash</dt><dd>{formatValue(path.metrics.minimum_cash)}</dd></div><div><dt>Lowest cash month</dt><dd>Month {path.metrics.cash_trough_month}</dd></div><div><dt>Project payback</dt><dd>{paybackLabel(path.metrics.payback)}</dd></div></dl></article>{/each}</section>
+        <section id="outcomes" class="cards" aria-label="Scenario outcomes">{#each paths as path, i}<article class="panel outcome" style:--scenario-color={['#72828e','#208c7c','#d17742','#7b65ad','#3175b0','#b44d6b'][i % 6]}><p class="scenario-name">{path.metadata.name}</p><p class="card-label">Estimated owner value · year 5</p><h3>{formatValue(path.metrics.exit_equity_value)}</h3><p class="delta">{path.metadata.scenario_id === 'baseline' ? 'Reference scenario' : `${formatValue(result?.comparisons[path.metadata.scenario_id].incremental_exit_equity_value)} vs baseline`}</p><dl><div><dt>Minimum cash</dt><dd>{formatValue(path.metrics.minimum_cash)}</dd></div><div><dt>Lowest cash month</dt><dd>Month {path.metrics.cash_trough_month}</dd></div><div><dt>Project payback</dt><dd>{paybackLabel(path.metrics.payback)}</dd></div></dl></article>{/each}</section>
         <section class="panel inspector"><details><summary class="inspector-summary">Explore the monthly numbers and financial details</summary><div class="panel-head"><div><p class="eyebrow">03 / UNDERSTAND</p><h2>{month === 0 ? 'Opening state' : `Inside month ${month}`}</h2></div><span class="small-tag">{selectedPath?.metadata.name ?? 'Selected scenario'}</span></div>
           <p class="muted">Inspecting the scenario selected in the decision editor.{stale ? ' Values are from the previous run.' : ''}</p>
           <div class="table-wrap"><table><caption class="sr-only">Selected month values and backend differences from baseline</caption><thead><tr><th scope="col">Metric</th>{#each paths as path}<th scope="col">{path.metadata.name}</th>{/each}<th scope="col">Selected plan’s change</th></tr></thead><tbody>{#each metrics as item}<tr><th scope="row">{item.label}</th>{#each paths as path}<td>{formatValue(metricValue(path.months[month], item.key), item.key === 'utilization')}</td>{/each}<td>{item.key === 'utilization' ? formatValue(comparison?.monthly_deltas[month].values[item.key], true).replace('%', ' pp') : formatValue(comparison?.monthly_deltas[month].values[item.key])}</td></tr>{/each}</tbody></table></div>
@@ -146,7 +142,7 @@
         {#if result?.warnings.length}<section class="panel warnings"><h2>Things to watch</h2><ul>{#each [...new Set(result.warnings.map(warning => warning.message))] as message}<li>{message}<small> · Applies to: {Array.from(new Set(result.warnings.filter(w => w.message === message && w.scenario_id).map(w => result!.scenarios[w.scenario_id!]?.metadata.name).filter(Boolean))).join(", ")}</small></li>{/each}</ul></section>{/if}
       </div>
     </div>
-    {#if profileMode}<section class="panel"><h2>Risk analysis is not available for this business yet</h2><p>This comparison uses one set of assumptions. It does not estimate the likelihood of different outcomes.</p></section>{:else}<RiskPanel {request} enabled={metadata?.readiness.monte_carlo ?? false} {month} {scenarioId} {metric} />{/if}
+    <div id="risk">{#if profileMode}<section class="panel"><h2>Risk analysis is not available for this business yet</h2><p>This comparison uses one set of assumptions. It does not estimate the likelihood of different outcomes.</p></section>{:else}<RiskPanel {request} enabled={metadata?.readiness.monte_carlo ?? false} {month} {scenarioId} {metric} />{/if}</div>
     <section class="panel assumptions" id="assumptions"><details><summary><div><p class="eyebrow">CONTEXT MATTERS</p><h2>Assumptions & model notes</h2></div><span>View details +</span></summary><p>{profileMode ? 'This run uses the selected confirmed business revision, including its reviewed estimates. Results are modeled outcomes.' : metadata?.data_notice}</p><ul>{#each metadata?.limitations ?? [] as limitation}<li>{limitation}</li>{/each}</ul><p>Month 0 shows starting balances. An unavailable value is not zero. Payback compares the plan’s extra cash flow with doing nothing new, before financing; a later cash shortfall can reverse that recovery.</p><details><summary>Technical records</summary><pre>{JSON.stringify({ assumptions: result?.assumptions ?? company?.global_assumptions, provenance: company?.provenance }, null, 2)}</pre><p class="muted">Schema {metadata?.schema_version ?? '—'} · Model {metadata?.model_version ?? '—'} · Revision {metadata?.contract_revision ?? '—'} · Run {result?.run_id ?? 'not run'}</p><p class="fingerprint">Input fingerprint: {result?.input_fingerprint ?? 'not run'}</p></details></details></section>
     <footer><span>Sapling / A clearer view of what comes next.</span><span>{profileMode ? 'Confirmed facts and reviewed estimates. Modeled outcomes.' : 'Synthetic inputs. Modeled outcomes.'}</span></footer>
     <div class="sr-only" aria-live="polite">{pending ? 'Simulation running' : error ? 'Request failed' : stale ? 'Inputs changed; results are stale' : result ? 'Simulation complete' : ''}</div>

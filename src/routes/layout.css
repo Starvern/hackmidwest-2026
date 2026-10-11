@@ -169,3 +169,6 @@ button:disabled{cursor:default}
 .card-label,.delta,.scenario-name{font-size:11px}.outcome dl div{font-size:11px;flex-wrap:wrap}.outcome dd{text-align:left}
 @media(max-width:800px){.explanation-numbers{grid-template-columns:1fr;gap:14px}.explanation-numbers div{display:flex;justify-content:space-between;gap:12px;align-items:center}.explanation-numbers span{margin:0}.cards{grid-template-columns:1fr}}
 .item-name{display:block;width:100%;margin-top:8px;border:1px solid #dae2d7;border-radius:5px;padding:10px;color:#304c40}
+
+[id]{scroll-margin-top:24px}
+@media(max-width:800px){.workspace{flex-direction:column}[id]{scroll-margin-top:76px}}
