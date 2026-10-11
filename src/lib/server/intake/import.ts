@@ -22,7 +22,28 @@ function period(r: Row) {
   if (!p.success) throw new ImportFailure(r.as_of?.address ?? r.period_start?.address ?? 'Period','Provide either a complete date range or one as-of date.');
   return p.data;
 }
-/** Header-driven table data; bounded to the first blank leading cell, with no positional joins. */
+// Revision-2 section titles bound tables independently of blank rows. Notes and
+// other tables must never be interpreted as records in the preceding section.
+const sectionTitles = new Set(['Sources: use stable IDs; JSON arrays in source_ids cells',
+  'Completion instructions', 'How to map existing expenses', 'Service mix',
+  'Workforce declaration', 'Workforce constraints', 'Demand declaration', 'Measured demand observations']);
+function sectionRows(sheet: Sheet, header: number): [number, Map<string, Cell>][] {
+  const following = [...sheet.rows.entries()].filter(([n]) => n > header).sort(([a],[b]) => a-b);
+  const result: [number, Map<string, Cell>][] = [];
+  let previous = header;
+  let gap = false;
+  for (const [n,cells] of following) {
+    if (sectionTitles.has(String(cells.get('A')?.value)) && [...cells].every(([column,c]) => column === 'A' || c.value === null)) break;
+    if (n > previous + 1) gap = true;
+    previous = n;
+    if (![...cells.values()].some(c => c.value !== null)) { gap = true; continue; }
+    if (cells.get('A')?.value == null) throw new ImportFailure(`${sheet.name}!A${n}`, 'Row has data but is missing its leading key.');
+    if (gap) throw new ImportFailure(`${sheet.name}!A${n}`, 'Table has an internal blank row before this record. Remove the gap.');
+    result.push([n,cells]);
+  }
+  return result;
+}
+/** Header-driven records; blank trailing rows allowed, internal gaps reject. */
 function table(sheet: Sheet, first: string, columns?: string[]): Row[] {
   const found=[...sheet.rows.entries()].filter(([,r])=>r.get('A')?.value === first);
   if (found.length!==1) throw new ImportFailure(sheet.name,`Expected one ${first} table.`);
@@ -30,11 +51,7 @@ function table(sheet: Sheet, first: string, columns?: string[]): Row[] {
   const names=[...header.entries()].filter(([,c])=>c.value!==null).sort(([a],[b])=>a.length-b.length || a.localeCompare(b)).map(([column,c])=>[column,c.value] as const);
   if (names.some(([,v])=>typeof v!=='string') || new Set(names.map(([,v])=>v)).size!==names.length || columns && (names.length!==columns.length || names.some(([,v],i)=>v!==columns[i]))) throw new ImportFailure(`${sheet.name}!A${n}`,'Unexpected or duplicate table columns. Use the revision-2 template.');
   const result: Row[]=[];
-  for(let i=n+1;i<=10000;i++) {
-    const cells=sheet.rows.get(i); if(!cells || cells.get('A')?.value==null) {
-      if(cells && [...cells.values()].some(c=>c.value!==null)) throw new ImportFailure(`${sheet.name}!A${i}`,'Row has data but is missing its leading key.');
-      break;
-    }
+  for(const [i,cells] of sectionRows(sheet,n)) {
     const r:Row={}; for(const [column,key] of names) r[key as string]=cells.get(column) ?? {value:null,raw:'',address:`${column}${i}`};
     result.push(r);
   }
@@ -53,8 +70,7 @@ function detailTables(sheet: Sheet) {
     const first=sheet.rows.get(n+1)?.get('A')?.value;
     if(typeof first!=='string' || !allowed[first] || result.has(first) || cols.map(([,v])=>v).join('|')!==['record_kind','parent_pointer',...allowed[first]].join('|')) throw new ImportFailure(`${sheet.name}!A${n}`,'Unexpected operating detail columns or kind.');
     const rows:Row[]=[];
-    for(let i=n+1;i<=10000;i++) {
-      const cells=sheet.rows.get(i); if(!cells || cells.get('A')?.value==null) break;
+    for(const [i,cells] of sectionRows(sheet,n)) {
       const r:Row={}; for(const [c,key] of cols) r[key as string]=cells.get(c) ?? {value:null,raw:'',address:`${c}${i}`};
       if(val(r,'record_kind')!==first || val(r,'parent_pointer')!==`operations.${first==='service_mix'?'service_mix':['workforce','constraint'].includes(first)?'workforce_availability':'demand_evidence'}`) throw new ImportFailure(`Operations!A${i}`,'Detail kind/parent mismatch.');
       if(allowed[first].some(k=>val(r,k)!==null)) rows.push(r);
