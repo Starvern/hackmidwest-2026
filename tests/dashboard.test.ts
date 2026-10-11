@@ -36,7 +36,22 @@ test('decision edits preserve paired economic actions, provenance units and inpu
   assert.equal(JSON.stringify(request), before);
 });
 
-import { addPlan, addAction, editPlanAction, riskComparison, timelineValue, revenueWindows } from '../src/lib/dashboard/plans.ts';
+import { createPlanningRequest, addPlan, addAction, editPlanAction, riskComparison, timelineValue, revenueWindows } from '../src/lib/dashboard/plans.ts';
+test('workspace starts with blank customizable Plan A and Plan B, preserving company settings', () => {
+  const initial = createPlanningRequest(request.company_id, request.reserve_floor_usd, request.exit_multiple);
+  DeterministicRequestSchema.parse(initial);
+  assert.equal(initial.company_id, request.company_id);
+  assert.equal(initial.reserve_floor_usd, request.reserve_floor_usd);
+  assert.equal(initial.exit_multiple, request.exit_multiple);
+  assert.deepEqual(initial.scenarios.map(s => s.name), ['Do nothing new', 'Plan A', 'Plan B']);
+  assert.ok(initial.scenarios.every(s => s.decisions.length === 0));
+  const edited = addAction(initial, 'plan_a', 'operating_expense', 'software');
+  edited.scenarios[1].name = 'Dispatch software';
+  DeterministicRequestSchema.parse(edited);
+  assert.equal(edited.scenarios[1].decisions.length, 1);
+  assert.deepEqual(edited.scenarios[2], initial.scenarios[2]);
+  assert.deepEqual(initial, createPlanningRequest(request.company_id, request.reserve_floor_usd, request.exit_multiple));
+});
 test('independent plan edits preserve the original economics, pairing identity and provenance', () => {
   const copied = addPlan(request, 'my-plan', 'combined_expansion');
   const edited = editPlanAction(copied, 'my-plan', 'truck-01b', 'quantity', 4, 'my-trucks');

@@ -8,7 +8,7 @@
   import example from '../../contracts/example-request.json';
   import PlanExplanation from '../lib/dashboard/PlanExplanation.svelte';
   import Sidebar from '../lib/dashboard/Sidebar.svelte';
-  import { addPlan, addAction, editPlanAction } from '../lib/dashboard/plans.ts';
+  import { createPlanningRequest, addPlan, addAction, editPlanAction } from '../lib/dashboard/plans.ts';
   import RiskPanel from '../lib/dashboard/RiskPanel.svelte';
   import ResultsExplanation from '../lib/dashboard/ResultsExplanation.svelte';
   import Timeline from '../lib/dashboard/Timeline.svelte';
@@ -16,7 +16,7 @@
   const profileMode = $derived(page.url.searchParams.has('profile'));
   let binding = $state<CompanyBinding | null>(null);
   let latestRevision = $state<number | null>(null);
-  let request = $state<DeterministicRequest>(page.url.searchParams.has('profile') ? { schema_version: '1.0', company_id: '', horizon_months: 60, reserve_floor_usd: 0, exit_multiple: 1, scenarios: [{ id: 'baseline', name: 'Do nothing new', decisions: [] }, { id: 'trucks_only', name: 'Plan A', decisions: [] }, { id: 'combined_expansion', name: 'Plan B', decisions: [] }] } : structuredClone(example) as unknown as DeterministicRequest);
+  let request = $state<DeterministicRequest>(page.url.searchParams.has('profile') ? createPlanningRequest() : createPlanningRequest(example.company_id, example.reserve_floor_usd, example.exit_multiple));
   let company = $state<CompanyInput | null>(null);
   let metadata = $state<ModelMetadata | null>(null);
   let result = $state<SimulationResult | null>(null);
@@ -27,7 +27,7 @@
   let month = $state(5);
   let changes = $state(false);
   let actionType = $state<Decision['type']>('increase_marketing');
-  let scenarioId = $state('combined_expansion');
+  let scenarioId = $state('plan_a');
   let editorForm: HTMLFormElement;
   let stale = $derived(result !== null && resultInput !== JSON.stringify(request));
   let paths = $derived(result ? Object.values(result.scenarios) : []);
@@ -97,7 +97,7 @@
     {#if error}<div class="error" role="alert"><strong>We couldn’t complete that request.</strong><p>{error}</p><button onclick={() => company ? run() : initialize()} disabled={pending}>Retry</button></div>{/if}
     <div class="main-grid">
       <section id="plans" class="panel editor" aria-labelledby="editor-title">
-        <div class="panel-head"><div><p class="eyebrow">01 / CONFIGURE</p><h2 id="editor-title">Build your plan</h2></div><span class="small-tag">{request.scenarios.length} plans</span></div>
+        <div class="panel-head"><div><p class="eyebrow">01 / CONFIGURE</p><h2 id="editor-title">Build your plan</h2></div><span class="small-tag">{request.scenarios.length - 1} plans</span></div>
         <form bind:this={editorForm} onsubmit={event => { event.preventDefault(); void run(); }}>
           <label class="full-label">Selected plan<select bind:value={scenarioId} disabled={pending}>{#each request.scenarios.filter(s => s.id !== 'baseline') as s}<option value={s.id}>{s.name}</option>{/each}</select></label>
           <div class="plan-buttons"><button type="button" onclick={() => createPlan()} disabled={pending}>+ New plan</button><button type="button" onclick={() => createPlan(true)} disabled={pending}>Copy plan</button><button type="button" onclick={removePlan} disabled={pending || request.scenarios.length <= 3}>Remove plan</button></div>
