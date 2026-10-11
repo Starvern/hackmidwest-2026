@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { onMount } from 'svelte';
   import { page } from '$app/state';
   let { intake = false, workspaceHref = '/' }: { intake?: boolean; workspaceHref?: string } = $props();
   const links = $derived([
@@ -16,11 +17,12 @@
   }
   function reveal(href: string) {
     const target = new URL(href, page.url.href);
-    if (target.pathname !== page.url.pathname || target.search !== page.url.search) return;
+    if (target.pathname !== page.url.pathname || target.search !== page.url.search || target.hash !== '#assumptions') return;
     const section = document.getElementById(target.hash.slice(1));
     const details = section instanceof HTMLDetailsElement ? section : section?.querySelector('details');
     if (details) details.open = true;
   }
+  onMount(() => reveal(page.url.href));
 </script>
 
 <aside class="sidebar" aria-label="Workspace navigation">

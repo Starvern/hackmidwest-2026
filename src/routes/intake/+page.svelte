@@ -1,5 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte';
+  import { page } from '$app/state';
   import Sidebar from '../../lib/dashboard/Sidebar.svelte';
   import { requestJson } from '../../lib/dashboard/api.ts';
   import { fieldEntries, issueLabel, type Envelope } from '../../lib/intake/form.ts';
@@ -40,7 +41,14 @@
     if (books) rows = (await api<{ rows: typeof rows }>(`/template?books_through=${books}`)).rows;
     importNote = 'Workbook imported as a new draft. Review the imported facts, sources and estimates before calculating your starting picture.'; await refresh();
   }); }
-  onMount(() => { void action(async () => { await api('/session', 'POST'); await refresh(); }); });
+  onMount(() => { void action(async () => {
+    await api('/session', 'POST'); await refresh();
+    const id = page.url.searchParams.get('profile'), revision = page.url.searchParams.get('revision');
+    if (id) {
+      if (!revision || !/^[1-9]\d*$/.test(revision) || !Number.isSafeInteger(Number(revision))) throw new Error('Choose a saved business to open a valid revision.');
+      await loadProfile(id, Number(revision));
+    }
+  }); });
   async function create() { await action(async () => {
     const template = await api<{ profile: ProfilePayload; rows: typeof rows }>(`/template?books_through=${encodeURIComponent(date)}`);
     rows = template.rows;
@@ -52,11 +60,13 @@
     template.profile.business.name.source_ids = ['facts']; template.profile.business.books_through.source_ids = ['facts'];
     accept(await api<Record>('/profiles', 'POST', template.profile)); await refresh();
   }); }
-  async function load(id: string, revision: number) { await action(async () => {
-    accept(await api<Record>(`/profiles/${id}?revision=${revision}`));
+  async function loadProfile(id: string, revision: number) {
+    accept(await api<Record>(`/profiles/${encodeURIComponent(id)}?revision=${revision}`));
+    rows = null;
     const books = record!.profile.business.books_through.value;
     if (books) rows = (await api<{ rows: typeof rows }>(`/template?books_through=${books}`)).rows;
-  }); }
+  }
+  async function load(id: string, revision: number) { await action(() => loadProfile(id, revision)); }
   function edit(field: Envelope, value: unknown, source: string, raw?: string) {
     field.value = value; field.state = value === null ? 'unknown' : 'entered'; field.review = null; field.derivation = null;
     field.source_ids = value === null || !source ? [] : [source];
@@ -133,7 +143,7 @@
   <footer><a href="/">Use the fictional demo instead</a><span>{busy ? 'Working…' : 'Your facts stay separate from demo economics.'}</span></footer>
 </main>
 </div>
-<style>.intake-brand img{display:block;width:156px;height:52px;object-fit:contain}:global(body){background:#f2f5f2;color:#17363b;font-family:Arial,sans-serif}main{max-width:1100px;margin:0 auto;padding:2rem 1.2rem}nav,footer,.status{display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap}nav a,a{color:#176d60}header{max-width:760px;margin:3rem 0 2rem}h1{font-size:clamp(2rem,5vw,3.4rem);line-height:1.08;letter-spacing:-.04em;margin:.7rem 0}h2{font-size:1.3rem}p{line-height:1.6}.eyebrow{font-size:.75rem;letter-spacing:.16em}.panel{background:white;padding:1.5rem;border:1px solid #d5dfd9;border-radius:12px;margin:1rem 0}summary{cursor:pointer;font-weight:600;padding:.5rem 0}.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1.2rem;margin:1rem 0}.grid strong{display:block;font-size:1.8rem;margin:.5rem 0}.note{color:#536b69;font-size:.86rem}label{display:grid;gap:.4rem;font-size:.9rem}input,select,textarea{box-sizing:border-box;width:100%;padding:.65rem;border:1px solid #b9c8c9;border-radius:6px;background:white;font:inherit}textarea{min-height:80px}.check{display:flex;align-items:center;gap:.7rem;margin:1rem 0}.check input{width:auto}button,.link{padding:.7rem 1rem;border:1px solid #b4c6bd;border-radius:7px;background:#f5f8f4;color:#17363b;cursor:pointer;font:inherit}button:disabled{opacity:.5;cursor:default}.primary{background:#176d60;color:white;border-color:#176d60}.link{display:inline-block;text-decoration:none}.saved{margin:.4rem}.error{border-left:4px solid #b94731;padding:1rem;background:#fff0e9}.row{border-top:1px solid #dce5df;padding:1rem 0}.status{position:sticky;top:0;background:#e0ece3;padding:1rem;z-index:1}ul{max-height:350px;overflow:auto;font-size:.9rem;line-height:1.7}footer{padding:2rem 0;font-size:.85rem}@media(max-width:700px){.grid{grid-template-columns:1fr}.panel{padding:1rem}.status{position:static}}
+<style>.intake-brand img{display:block;width:156px;height:52px;object-fit:contain}.workspace{background:#f2f5f2;color:#233e3c}main{max-width:1100px;margin:0 auto;padding:2rem 1.2rem}nav,footer,.status{display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap}nav a,a{color:#176d60}header{max-width:760px;margin:3rem 0 2rem}h1{font-size:clamp(2rem,5vw,3.4rem);line-height:1.08;letter-spacing:-.04em;margin:.7rem 0}h2{font-size:1.3rem}p{line-height:1.6}.eyebrow{font-size:.75rem;letter-spacing:.16em}.panel{background:white;padding:1.5rem;border:1px solid #d5dfd9;border-radius:12px;margin:1rem 0}summary{cursor:pointer;font-weight:600;padding:.5rem 0}.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1.2rem;margin:1rem 0}.grid strong{display:block;font-size:1.8rem;margin:.5rem 0}.note{color:#536b69;font-size:.86rem}label{display:grid;gap:.4rem;font-size:.9rem}input,select,textarea{box-sizing:border-box;width:100%;padding:.65rem;border:1px solid #b9c8c9;border-radius:6px;background:white;font:inherit}textarea{min-height:80px}.check{display:flex;align-items:center;gap:.7rem;margin:1rem 0}.check input{width:auto}button,.link{padding:.7rem 1rem;border:1px solid #b4c6bd;border-radius:7px;background:#f5f8f4;color:#17363b;cursor:pointer;font:inherit}button:disabled{opacity:.5;cursor:default}.primary{background:#176d60;color:white;border-color:#176d60}.link{display:inline-block;text-decoration:none}.saved{margin:.4rem}.error{border-left:4px solid #b94731;padding:1rem;background:#fff0e9}.row{border-top:1px solid #dce5df;padding:1rem 0}.status{position:sticky;top:0;background:#e0ece3;padding:1rem;z-index:1}ul{max-height:350px;overflow:auto;font-size:.9rem;line-height:1.7}footer{padding:2rem 0;font-size:.85rem}@media(max-width:700px){.grid{grid-template-columns:1fr}.panel{padding:1rem}.status{position:static}}
 header{display:block;height:auto;min-height:0;border:0;max-width:760px;margin:36px 0 28px}
 header .eyebrow{margin:0 0 10px}
 header h1{font-size:clamp(28px,3vw,42px);line-height:1.15;letter-spacing:-.035em;margin:0 0 14px}
