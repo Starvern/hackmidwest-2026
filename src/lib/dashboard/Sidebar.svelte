@@ -6,7 +6,6 @@
     { label: 'Businesses', href: '/intake#businesses' },
     { label: 'Import company', href: '/intake#import' },
     { label: 'Plan builder', href: `${intake ? workspaceHref : ''}#plans` },
-    { label: 'Timeline', href: `${intake ? workspaceHref : ''}#timeline` },
     { label: 'Results', href: `${intake ? workspaceHref : ''}#outcomes` },
     { label: 'Risk', href: `${intake ? workspaceHref : ''}#risk` },
     { label: 'Assumptions', href: `${intake ? workspaceHref : ''}#assumptions` },
