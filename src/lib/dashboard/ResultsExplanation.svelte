@@ -6,9 +6,8 @@
 </script>
 
 {#if explanation}
-  <section class="panel plain-results" aria-labelledby="plain-results-title">
+  <section class="panel plain-results" aria-label="Plan results">
     <p class="eyebrow">WHAT THIS MEANS FOR YOUR BUSINESS</p>
-    <h2 id="plain-results-title">Your results, in plain English</h2>
     <p class="plan-name">{explanation.name} · compared with keeping your current plan</p>
     {#if stale}<p class="previous" role="status">These explanations describe your previous run. Run the comparison again to include your latest edits.</p>{/if}
     <p class="takeaway">{explanation.cash}</p>
@@ -24,5 +23,5 @@
 {/if}
 
 <style>
-  .plain-results{padding:24px;margin-top:24px;line-height:1.65;max-width:100%}.plain-results h2{margin:4px 0 8px}.plain-results h3{font-size:16px;margin-top:22px}.plain-results li{margin:10px 0}.takeaway{font-size:18px;font-weight:600;color:#244a40}.plan-name,.scope{color:#536865;font-size:13px}.previous{padding:12px;background:#fff1d8;border-radius:8px}.scope{border-top:1px solid #dce5df;padding-top:16px}@media(max-width:850px){.plain-results{padding:16px}}
+  .plain-results{padding:24px;margin-top:24px;line-height:1.65;max-width:100%}.plain-results h3{font-size:16px;margin-top:22px}.plain-results li{margin:10px 0}.takeaway{font-size:18px;font-weight:600;color:#244a40}.plan-name,.scope{color:#536865;font-size:13px}.previous{padding:12px;background:#fff1d8;border-radius:8px}.scope{border-top:1px solid #dce5df;padding-top:16px}@media(max-width:850px){.plain-results{padding:16px}}
 </style>
