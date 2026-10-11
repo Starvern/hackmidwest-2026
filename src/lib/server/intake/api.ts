@@ -1,3 +1,4 @@
+import { RiskEditorFailure, RiskEditorInputSchema } from './risk-editor.ts';
 import { z } from 'zod';
 import { json } from '@sveltejs/kit';
 import type { RequestEvent } from '@sveltejs/kit';
@@ -76,7 +77,11 @@ export function intakeApi(store: ProfileStore) {
           result = { profile_id: id, ...record, eligibility: assessIntake(record.profile) };
         } else if (parts.length === 3 && method === 'POST') {
           const body = await input(request);
-          if (parts[2] === 'review') {
+          if (parts[2] === 'risk-configuration') {
+            const parsed = z.strictObject({ revision, draft: RiskEditorInputSchema }).parse(body);
+            const record = store.saveRiskConfiguration(owner, id, parsed.revision, parsed.draft);
+            result = { profile_id: id, ...record, eligibility: assessIntake(record.profile) };
+          } else if (parts[2] === 'review') {
             const parsed = z.strictObject({ revision, selections: z.array(z.strictObject({ pointer: z.string().max(200), state: z.enum(['confirmed', 'reviewed_estimate', 'not_applicable']), rationale: z.string().min(1).max(2000) })).min(1).max(1500) }).parse(body);
             const record = store.review(owner, id, parsed.revision, parsed.selections);
             result = { profile_id: id, ...record, eligibility: assessIntake(record.profile) };
@@ -92,6 +97,7 @@ export function intakeApi(store: ProfileStore) {
       } else throw new RequestFailure(404, 'Intake endpoint not found.');
       return json(result, { headers: { 'cache-control': 'no-store' } });
     } catch (error) {
+      if (error instanceof RiskEditorFailure) return apiError(422, 'RISK_CONFIGURATION', error.message);
       if (error instanceof ImportFailure) return apiError(422, 'WORKBOOK_IMPORT', `${error.issues[0]?.location}: ${error.message}`, error.issues.slice(0, 100).map(i => ({ path: i.location, message: i.message })));
       if (error instanceof RequestFailure) return apiError(error.status, 'INTAKE_REQUEST', error.message);
       if (error instanceof z.ZodError) return apiError(422, 'VALIDATION_ERROR', 'Check the intake fields.', error.issues.map(i => ({ path: '/' + i.path.map(String).join('/'), message: i.message })));
