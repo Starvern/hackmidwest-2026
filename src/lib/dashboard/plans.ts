@@ -24,6 +24,11 @@ export function addAction(request: DeterministicRequest, scenarioId: string, typ
 export function editPlanAction(request: DeterministicRequest, scenarioId: string, decisionId: string, path: string, value: number | string, detachedKey: string): DeterministicRequest {
   const next = structuredClone(request);
   const decision = next.scenarios.find(s => s.id === scenarioId)!.decisions.find(d => d.id === decisionId)!;
+  if (path === 'name') {
+    decision.name = String(value);
+    decision.provenance['/name'] = { ...userLabel };
+    return next;
+  }
   const shared = next.scenarios.some(s => s.id !== scenarioId && s.decisions.some(d => d.stable_investment_key === decision.stable_investment_key));
   if (shared) {
     decision.stable_investment_key = detachedKey;

@@ -90,11 +90,44 @@ test('custom expenses and assets compose into new plans and copied edits remain 
   next = editPlanAction(next, 'custom-copy', 'subscription', 'name', 'Different subscription', 'copy-subscription');
   DeterministicRequestSchema.parse(next);
   assert.deepEqual(next.scenarios.slice(0, 4), before.scenarios);
-  assert.equal(next.scenarios[4].decisions[0].stable_investment_key, 'copy-subscription');
+  assert.equal(next.scenarios[4].decisions[0].stable_investment_key, 'subscription');
   assert.equal(next.scenarios[4].decisions[0].provenance['/name'].kind, 'user_input');
   assert.equal(next.scenarios[4].decisions[1].stable_investment_key, 'copy-equipment');
   assert.equal(next.scenarios[4].decisions[1].provenance['/funding/debt_fraction'].unit, 'decimal_rate');
   const risk = riskComparison(next, 'custom-copy', 'custom-plan');
   DeterministicRequestSchema.parse(risk);
   assert.equal(risk.scenarios.length, 3);
+});
+
+import { sample_action_risks } from '../src/lib/server/engine/monte_carlo.ts';
+import { loadMonteCarloConfig } from '../src/lib/server/monte-carlo/config.ts';
+import { CompanyInputSchema, APPROVED_POLICIES } from '../src/lib/server/schemas.ts';
+import { fingerprintRequest } from '../src/lib/server/fingerprint.ts';
+test('copied operational action labels retain economic fingerprints and paired risk draws', () => {
+  const copied = addPlan(request, 'operational-copy', 'combined_expansion');
+  const company = CompanyInputSchema.parse(load('../data/synthetic_hvac_company.json'));
+  let edited = copied;
+  for (const action of copied.scenarios[3].decisions) {
+    edited = editPlanAction(edited, 'operational-copy', action.id, 'name', `My ${action.type}`, 'must-not-detach');
+  }
+  DeterministicRequestSchema.parse(edited);
+  assert.deepEqual(edited.scenarios.slice(0, 3), request.scenarios);
+  assert.equal(fingerprintRequest(company, edited, APPROVED_POLICIES), fingerprintRequest(company, copied, APPROVED_POLICIES));
+  const config = loadMonteCarloConfig();
+  for (let run = 0; run < 20; run++) assert.deepEqual(
+    sample_action_risks(config, 42, run, edited.scenarios[3].decisions),
+    sample_action_risks(config, 42, run, copied.scenarios[3].decisions));
+  for (let i = 0; i < 3; i++) {
+    assert.equal(edited.scenarios[3].decisions[i].stable_investment_key, copied.scenarios[3].decisions[i].stable_investment_key);
+    assert.equal(edited.scenarios[3].decisions[i].provenance['/name'].kind, 'user_input');
+    assert.equal(copied.scenarios[3].decisions[i].name, undefined);
+  }
+  const economic = editPlanAction(edited, 'operational-copy', 'truck-01b', 'quantity', 4, 'different-trucks');
+  DeterministicRequestSchema.parse(economic);
+  assert.equal(economic.scenarios[3].decisions[0].stable_investment_key, 'different-trucks');
+  assert.notEqual(fingerprintRequest(company, economic, APPROVED_POLICIES), fingerprintRequest(company, edited, APPROVED_POLICIES));
+  const conflict = structuredClone(edited);
+  const truck = conflict.scenarios[3].decisions[0];
+  if (truck.type === 'purchase_trucks') truck.quantity = 4;
+  assert.equal(DeterministicRequestSchema.safeParse(conflict).success, false);
 });

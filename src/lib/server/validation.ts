@@ -87,7 +87,8 @@ export function validateRequest(value: {
 	value.scenarios.forEach((scenario, i) => {
 		const keys = new Set<string>();
 		scenario.decisions.forEach((decision, j) => {
-			const { id, provenance, ...action } = decision;
+			const { id, provenance, name, ...action } = decision as typeof decision & { name?: string };
+			void name;
 			void id; void provenance;
 			const serialized = canonicalJson(action);
 			const previous = reused.get(decision.stable_investment_key);

@@ -25,6 +25,7 @@ export const FundingSchema = z.strictObject({
 });
 
 export const DecisionBaseSchema = z.strictObject({
+  name: z.string().trim().min(1).max(100).optional(), // Presentation only; excluded from economic identity.
   id: z.string().min(1),
   stable_investment_key: z.string().min(1),
   start_month: forwardMonth,

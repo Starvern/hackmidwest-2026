@@ -17,6 +17,11 @@
           {
             "type": "object",
             "properties": {
+              "name": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 100
+              },
               "id": {
                 "type": "string",
                 "minLength": 1
@@ -139,6 +144,11 @@
           {
             "type": "object",
             "properties": {
+              "name": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 100
+              },
               "id": {
                 "type": "string",
                 "minLength": 1
@@ -246,6 +256,11 @@
           {
             "type": "object",
             "properties": {
+              "name": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 100
+              },
               "id": {
                 "type": "string",
                 "minLength": 1
@@ -347,6 +362,11 @@
           {
             "type": "object",
             "properties": {
+              "name": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 100
+              },
               "id": {
                 "type": "string",
                 "minLength": 1
@@ -417,11 +437,6 @@
                 "type": "string",
                 "const": "flexible-investment-1-candidate"
               },
-              "name": {
-                "type": "string",
-                "minLength": 1,
-                "maxLength": 100
-              },
               "amount_per_month": {
                 "type": "number",
                 "minimum": 0
@@ -433,13 +448,13 @@
               }
             },
             "required": [
+              "name",
               "id",
               "stable_investment_key",
               "start_month",
               "provenance",
               "type",
               "decision_version",
-              "name",
               "amount_per_month",
               "duration_months"
             ],
@@ -448,6 +463,11 @@
           {
             "type": "object",
             "properties": {
+              "name": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 100
+              },
               "id": {
                 "type": "string",
                 "minLength": 1
@@ -518,11 +538,6 @@
                 "type": "string",
                 "const": "flexible-investment-1-candidate"
               },
-              "name": {
-                "type": "string",
-                "minLength": 1,
-                "maxLength": 100
-              },
               "purchase_cost": {
                 "type": "number",
                 "minimum": 0
@@ -568,13 +583,13 @@
               }
             },
             "required": [
+              "name",
               "id",
               "stable_investment_key",
               "start_month",
               "provenance",
               "type",
               "decision_version",
-              "name",
               "purchase_cost",
               "in_service_delay_months",
               "useful_life_months",
