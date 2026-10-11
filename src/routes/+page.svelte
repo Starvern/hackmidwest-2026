@@ -8,7 +8,6 @@
   import example from '../../contracts/example-request.json';
   import PlanExplanation from '../lib/dashboard/PlanExplanation.svelte';
   import Sidebar from '../lib/dashboard/Sidebar.svelte';
-  import { createGrowthPlans } from '../lib/dashboard/growth-example.ts';
   import { createPlanningRequest, addPlan, addAction, editPlanAction } from '../lib/dashboard/plans.ts';
   import RiskPanel from '../lib/dashboard/RiskPanel.svelte';
   import ResultsExplanation from '../lib/dashboard/ResultsExplanation.svelte';
@@ -18,7 +17,7 @@
   const growthExample = $derived(!profileMode && page.url.searchParams.get('example') === 'growth');
   let binding = $state<CompanyBinding | null>(null);
   let latestRevision = $state<number | null>(null);
-  let request = $state<DeterministicRequest>(!page.url.searchParams.has('profile') && page.url.searchParams.get('example') === 'growth' ? createGrowthPlans() : page.url.searchParams.has('profile') ? createPlanningRequest() : createPlanningRequest(example.company_id, example.reserve_floor_usd, example.exit_multiple));
+  let request = $state<DeterministicRequest>(!page.url.searchParams.has('profile') && page.url.searchParams.get('example') === 'growth' ? createPlanningRequest('synthetic-growth-hvac-002', 150000, 4) : page.url.searchParams.has('profile') ? createPlanningRequest() : createPlanningRequest(example.company_id, example.reserve_floor_usd, example.exit_multiple));
   let company = $state<CompanyInput | null>(null);
   let metadata = $state<ModelMetadata | null>(null);
   let result = $state<SimulationResult | null>(null);
@@ -95,7 +94,7 @@
     <header class="workspace-header"><div class="wordmark"><img class="sapling-wordmark" src="/brand/sapling-logo.png" alt="Sapling" /><span class="divider">/</span><span class="workspace-name">Investment workspace</span></div><a href={profileMode && binding ? `/intake?profile=${binding.profile_id}&revision=${binding.revision}` : '/intake'} class="synthetic" title="View this company in Businesses"><span aria-hidden="true">● </span>{company?.name ?? 'Loading company…'}</a></header>
     {#if profileMode && binding && latestRevision !== binding.revision}<p class="editor-note">Viewing confirmed revision {binding.revision}. A newer revision {latestRevision} exists. <a href="/intake">Review the latest draft</a>.</p>{/if}
     <section class="intro"><div><p class="eyebrow">OPERATING DECISIONS, OVER TIME</p><h1>Plant the next move.</h1><p class="subtitle">See what your investments change—and when they matter.</p></div><div class="company-tag"><span class="company-icon">⌁</span><div><strong>{company?.name ?? 'Loading company…'}</strong><small>HVAC services · USD · Five-year forecast</small></div></div></section>
-    {#if growthExample}<p class="editor-note">Synthetic growth example: 600 requested jobs per month, but four trucks can serve only 240. Compare adding trucks and technicians with spending on marketing before increasing capacity. Both plans are editable.</p>{/if}
+    {#if growthExample}<p class="editor-note">Synthetic growth example: 600 requested jobs per month, but four trucks can serve only 240. Start with Plan A and Plan B. Try adding four trucks and two technicians in one plan, and marketing alone in the other.</p>{/if}
     <div class="notice"><span>↗</span><p>Plan comparison <span>Five-year forecasts based on your inputs and assumptions.</span></p><span class="status">{pending ? 'Computing…' : stale ? 'Results need updating' : result ? 'Results current' : 'Ready to load'}</span></div>
     {#if error}<div class="error" role="alert"><strong>We couldn’t complete that request.</strong><p>{error}</p><button onclick={() => company ? run() : initialize()} disabled={pending}>Retry</button></div>{/if}
     <div class="main-grid">
