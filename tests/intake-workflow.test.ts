@@ -118,6 +118,10 @@ test('edits and new previews invalidate acknowledgment; exact old confirmed revi
   } finally { store.close(); }
 });
 test('private SQLite storage persists confirmed snapshots across reopen and deletion revokes resolution', () => {
+  if (!['darwin', 'linux'].includes(process.platform)) {
+    assert.throws(() => new ProfileStore(join(tmpdir(), 'unsupported-profile.sqlite')), /macOS and Linux only/);
+    return; // Explicit rejection tested; durable persistence is not supported or claimed here.
+  }
   const dir = mkdtempSync(join(tmpdir(), 'intake-store-')), filename = join(dir, 'profiles.sqlite');
   let store = new ProfileStore(filename);
   try {

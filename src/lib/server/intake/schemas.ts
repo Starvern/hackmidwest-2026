@@ -31,13 +31,14 @@ export const ReviewSchema = z.strictObject({ actor_id: text, reviewed_at: z.iso.
 export function profileField<T extends z.ZodType>(value: T, unit: z.infer<typeof ProfileUnitSchema>) {
   return z.strictObject({
     value: value.nullable(), state: z.enum(['unknown', 'entered', 'reviewed_estimate', 'confirmed', 'not_applicable']),
-    unit: z.literal(unit), period: PeriodSchema, source_ids: z.array(text),
+    unit: z.literal(unit), period: PeriodSchema.nullable(), source_ids: z.array(text),
     raw: z.strictObject({ text: text, unit: text, precision: text }).nullable(),
     derivation: z.strictObject({ mapping_version: z.literal(MAPPING_VERSION), rule: text, inputs: z.array(text) }).nullable(),
     review: ReviewSchema.nullable(),
   }).superRefine((field, ctx) => {
     const absent = field.state === 'unknown' || field.state === 'not_applicable';
     const fieldValue = (field as Record<string, unknown>).value;
+    if (field.state !== 'unknown' && field.period === null) ctx.addIssue({ code: 'custom', path: ['period'], message: 'Entered or reviewed facts require an applicable date' });
     if (absent !== (fieldValue === null)) ctx.addIssue({ code: 'custom', path: ['value'], message: 'Unknown/not-applicable fields require null; other states require a value' });
     if (['confirmed', 'reviewed_estimate', 'not_applicable'].includes(field.state) && !field.review)
       ctx.addIssue({ code: 'custom', path: ['review'], message: 'Reviewed state requires explicit review' });
