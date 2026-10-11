@@ -186,7 +186,7 @@ export function simulate_deterministic(companyValue: CompanyInput, requestValue:
   company.global_assumptions.liquidity_floor = request.reserve_floor_usd;
   for (const [field, source] of [['valuation_multiple', 'exit_multiple'], ['liquidity_floor', 'reserve_floor_usd']] as const) {
     const pointer = `/global_assumptions/${field}`;
-    company.provenance[pointer] = { ...company.provenance[pointer], kind: 'user_input', source: `Resolved request.${source}` };
+    company.provenance[pointer] = { kind: 'user_input', unit: company.provenance[pointer].unit, source: `Resolved request.${source}` };
   }
   const raw = new Map<string, ReturnType<typeof runPath>>();
   const sorted = [...request.scenarios].sort((a, b) => a.id < b.id ? -1 : a.id > b.id ? 1 : 0);

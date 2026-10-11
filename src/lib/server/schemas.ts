@@ -8,12 +8,20 @@ const fraction = finite.min(0).max(1);
 const monthIndex = z.number().int().min(0).max(60);
 const forwardMonth = z.number().int().min(1).max(60);
 
-export const ProvenanceKindSchema = z.union([z.literal('synthetic_historical'), z.literal('user_input'), z.literal('derived'), z.literal('assumed'), z.literal('simulated')]);
+export const ProvenanceKindSchema = z.union([z.literal('synthetic_historical'), z.literal('user_input'), z.literal('derived'), z.literal('assumed'), z.literal('simulated'), z.literal('profile_source')]);
 
 export const ProvenanceSchema = z.strictObject({
   kind: ProvenanceKindSchema,
   source: z.string().min(1),
   unit: z.string().min(1),
+  profile_ref: z.strictObject({
+    profile_id: z.uuid(), revision: z.number().int().positive(),
+    mapping_version: z.literal('company-mapping-2-draft'),
+    pointers: z.array(z.string().startsWith('/')).min(1), source_ids: z.array(z.string().min(1)),
+  }).optional(),
+}).superRefine((value, ctx) => {
+  if ((value.kind === 'profile_source') !== (value.profile_ref !== undefined))
+    ctx.addIssue({ code: 'custom', path: ['profile_ref'], message: 'Profile-source provenance requires an exact revision reference, exclusive to that kind' });
 });
 
 export const ProvenanceManifestSchema = z.record(z.string(), ProvenanceSchema);
@@ -25,6 +33,7 @@ export const FundingSchema = z.strictObject({
 });
 
 export const DecisionBaseSchema = z.strictObject({
+  name: z.string().trim().min(1).max(100).optional(), // Presentation only; excluded from economic identity.
   id: z.string().min(1),
   stable_investment_key: z.string().min(1),
   start_month: forwardMonth,
@@ -59,7 +68,21 @@ export const IncreaseMarketingSchema = z.strictObject({
   incremental_cost_per_booked_job: positive,
 }).superRefine(validateProvenance);
 
-export const DecisionSchema = z.discriminatedUnion('type', [PurchaseTrucksSchema, HireTechniciansSchema, IncreaseMarketingSchema]);
+/** Additive candidate; original decisions/reference hashes remain unchanged. */
+export const FLEXIBLE_DECISION_VERSION = 'flexible-investment-1-candidate' as const;
+export const OperatingExpenseSchema = z.strictObject({
+  ...DecisionBaseSchema.shape, type: z.literal('operating_expense'),
+  decision_version: z.literal(FLEXIBLE_DECISION_VERSION), name: z.string().trim().min(1).max(100),
+  amount_per_month: nonnegative, duration_months: z.number().int().min(1).max(60),
+}).superRefine(validateProvenance);
+export const PurchaseAssetSchema = z.strictObject({
+  ...DecisionBaseSchema.shape, type: z.literal('purchase_asset'),
+  decision_version: z.literal(FLEXIBLE_DECISION_VERSION), name: z.string().trim().min(1).max(100),
+  purchase_cost: nonnegative, in_service_delay_months: z.number().int().nonnegative(),
+  useful_life_months: z.number().int().min(1).max(600), monthly_operating_cost: nonnegative,
+  funding: FundingSchema,
+}).superRefine(validateProvenance);
+export const DecisionSchema = z.discriminatedUnion('type', [PurchaseTrucksSchema, HireTechniciansSchema, IncreaseMarketingSchema, OperatingExpenseSchema, PurchaseAssetSchema]);
 
 export const ScenarioInputSchema = z.strictObject({
   id: z.string().min(1),
@@ -197,7 +220,7 @@ export const ModelEventSchema = z.strictObject({
   month: monthIndex,
   decision_id: z.union([z.string().min(1), z.null()]),
   type: z.union([z.literal('scheduled'), z.literal('simulated_operational'), z.literal('calculated_milestone')]),
-  kind: z.union([z.literal('truck_purchase'), z.literal('truck_in_service'), z.literal('recruitment'), z.literal('employment_start'), z.literal('ramp_complete'), z.literal('campaign_spend'), z.literal('campaign_demand'), z.literal('campaign_end'), z.literal('cash_trough'), z.literal('reserve_breach'), z.literal('payback'), z.literal('payback_reversal'), z.literal('debt_peak'), z.literal('exit')]),
+  kind: z.union([z.literal('asset_purchase'), z.literal('asset_in_service'), z.literal('operating_expense'), z.literal('truck_purchase'), z.literal('truck_in_service'), z.literal('recruitment'), z.literal('employment_start'), z.literal('ramp_complete'), z.literal('campaign_spend'), z.literal('campaign_demand'), z.literal('campaign_end'), z.literal('cash_trough'), z.literal('reserve_breach'), z.literal('payback'), z.literal('payback_reversal'), z.literal('debt_peak'), z.literal('exit')]),
   label: z.string().min(1),
   provenance: ProvenanceKindSchema,
 });
@@ -238,6 +261,7 @@ export const FinancialResultSchema = z.strictObject({
   fixed_overhead: nonnegative,
   incremental_marketing: nonnegative,
   recruitment: nonnegative,
+  custom_operating_expenses: nonnegative.optional(),
   operating_overhead: nonnegative,
   ebitda: finite,
   depreciation: nonnegative,
@@ -530,11 +554,13 @@ export const CampaignSpendSchema = z.strictObject({
   spend_month: forwardMonth, amount: nonnegative, demand: CampaignDemandSchema,
 });
 export const EngineStateSchema = z.strictObject({ month: monthIndex, financial: FinancialStateSchema, operational: OperationalStateSchema });
-export const GrowthAssetAdditionSchema = z.strictObject({ asset: DepreciableAssetSchema, category: z.literal('growth') });
+export const GrowthAssetAdditionSchema = z.strictObject({ asset: DepreciableAssetSchema, category: z.literal('growth'),
+  depreciation_life_months: z.number().int().min(1).max(600).optional() });
 export const FinancialMonthInputsSchema = z.strictObject({
   tech_direct_labor: nonnegative, vehicle_direct_opex: nonnegative, other_revenue: nonnegative,
   other_direct_cost: nonnegative, fixed_overhead: nonnegative, service_variable_cost_rate: nonnegative,
   incremental_marketing: nonnegative, recruitment: nonnegative, maintenance_capex: nonnegative,
+  custom_operating_expenses: nonnegative.optional(),
   growth_capex: nonnegative, new_debt_tranches: z.array(DebtTrancheSchema),
   asset_additions: z.array(GrowthAssetAdditionSchema), incremental_investment_outlay: nonnegative,
 }).superRefine((v, ctx) => {
@@ -612,6 +638,8 @@ export const ModelMetadataSchema = z.strictObject({
   schema_version: z.literal('1.0'), model_version: z.literal('mvp-1.0'), contract_revision: z.literal(1),
   interface_revision: z.literal(INTERFACE_REVISION), horizon_months: z.literal(60), currency: z.literal('USD'),
   decision_types: z.tuple([z.literal('purchase_trucks'), z.literal('hire_technicians'), z.literal('increase_marketing')]),
+  decision_extensions: z.strictObject({ version: z.literal(FLEXIBLE_DECISION_VERSION),
+    types: z.tuple([z.literal('operating_expense'), z.literal('purchase_asset')]), status: z.literal('candidate') }).optional(),
   metrics: z.array(MetricDefinitionSchema).length(9),
   readiness: z.strictObject({ deterministic: z.boolean(), monte_carlo: z.boolean() }),
   data_notice: z.string().min(1), limitations: z.array(z.string().min(1)).min(1),

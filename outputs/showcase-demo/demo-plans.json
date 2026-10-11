@@ -1,0 +1,77 @@
+{
+  "schema_version": "1.0",
+  "company_id": "profile:5edc5d5d-387e-4513-a5ce-825b59e3ced5",
+  "horizon_months": 60,
+  "reserve_floor_usd": 1000,
+  "exit_multiple": 4,
+  "scenarios": [
+    {
+      "id": "baseline",
+      "name": "Current business",
+      "decisions": []
+    },
+    {
+      "id": "plan-a",
+      "name": "Hold current operations",
+      "decisions": []
+    },
+    {
+      "id": "plan-b",
+      "name": "Software subscription (cost only)",
+      "decisions": [
+        {
+          "id": "showcase-software",
+          "stable_investment_key": "showcase-software",
+          "start_month": 1,
+          "type": "operating_expense",
+          "decision_version": "flexible-investment-1-candidate",
+          "name": "Software subscription (cost only)",
+          "amount_per_month": 1000,
+          "duration_months": 60,
+          "provenance": {
+            "/id": {
+              "kind": "user_input",
+              "source": "OperatorOS flexible decision editor",
+              "unit": "label"
+            },
+            "/stable_investment_key": {
+              "kind": "user_input",
+              "source": "OperatorOS flexible decision editor",
+              "unit": "label"
+            },
+            "/start_month": {
+              "kind": "user_input",
+              "source": "OperatorOS decision editor",
+              "unit": "months"
+            },
+            "/type": {
+              "kind": "user_input",
+              "source": "OperatorOS flexible decision editor",
+              "unit": "label"
+            },
+            "/decision_version": {
+              "kind": "user_input",
+              "source": "OperatorOS flexible decision editor",
+              "unit": "label"
+            },
+            "/name": {
+              "kind": "user_input",
+              "source": "OperatorOS decision editor",
+              "unit": "label"
+            },
+            "/amount_per_month": {
+              "kind": "user_input",
+              "source": "OperatorOS decision editor",
+              "unit": "USD/month"
+            },
+            "/duration_months": {
+              "kind": "user_input",
+              "source": "OperatorOS decision editor",
+              "unit": "months"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

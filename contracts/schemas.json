@@ -772,6 +772,10 @@
                 {
                   "type": "string",
                   "const": "simulated"
+                },
+                {
+                  "type": "string",
+                  "const": "profile_source"
                 }
               ]
             },
@@ -782,6 +786,49 @@
             "unit": {
               "type": "string",
               "minLength": 1
+            },
+            "profile_ref": {
+              "type": "object",
+              "properties": {
+                "profile_id": {
+                  "type": "string",
+                  "format": "uuid",
+                  "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                },
+                "revision": {
+                  "type": "integer",
+                  "exclusiveMinimum": 0,
+                  "maximum": 9007199254740991
+                },
+                "mapping_version": {
+                  "type": "string",
+                  "const": "company-mapping-2-draft"
+                },
+                "pointers": {
+                  "minItems": 1,
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "format": "starts_with",
+                    "pattern": "^\\/.*"
+                  }
+                },
+                "source_ids": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                }
+              },
+              "required": [
+                "profile_id",
+                "revision",
+                "mapping_version",
+                "pointers",
+                "source_ids"
+              ],
+              "additionalProperties": false
             }
           },
           "required": [
@@ -899,6 +946,11 @@
     "$schema": "https://json-schema.org/draft/2020-12/schema",
     "type": "object",
     "properties": {
+      "name": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 100
+      },
       "id": {
         "type": "string",
         "minLength": 1
@@ -941,6 +993,10 @@
                 {
                   "type": "string",
                   "const": "simulated"
+                },
+                {
+                  "type": "string",
+                  "const": "profile_source"
                 }
               ]
             },
@@ -951,6 +1007,49 @@
             "unit": {
               "type": "string",
               "minLength": 1
+            },
+            "profile_ref": {
+              "type": "object",
+              "properties": {
+                "profile_id": {
+                  "type": "string",
+                  "format": "uuid",
+                  "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                },
+                "revision": {
+                  "type": "integer",
+                  "exclusiveMinimum": 0,
+                  "maximum": 9007199254740991
+                },
+                "mapping_version": {
+                  "type": "string",
+                  "const": "company-mapping-2-draft"
+                },
+                "pointers": {
+                  "minItems": 1,
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "format": "starts_with",
+                    "pattern": "^\\/.*"
+                  }
+                },
+                "source_ids": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                }
+              },
+              "required": [
+                "profile_id",
+                "revision",
+                "mapping_version",
+                "pointers",
+                "source_ids"
+              ],
+              "additionalProperties": false
             }
           },
           "required": [
@@ -1042,6 +1141,11 @@
       {
         "type": "object",
         "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          },
           "id": {
             "type": "string",
             "minLength": 1
@@ -1084,6 +1188,10 @@
                     {
                       "type": "string",
                       "const": "simulated"
+                    },
+                    {
+                      "type": "string",
+                      "const": "profile_source"
                     }
                   ]
                 },
@@ -1094,6 +1202,49 @@
                 "unit": {
                   "type": "string",
                   "minLength": 1
+                },
+                "profile_ref": {
+                  "type": "object",
+                  "properties": {
+                    "profile_id": {
+                      "type": "string",
+                      "format": "uuid",
+                      "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                    },
+                    "revision": {
+                      "type": "integer",
+                      "exclusiveMinimum": 0,
+                      "maximum": 9007199254740991
+                    },
+                    "mapping_version": {
+                      "type": "string",
+                      "const": "company-mapping-2-draft"
+                    },
+                    "pointers": {
+                      "minItems": 1,
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "format": "starts_with",
+                        "pattern": "^\\/.*"
+                      }
+                    },
+                    "source_ids": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "minLength": 1
+                      }
+                    }
+                  },
+                  "required": [
+                    "profile_id",
+                    "revision",
+                    "mapping_version",
+                    "pointers",
+                    "source_ids"
+                  ],
+                  "additionalProperties": false
                 }
               },
               "required": [
@@ -1164,6 +1315,11 @@
       {
         "type": "object",
         "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          },
           "id": {
             "type": "string",
             "minLength": 1
@@ -1206,6 +1362,10 @@
                     {
                       "type": "string",
                       "const": "simulated"
+                    },
+                    {
+                      "type": "string",
+                      "const": "profile_source"
                     }
                   ]
                 },
@@ -1216,6 +1376,49 @@
                 "unit": {
                   "type": "string",
                   "minLength": 1
+                },
+                "profile_ref": {
+                  "type": "object",
+                  "properties": {
+                    "profile_id": {
+                      "type": "string",
+                      "format": "uuid",
+                      "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                    },
+                    "revision": {
+                      "type": "integer",
+                      "exclusiveMinimum": 0,
+                      "maximum": 9007199254740991
+                    },
+                    "mapping_version": {
+                      "type": "string",
+                      "const": "company-mapping-2-draft"
+                    },
+                    "pointers": {
+                      "minItems": 1,
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "format": "starts_with",
+                        "pattern": "^\\/.*"
+                      }
+                    },
+                    "source_ids": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "minLength": 1
+                      }
+                    }
+                  },
+                  "required": [
+                    "profile_id",
+                    "revision",
+                    "mapping_version",
+                    "pointers",
+                    "source_ids"
+                  ],
+                  "additionalProperties": false
                 }
               },
               "required": [
@@ -1271,6 +1474,11 @@
       {
         "type": "object",
         "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          },
           "id": {
             "type": "string",
             "minLength": 1
@@ -1313,6 +1521,10 @@
                     {
                       "type": "string",
                       "const": "simulated"
+                    },
+                    {
+                      "type": "string",
+                      "const": "profile_source"
                     }
                   ]
                 },
@@ -1323,6 +1535,49 @@
                 "unit": {
                   "type": "string",
                   "minLength": 1
+                },
+                "profile_ref": {
+                  "type": "object",
+                  "properties": {
+                    "profile_id": {
+                      "type": "string",
+                      "format": "uuid",
+                      "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                    },
+                    "revision": {
+                      "type": "integer",
+                      "exclusiveMinimum": 0,
+                      "maximum": 9007199254740991
+                    },
+                    "mapping_version": {
+                      "type": "string",
+                      "const": "company-mapping-2-draft"
+                    },
+                    "pointers": {
+                      "minItems": 1,
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "format": "starts_with",
+                        "pattern": "^\\/.*"
+                      }
+                    },
+                    "source_ids": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "minLength": 1
+                      }
+                    }
+                  },
+                  "required": [
+                    "profile_id",
+                    "revision",
+                    "mapping_version",
+                    "pointers",
+                    "source_ids"
+                  ],
+                  "additionalProperties": false
                 }
               },
               "required": [
@@ -1366,6 +1621,339 @@
           "extra_spend_per_month",
           "lead_to_job_lag_months",
           "incremental_cost_per_booked_job"
+        ],
+        "additionalProperties": false
+      },
+      {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "stable_investment_key": {
+            "type": "string",
+            "minLength": 1
+          },
+          "start_month": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 60
+          },
+          "provenance": {
+            "type": "object",
+            "propertyNames": {
+              "type": "string"
+            },
+            "additionalProperties": {
+              "type": "object",
+              "properties": {
+                "kind": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "const": "synthetic_historical"
+                    },
+                    {
+                      "type": "string",
+                      "const": "user_input"
+                    },
+                    {
+                      "type": "string",
+                      "const": "derived"
+                    },
+                    {
+                      "type": "string",
+                      "const": "assumed"
+                    },
+                    {
+                      "type": "string",
+                      "const": "simulated"
+                    },
+                    {
+                      "type": "string",
+                      "const": "profile_source"
+                    }
+                  ]
+                },
+                "source": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "unit": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "profile_ref": {
+                  "type": "object",
+                  "properties": {
+                    "profile_id": {
+                      "type": "string",
+                      "format": "uuid",
+                      "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                    },
+                    "revision": {
+                      "type": "integer",
+                      "exclusiveMinimum": 0,
+                      "maximum": 9007199254740991
+                    },
+                    "mapping_version": {
+                      "type": "string",
+                      "const": "company-mapping-2-draft"
+                    },
+                    "pointers": {
+                      "minItems": 1,
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "format": "starts_with",
+                        "pattern": "^\\/.*"
+                      }
+                    },
+                    "source_ids": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "minLength": 1
+                      }
+                    }
+                  },
+                  "required": [
+                    "profile_id",
+                    "revision",
+                    "mapping_version",
+                    "pointers",
+                    "source_ids"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "required": [
+                "kind",
+                "source",
+                "unit"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "type": {
+            "type": "string",
+            "const": "operating_expense"
+          },
+          "decision_version": {
+            "type": "string",
+            "const": "flexible-investment-1-candidate"
+          },
+          "amount_per_month": {
+            "type": "number",
+            "minimum": 0
+          },
+          "duration_months": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 60
+          }
+        },
+        "required": [
+          "name",
+          "id",
+          "stable_investment_key",
+          "start_month",
+          "provenance",
+          "type",
+          "decision_version",
+          "amount_per_month",
+          "duration_months"
+        ],
+        "additionalProperties": false
+      },
+      {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "stable_investment_key": {
+            "type": "string",
+            "minLength": 1
+          },
+          "start_month": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 60
+          },
+          "provenance": {
+            "type": "object",
+            "propertyNames": {
+              "type": "string"
+            },
+            "additionalProperties": {
+              "type": "object",
+              "properties": {
+                "kind": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "const": "synthetic_historical"
+                    },
+                    {
+                      "type": "string",
+                      "const": "user_input"
+                    },
+                    {
+                      "type": "string",
+                      "const": "derived"
+                    },
+                    {
+                      "type": "string",
+                      "const": "assumed"
+                    },
+                    {
+                      "type": "string",
+                      "const": "simulated"
+                    },
+                    {
+                      "type": "string",
+                      "const": "profile_source"
+                    }
+                  ]
+                },
+                "source": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "unit": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "profile_ref": {
+                  "type": "object",
+                  "properties": {
+                    "profile_id": {
+                      "type": "string",
+                      "format": "uuid",
+                      "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                    },
+                    "revision": {
+                      "type": "integer",
+                      "exclusiveMinimum": 0,
+                      "maximum": 9007199254740991
+                    },
+                    "mapping_version": {
+                      "type": "string",
+                      "const": "company-mapping-2-draft"
+                    },
+                    "pointers": {
+                      "minItems": 1,
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "format": "starts_with",
+                        "pattern": "^\\/.*"
+                      }
+                    },
+                    "source_ids": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "minLength": 1
+                      }
+                    }
+                  },
+                  "required": [
+                    "profile_id",
+                    "revision",
+                    "mapping_version",
+                    "pointers",
+                    "source_ids"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "required": [
+                "kind",
+                "source",
+                "unit"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "type": {
+            "type": "string",
+            "const": "purchase_asset"
+          },
+          "decision_version": {
+            "type": "string",
+            "const": "flexible-investment-1-candidate"
+          },
+          "purchase_cost": {
+            "type": "number",
+            "minimum": 0
+          },
+          "in_service_delay_months": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "useful_life_months": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 600
+          },
+          "monthly_operating_cost": {
+            "type": "number",
+            "minimum": 0
+          },
+          "funding": {
+            "type": "object",
+            "properties": {
+              "debt_fraction": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1
+              },
+              "annual_interest_rate": {
+                "type": "number",
+                "minimum": 0
+              },
+              "term_months": {
+                "type": "integer",
+                "exclusiveMinimum": 0,
+                "maximum": 9007199254740991
+              }
+            },
+            "required": [
+              "debt_fraction",
+              "annual_interest_rate",
+              "term_months"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "name",
+          "id",
+          "stable_investment_key",
+          "start_month",
+          "provenance",
+          "type",
+          "decision_version",
+          "purchase_cost",
+          "in_service_delay_months",
+          "useful_life_months",
+          "monthly_operating_cost",
+          "funding"
         ],
         "additionalProperties": false
       }
@@ -1456,6 +2044,11 @@
                   {
                     "type": "object",
                     "properties": {
+                      "name": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 100
+                      },
                       "id": {
                         "type": "string",
                         "minLength": 1
@@ -1498,6 +2091,10 @@
                                 {
                                   "type": "string",
                                   "const": "simulated"
+                                },
+                                {
+                                  "type": "string",
+                                  "const": "profile_source"
                                 }
                               ]
                             },
@@ -1508,6 +2105,49 @@
                             "unit": {
                               "type": "string",
                               "minLength": 1
+                            },
+                            "profile_ref": {
+                              "type": "object",
+                              "properties": {
+                                "profile_id": {
+                                  "type": "string",
+                                  "format": "uuid",
+                                  "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                                },
+                                "revision": {
+                                  "type": "integer",
+                                  "exclusiveMinimum": 0,
+                                  "maximum": 9007199254740991
+                                },
+                                "mapping_version": {
+                                  "type": "string",
+                                  "const": "company-mapping-2-draft"
+                                },
+                                "pointers": {
+                                  "minItems": 1,
+                                  "type": "array",
+                                  "items": {
+                                    "type": "string",
+                                    "format": "starts_with",
+                                    "pattern": "^\\/.*"
+                                  }
+                                },
+                                "source_ids": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "string",
+                                    "minLength": 1
+                                  }
+                                }
+                              },
+                              "required": [
+                                "profile_id",
+                                "revision",
+                                "mapping_version",
+                                "pointers",
+                                "source_ids"
+                              ],
+                              "additionalProperties": false
                             }
                           },
                           "required": [
@@ -1578,6 +2218,11 @@
                   {
                     "type": "object",
                     "properties": {
+                      "name": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 100
+                      },
                       "id": {
                         "type": "string",
                         "minLength": 1
@@ -1620,6 +2265,10 @@
                                 {
                                   "type": "string",
                                   "const": "simulated"
+                                },
+                                {
+                                  "type": "string",
+                                  "const": "profile_source"
                                 }
                               ]
                             },
@@ -1630,6 +2279,49 @@
                             "unit": {
                               "type": "string",
                               "minLength": 1
+                            },
+                            "profile_ref": {
+                              "type": "object",
+                              "properties": {
+                                "profile_id": {
+                                  "type": "string",
+                                  "format": "uuid",
+                                  "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                                },
+                                "revision": {
+                                  "type": "integer",
+                                  "exclusiveMinimum": 0,
+                                  "maximum": 9007199254740991
+                                },
+                                "mapping_version": {
+                                  "type": "string",
+                                  "const": "company-mapping-2-draft"
+                                },
+                                "pointers": {
+                                  "minItems": 1,
+                                  "type": "array",
+                                  "items": {
+                                    "type": "string",
+                                    "format": "starts_with",
+                                    "pattern": "^\\/.*"
+                                  }
+                                },
+                                "source_ids": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "string",
+                                    "minLength": 1
+                                  }
+                                }
+                              },
+                              "required": [
+                                "profile_id",
+                                "revision",
+                                "mapping_version",
+                                "pointers",
+                                "source_ids"
+                              ],
+                              "additionalProperties": false
                             }
                           },
                           "required": [
@@ -1685,6 +2377,11 @@
                   {
                     "type": "object",
                     "properties": {
+                      "name": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 100
+                      },
                       "id": {
                         "type": "string",
                         "minLength": 1
@@ -1727,6 +2424,10 @@
                                 {
                                   "type": "string",
                                   "const": "simulated"
+                                },
+                                {
+                                  "type": "string",
+                                  "const": "profile_source"
                                 }
                               ]
                             },
@@ -1737,6 +2438,49 @@
                             "unit": {
                               "type": "string",
                               "minLength": 1
+                            },
+                            "profile_ref": {
+                              "type": "object",
+                              "properties": {
+                                "profile_id": {
+                                  "type": "string",
+                                  "format": "uuid",
+                                  "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                                },
+                                "revision": {
+                                  "type": "integer",
+                                  "exclusiveMinimum": 0,
+                                  "maximum": 9007199254740991
+                                },
+                                "mapping_version": {
+                                  "type": "string",
+                                  "const": "company-mapping-2-draft"
+                                },
+                                "pointers": {
+                                  "minItems": 1,
+                                  "type": "array",
+                                  "items": {
+                                    "type": "string",
+                                    "format": "starts_with",
+                                    "pattern": "^\\/.*"
+                                  }
+                                },
+                                "source_ids": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "string",
+                                    "minLength": 1
+                                  }
+                                }
+                              },
+                              "required": [
+                                "profile_id",
+                                "revision",
+                                "mapping_version",
+                                "pointers",
+                                "source_ids"
+                              ],
+                              "additionalProperties": false
                             }
                           },
                           "required": [
@@ -1780,6 +2524,339 @@
                       "extra_spend_per_month",
                       "lead_to_job_lag_months",
                       "incremental_cost_per_booked_job"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 100
+                      },
+                      "id": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "stable_investment_key": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "start_month": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 60
+                      },
+                      "provenance": {
+                        "type": "object",
+                        "propertyNames": {
+                          "type": "string"
+                        },
+                        "additionalProperties": {
+                          "type": "object",
+                          "properties": {
+                            "kind": {
+                              "anyOf": [
+                                {
+                                  "type": "string",
+                                  "const": "synthetic_historical"
+                                },
+                                {
+                                  "type": "string",
+                                  "const": "user_input"
+                                },
+                                {
+                                  "type": "string",
+                                  "const": "derived"
+                                },
+                                {
+                                  "type": "string",
+                                  "const": "assumed"
+                                },
+                                {
+                                  "type": "string",
+                                  "const": "simulated"
+                                },
+                                {
+                                  "type": "string",
+                                  "const": "profile_source"
+                                }
+                              ]
+                            },
+                            "source": {
+                              "type": "string",
+                              "minLength": 1
+                            },
+                            "unit": {
+                              "type": "string",
+                              "minLength": 1
+                            },
+                            "profile_ref": {
+                              "type": "object",
+                              "properties": {
+                                "profile_id": {
+                                  "type": "string",
+                                  "format": "uuid",
+                                  "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                                },
+                                "revision": {
+                                  "type": "integer",
+                                  "exclusiveMinimum": 0,
+                                  "maximum": 9007199254740991
+                                },
+                                "mapping_version": {
+                                  "type": "string",
+                                  "const": "company-mapping-2-draft"
+                                },
+                                "pointers": {
+                                  "minItems": 1,
+                                  "type": "array",
+                                  "items": {
+                                    "type": "string",
+                                    "format": "starts_with",
+                                    "pattern": "^\\/.*"
+                                  }
+                                },
+                                "source_ids": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "string",
+                                    "minLength": 1
+                                  }
+                                }
+                              },
+                              "required": [
+                                "profile_id",
+                                "revision",
+                                "mapping_version",
+                                "pointers",
+                                "source_ids"
+                              ],
+                              "additionalProperties": false
+                            }
+                          },
+                          "required": [
+                            "kind",
+                            "source",
+                            "unit"
+                          ],
+                          "additionalProperties": false
+                        }
+                      },
+                      "type": {
+                        "type": "string",
+                        "const": "operating_expense"
+                      },
+                      "decision_version": {
+                        "type": "string",
+                        "const": "flexible-investment-1-candidate"
+                      },
+                      "amount_per_month": {
+                        "type": "number",
+                        "minimum": 0
+                      },
+                      "duration_months": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 60
+                      }
+                    },
+                    "required": [
+                      "name",
+                      "id",
+                      "stable_investment_key",
+                      "start_month",
+                      "provenance",
+                      "type",
+                      "decision_version",
+                      "amount_per_month",
+                      "duration_months"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 100
+                      },
+                      "id": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "stable_investment_key": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "start_month": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 60
+                      },
+                      "provenance": {
+                        "type": "object",
+                        "propertyNames": {
+                          "type": "string"
+                        },
+                        "additionalProperties": {
+                          "type": "object",
+                          "properties": {
+                            "kind": {
+                              "anyOf": [
+                                {
+                                  "type": "string",
+                                  "const": "synthetic_historical"
+                                },
+                                {
+                                  "type": "string",
+                                  "const": "user_input"
+                                },
+                                {
+                                  "type": "string",
+                                  "const": "derived"
+                                },
+                                {
+                                  "type": "string",
+                                  "const": "assumed"
+                                },
+                                {
+                                  "type": "string",
+                                  "const": "simulated"
+                                },
+                                {
+                                  "type": "string",
+                                  "const": "profile_source"
+                                }
+                              ]
+                            },
+                            "source": {
+                              "type": "string",
+                              "minLength": 1
+                            },
+                            "unit": {
+                              "type": "string",
+                              "minLength": 1
+                            },
+                            "profile_ref": {
+                              "type": "object",
+                              "properties": {
+                                "profile_id": {
+                                  "type": "string",
+                                  "format": "uuid",
+                                  "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                                },
+                                "revision": {
+                                  "type": "integer",
+                                  "exclusiveMinimum": 0,
+                                  "maximum": 9007199254740991
+                                },
+                                "mapping_version": {
+                                  "type": "string",
+                                  "const": "company-mapping-2-draft"
+                                },
+                                "pointers": {
+                                  "minItems": 1,
+                                  "type": "array",
+                                  "items": {
+                                    "type": "string",
+                                    "format": "starts_with",
+                                    "pattern": "^\\/.*"
+                                  }
+                                },
+                                "source_ids": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "string",
+                                    "minLength": 1
+                                  }
+                                }
+                              },
+                              "required": [
+                                "profile_id",
+                                "revision",
+                                "mapping_version",
+                                "pointers",
+                                "source_ids"
+                              ],
+                              "additionalProperties": false
+                            }
+                          },
+                          "required": [
+                            "kind",
+                            "source",
+                            "unit"
+                          ],
+                          "additionalProperties": false
+                        }
+                      },
+                      "type": {
+                        "type": "string",
+                        "const": "purchase_asset"
+                      },
+                      "decision_version": {
+                        "type": "string",
+                        "const": "flexible-investment-1-candidate"
+                      },
+                      "purchase_cost": {
+                        "type": "number",
+                        "minimum": 0
+                      },
+                      "in_service_delay_months": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 9007199254740991
+                      },
+                      "useful_life_months": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 600
+                      },
+                      "monthly_operating_cost": {
+                        "type": "number",
+                        "minimum": 0
+                      },
+                      "funding": {
+                        "type": "object",
+                        "properties": {
+                          "debt_fraction": {
+                            "type": "number",
+                            "minimum": 0,
+                            "maximum": 1
+                          },
+                          "annual_interest_rate": {
+                            "type": "number",
+                            "minimum": 0
+                          },
+                          "term_months": {
+                            "type": "integer",
+                            "exclusiveMinimum": 0,
+                            "maximum": 9007199254740991
+                          }
+                        },
+                        "required": [
+                          "debt_fraction",
+                          "annual_interest_rate",
+                          "term_months"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "required": [
+                      "name",
+                      "id",
+                      "stable_investment_key",
+                      "start_month",
+                      "provenance",
+                      "type",
+                      "decision_version",
+                      "purchase_cost",
+                      "in_service_delay_months",
+                      "useful_life_months",
+                      "monthly_operating_cost",
+                      "funding"
                     ],
                     "additionalProperties": false
                   }
@@ -2300,6 +3377,10 @@
         "type": "number",
         "minimum": 0
       },
+      "custom_operating_expenses": {
+        "type": "number",
+        "minimum": 0
+      },
       "growth_capex": {
         "type": "number",
         "minimum": 0
@@ -2400,6 +3481,11 @@
             "category": {
               "type": "string",
               "const": "growth"
+            },
+            "depreciation_life_months": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 600
             }
           },
           "required": [
@@ -2479,6 +3565,10 @@
         "minimum": 0
       },
       "recruitment": {
+        "type": "number",
+        "minimum": 0
+      },
+      "custom_operating_expenses": {
         "type": "number",
         "minimum": 0
       },
@@ -2842,6 +3932,10 @@
             "minimum": 0
           },
           "recruitment": {
+            "type": "number",
+            "minimum": 0
+          },
+          "custom_operating_expenses": {
             "type": "number",
             "minimum": 0
           },
@@ -3289,6 +4383,10 @@
             "type": "number",
             "minimum": 0
           },
+          "custom_operating_expenses": {
+            "type": "number",
+            "minimum": 0
+          },
           "operating_overhead": {
             "type": "number",
             "minimum": 0
@@ -3589,6 +4687,18 @@
               "anyOf": [
                 {
                   "type": "string",
+                  "const": "asset_purchase"
+                },
+                {
+                  "type": "string",
+                  "const": "asset_in_service"
+                },
+                {
+                  "type": "string",
+                  "const": "operating_expense"
+                },
+                {
+                  "type": "string",
                   "const": "truck_purchase"
                 },
                 {
@@ -3670,6 +4780,10 @@
                 {
                   "type": "string",
                   "const": "simulated"
+                },
+                {
+                  "type": "string",
+                  "const": "profile_source"
                 }
               ]
             }
@@ -3951,6 +5065,11 @@
       "category": {
         "type": "string",
         "const": "growth"
+      },
+      "depreciation_life_months": {
+        "type": "integer",
+        "minimum": 1,
+        "maximum": 600
       }
     },
     "required": [
@@ -3963,6 +5082,11 @@
     "$schema": "https://json-schema.org/draft/2020-12/schema",
     "type": "object",
     "properties": {
+      "name": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 100
+      },
       "id": {
         "type": "string",
         "minLength": 1
@@ -4005,6 +5129,10 @@
                 {
                   "type": "string",
                   "const": "simulated"
+                },
+                {
+                  "type": "string",
+                  "const": "profile_source"
                 }
               ]
             },
@@ -4015,6 +5143,49 @@
             "unit": {
               "type": "string",
               "minLength": 1
+            },
+            "profile_ref": {
+              "type": "object",
+              "properties": {
+                "profile_id": {
+                  "type": "string",
+                  "format": "uuid",
+                  "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                },
+                "revision": {
+                  "type": "integer",
+                  "exclusiveMinimum": 0,
+                  "maximum": 9007199254740991
+                },
+                "mapping_version": {
+                  "type": "string",
+                  "const": "company-mapping-2-draft"
+                },
+                "pointers": {
+                  "minItems": 1,
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "format": "starts_with",
+                    "pattern": "^\\/.*"
+                  }
+                },
+                "source_ids": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                }
+              },
+              "required": [
+                "profile_id",
+                "revision",
+                "mapping_version",
+                "pointers",
+                "source_ids"
+              ],
+              "additionalProperties": false
             }
           },
           "required": [
@@ -4140,6 +5311,11 @@
     "$schema": "https://json-schema.org/draft/2020-12/schema",
     "type": "object",
     "properties": {
+      "name": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 100
+      },
       "id": {
         "type": "string",
         "minLength": 1
@@ -4182,6 +5358,10 @@
                 {
                   "type": "string",
                   "const": "simulated"
+                },
+                {
+                  "type": "string",
+                  "const": "profile_source"
                 }
               ]
             },
@@ -4192,6 +5372,49 @@
             "unit": {
               "type": "string",
               "minLength": 1
+            },
+            "profile_ref": {
+              "type": "object",
+              "properties": {
+                "profile_id": {
+                  "type": "string",
+                  "format": "uuid",
+                  "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                },
+                "revision": {
+                  "type": "integer",
+                  "exclusiveMinimum": 0,
+                  "maximum": 9007199254740991
+                },
+                "mapping_version": {
+                  "type": "string",
+                  "const": "company-mapping-2-draft"
+                },
+                "pointers": {
+                  "minItems": 1,
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "format": "starts_with",
+                    "pattern": "^\\/.*"
+                  }
+                },
+                "source_ids": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                }
+              },
+              "required": [
+                "profile_id",
+                "revision",
+                "mapping_version",
+                "pointers",
+                "source_ids"
+              ],
+              "additionalProperties": false
             }
           },
           "required": [
@@ -4456,6 +5679,18 @@
         "anyOf": [
           {
             "type": "string",
+            "const": "asset_purchase"
+          },
+          {
+            "type": "string",
+            "const": "asset_in_service"
+          },
+          {
+            "type": "string",
+            "const": "operating_expense"
+          },
+          {
+            "type": "string",
             "const": "truck_purchase"
           },
           {
@@ -4537,6 +5772,10 @@
           {
             "type": "string",
             "const": "simulated"
+          },
+          {
+            "type": "string",
+            "const": "profile_source"
           }
         ]
       }
@@ -4599,6 +5838,41 @@
         "items": false,
         "minItems": 3,
         "maxItems": 3
+      },
+      "decision_extensions": {
+        "type": "object",
+        "properties": {
+          "version": {
+            "type": "string",
+            "const": "flexible-investment-1-candidate"
+          },
+          "types": {
+            "type": "array",
+            "prefixItems": [
+              {
+                "type": "string",
+                "const": "operating_expense"
+              },
+              {
+                "type": "string",
+                "const": "purchase_asset"
+              }
+            ],
+            "items": false,
+            "minItems": 2,
+            "maxItems": 2
+          },
+          "status": {
+            "type": "string",
+            "const": "candidate"
+          }
+        },
+        "required": [
+          "version",
+          "types",
+          "status"
+        ],
+        "additionalProperties": false
       },
       "metrics": {
         "minItems": 9,
@@ -4820,6 +6094,11 @@
                   {
                     "type": "object",
                     "properties": {
+                      "name": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 100
+                      },
                       "id": {
                         "type": "string",
                         "minLength": 1
@@ -4862,6 +6141,10 @@
                                 {
                                   "type": "string",
                                   "const": "simulated"
+                                },
+                                {
+                                  "type": "string",
+                                  "const": "profile_source"
                                 }
                               ]
                             },
@@ -4872,6 +6155,49 @@
                             "unit": {
                               "type": "string",
                               "minLength": 1
+                            },
+                            "profile_ref": {
+                              "type": "object",
+                              "properties": {
+                                "profile_id": {
+                                  "type": "string",
+                                  "format": "uuid",
+                                  "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                                },
+                                "revision": {
+                                  "type": "integer",
+                                  "exclusiveMinimum": 0,
+                                  "maximum": 9007199254740991
+                                },
+                                "mapping_version": {
+                                  "type": "string",
+                                  "const": "company-mapping-2-draft"
+                                },
+                                "pointers": {
+                                  "minItems": 1,
+                                  "type": "array",
+                                  "items": {
+                                    "type": "string",
+                                    "format": "starts_with",
+                                    "pattern": "^\\/.*"
+                                  }
+                                },
+                                "source_ids": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "string",
+                                    "minLength": 1
+                                  }
+                                }
+                              },
+                              "required": [
+                                "profile_id",
+                                "revision",
+                                "mapping_version",
+                                "pointers",
+                                "source_ids"
+                              ],
+                              "additionalProperties": false
                             }
                           },
                           "required": [
@@ -4942,6 +6268,11 @@
                   {
                     "type": "object",
                     "properties": {
+                      "name": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 100
+                      },
                       "id": {
                         "type": "string",
                         "minLength": 1
@@ -4984,6 +6315,10 @@
                                 {
                                   "type": "string",
                                   "const": "simulated"
+                                },
+                                {
+                                  "type": "string",
+                                  "const": "profile_source"
                                 }
                               ]
                             },
@@ -4994,6 +6329,49 @@
                             "unit": {
                               "type": "string",
                               "minLength": 1
+                            },
+                            "profile_ref": {
+                              "type": "object",
+                              "properties": {
+                                "profile_id": {
+                                  "type": "string",
+                                  "format": "uuid",
+                                  "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                                },
+                                "revision": {
+                                  "type": "integer",
+                                  "exclusiveMinimum": 0,
+                                  "maximum": 9007199254740991
+                                },
+                                "mapping_version": {
+                                  "type": "string",
+                                  "const": "company-mapping-2-draft"
+                                },
+                                "pointers": {
+                                  "minItems": 1,
+                                  "type": "array",
+                                  "items": {
+                                    "type": "string",
+                                    "format": "starts_with",
+                                    "pattern": "^\\/.*"
+                                  }
+                                },
+                                "source_ids": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "string",
+                                    "minLength": 1
+                                  }
+                                }
+                              },
+                              "required": [
+                                "profile_id",
+                                "revision",
+                                "mapping_version",
+                                "pointers",
+                                "source_ids"
+                              ],
+                              "additionalProperties": false
                             }
                           },
                           "required": [
@@ -5049,6 +6427,11 @@
                   {
                     "type": "object",
                     "properties": {
+                      "name": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 100
+                      },
                       "id": {
                         "type": "string",
                         "minLength": 1
@@ -5091,6 +6474,10 @@
                                 {
                                   "type": "string",
                                   "const": "simulated"
+                                },
+                                {
+                                  "type": "string",
+                                  "const": "profile_source"
                                 }
                               ]
                             },
@@ -5101,6 +6488,49 @@
                             "unit": {
                               "type": "string",
                               "minLength": 1
+                            },
+                            "profile_ref": {
+                              "type": "object",
+                              "properties": {
+                                "profile_id": {
+                                  "type": "string",
+                                  "format": "uuid",
+                                  "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                                },
+                                "revision": {
+                                  "type": "integer",
+                                  "exclusiveMinimum": 0,
+                                  "maximum": 9007199254740991
+                                },
+                                "mapping_version": {
+                                  "type": "string",
+                                  "const": "company-mapping-2-draft"
+                                },
+                                "pointers": {
+                                  "minItems": 1,
+                                  "type": "array",
+                                  "items": {
+                                    "type": "string",
+                                    "format": "starts_with",
+                                    "pattern": "^\\/.*"
+                                  }
+                                },
+                                "source_ids": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "string",
+                                    "minLength": 1
+                                  }
+                                }
+                              },
+                              "required": [
+                                "profile_id",
+                                "revision",
+                                "mapping_version",
+                                "pointers",
+                                "source_ids"
+                              ],
+                              "additionalProperties": false
                             }
                           },
                           "required": [
@@ -5144,6 +6574,339 @@
                       "extra_spend_per_month",
                       "lead_to_job_lag_months",
                       "incremental_cost_per_booked_job"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 100
+                      },
+                      "id": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "stable_investment_key": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "start_month": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 60
+                      },
+                      "provenance": {
+                        "type": "object",
+                        "propertyNames": {
+                          "type": "string"
+                        },
+                        "additionalProperties": {
+                          "type": "object",
+                          "properties": {
+                            "kind": {
+                              "anyOf": [
+                                {
+                                  "type": "string",
+                                  "const": "synthetic_historical"
+                                },
+                                {
+                                  "type": "string",
+                                  "const": "user_input"
+                                },
+                                {
+                                  "type": "string",
+                                  "const": "derived"
+                                },
+                                {
+                                  "type": "string",
+                                  "const": "assumed"
+                                },
+                                {
+                                  "type": "string",
+                                  "const": "simulated"
+                                },
+                                {
+                                  "type": "string",
+                                  "const": "profile_source"
+                                }
+                              ]
+                            },
+                            "source": {
+                              "type": "string",
+                              "minLength": 1
+                            },
+                            "unit": {
+                              "type": "string",
+                              "minLength": 1
+                            },
+                            "profile_ref": {
+                              "type": "object",
+                              "properties": {
+                                "profile_id": {
+                                  "type": "string",
+                                  "format": "uuid",
+                                  "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                                },
+                                "revision": {
+                                  "type": "integer",
+                                  "exclusiveMinimum": 0,
+                                  "maximum": 9007199254740991
+                                },
+                                "mapping_version": {
+                                  "type": "string",
+                                  "const": "company-mapping-2-draft"
+                                },
+                                "pointers": {
+                                  "minItems": 1,
+                                  "type": "array",
+                                  "items": {
+                                    "type": "string",
+                                    "format": "starts_with",
+                                    "pattern": "^\\/.*"
+                                  }
+                                },
+                                "source_ids": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "string",
+                                    "minLength": 1
+                                  }
+                                }
+                              },
+                              "required": [
+                                "profile_id",
+                                "revision",
+                                "mapping_version",
+                                "pointers",
+                                "source_ids"
+                              ],
+                              "additionalProperties": false
+                            }
+                          },
+                          "required": [
+                            "kind",
+                            "source",
+                            "unit"
+                          ],
+                          "additionalProperties": false
+                        }
+                      },
+                      "type": {
+                        "type": "string",
+                        "const": "operating_expense"
+                      },
+                      "decision_version": {
+                        "type": "string",
+                        "const": "flexible-investment-1-candidate"
+                      },
+                      "amount_per_month": {
+                        "type": "number",
+                        "minimum": 0
+                      },
+                      "duration_months": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 60
+                      }
+                    },
+                    "required": [
+                      "name",
+                      "id",
+                      "stable_investment_key",
+                      "start_month",
+                      "provenance",
+                      "type",
+                      "decision_version",
+                      "amount_per_month",
+                      "duration_months"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 100
+                      },
+                      "id": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "stable_investment_key": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "start_month": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 60
+                      },
+                      "provenance": {
+                        "type": "object",
+                        "propertyNames": {
+                          "type": "string"
+                        },
+                        "additionalProperties": {
+                          "type": "object",
+                          "properties": {
+                            "kind": {
+                              "anyOf": [
+                                {
+                                  "type": "string",
+                                  "const": "synthetic_historical"
+                                },
+                                {
+                                  "type": "string",
+                                  "const": "user_input"
+                                },
+                                {
+                                  "type": "string",
+                                  "const": "derived"
+                                },
+                                {
+                                  "type": "string",
+                                  "const": "assumed"
+                                },
+                                {
+                                  "type": "string",
+                                  "const": "simulated"
+                                },
+                                {
+                                  "type": "string",
+                                  "const": "profile_source"
+                                }
+                              ]
+                            },
+                            "source": {
+                              "type": "string",
+                              "minLength": 1
+                            },
+                            "unit": {
+                              "type": "string",
+                              "minLength": 1
+                            },
+                            "profile_ref": {
+                              "type": "object",
+                              "properties": {
+                                "profile_id": {
+                                  "type": "string",
+                                  "format": "uuid",
+                                  "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                                },
+                                "revision": {
+                                  "type": "integer",
+                                  "exclusiveMinimum": 0,
+                                  "maximum": 9007199254740991
+                                },
+                                "mapping_version": {
+                                  "type": "string",
+                                  "const": "company-mapping-2-draft"
+                                },
+                                "pointers": {
+                                  "minItems": 1,
+                                  "type": "array",
+                                  "items": {
+                                    "type": "string",
+                                    "format": "starts_with",
+                                    "pattern": "^\\/.*"
+                                  }
+                                },
+                                "source_ids": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "string",
+                                    "minLength": 1
+                                  }
+                                }
+                              },
+                              "required": [
+                                "profile_id",
+                                "revision",
+                                "mapping_version",
+                                "pointers",
+                                "source_ids"
+                              ],
+                              "additionalProperties": false
+                            }
+                          },
+                          "required": [
+                            "kind",
+                            "source",
+                            "unit"
+                          ],
+                          "additionalProperties": false
+                        }
+                      },
+                      "type": {
+                        "type": "string",
+                        "const": "purchase_asset"
+                      },
+                      "decision_version": {
+                        "type": "string",
+                        "const": "flexible-investment-1-candidate"
+                      },
+                      "purchase_cost": {
+                        "type": "number",
+                        "minimum": 0
+                      },
+                      "in_service_delay_months": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 9007199254740991
+                      },
+                      "useful_life_months": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 600
+                      },
+                      "monthly_operating_cost": {
+                        "type": "number",
+                        "minimum": 0
+                      },
+                      "funding": {
+                        "type": "object",
+                        "properties": {
+                          "debt_fraction": {
+                            "type": "number",
+                            "minimum": 0,
+                            "maximum": 1
+                          },
+                          "annual_interest_rate": {
+                            "type": "number",
+                            "minimum": 0
+                          },
+                          "term_months": {
+                            "type": "integer",
+                            "exclusiveMinimum": 0,
+                            "maximum": 9007199254740991
+                          }
+                        },
+                        "required": [
+                          "debt_fraction",
+                          "annual_interest_rate",
+                          "term_months"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "required": [
+                      "name",
+                      "id",
+                      "stable_investment_key",
+                      "start_month",
+                      "provenance",
+                      "type",
+                      "decision_version",
+                      "purchase_cost",
+                      "in_service_delay_months",
+                      "useful_life_months",
+                      "monthly_operating_cost",
+                      "funding"
                     ],
                     "additionalProperties": false
                   }
@@ -6802,6 +8565,10 @@
             "type": "number",
             "minimum": 0
           },
+          "custom_operating_expenses": {
+            "type": "number",
+            "minimum": 0
+          },
           "growth_capex": {
             "type": "number",
             "minimum": 0
@@ -6902,6 +8669,11 @@
                 "category": {
                   "type": "string",
                   "const": "growth"
+                },
+                "depreciation_life_months": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 600
                 }
               },
               "required": [
@@ -7152,6 +8924,18 @@
               "anyOf": [
                 {
                   "type": "string",
+                  "const": "asset_purchase"
+                },
+                {
+                  "type": "string",
+                  "const": "asset_in_service"
+                },
+                {
+                  "type": "string",
+                  "const": "operating_expense"
+                },
+                {
+                  "type": "string",
                   "const": "truck_purchase"
                 },
                 {
@@ -7233,6 +9017,10 @@
                 {
                   "type": "string",
                   "const": "simulated"
+                },
+                {
+                  "type": "string",
+                  "const": "profile_source"
                 }
               ]
             }
@@ -7410,6 +9198,155 @@
       "valuation",
       "events",
       "financials"
+    ],
+    "additionalProperties": false
+  },
+  "OperatingExpense": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "properties": {
+      "name": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 100
+      },
+      "id": {
+        "type": "string",
+        "minLength": 1
+      },
+      "stable_investment_key": {
+        "type": "string",
+        "minLength": 1
+      },
+      "start_month": {
+        "type": "integer",
+        "minimum": 1,
+        "maximum": 60
+      },
+      "provenance": {
+        "type": "object",
+        "propertyNames": {
+          "type": "string"
+        },
+        "additionalProperties": {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "const": "synthetic_historical"
+                },
+                {
+                  "type": "string",
+                  "const": "user_input"
+                },
+                {
+                  "type": "string",
+                  "const": "derived"
+                },
+                {
+                  "type": "string",
+                  "const": "assumed"
+                },
+                {
+                  "type": "string",
+                  "const": "simulated"
+                },
+                {
+                  "type": "string",
+                  "const": "profile_source"
+                }
+              ]
+            },
+            "source": {
+              "type": "string",
+              "minLength": 1
+            },
+            "unit": {
+              "type": "string",
+              "minLength": 1
+            },
+            "profile_ref": {
+              "type": "object",
+              "properties": {
+                "profile_id": {
+                  "type": "string",
+                  "format": "uuid",
+                  "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                },
+                "revision": {
+                  "type": "integer",
+                  "exclusiveMinimum": 0,
+                  "maximum": 9007199254740991
+                },
+                "mapping_version": {
+                  "type": "string",
+                  "const": "company-mapping-2-draft"
+                },
+                "pointers": {
+                  "minItems": 1,
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "format": "starts_with",
+                    "pattern": "^\\/.*"
+                  }
+                },
+                "source_ids": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                }
+              },
+              "required": [
+                "profile_id",
+                "revision",
+                "mapping_version",
+                "pointers",
+                "source_ids"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "kind",
+            "source",
+            "unit"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "type": {
+        "type": "string",
+        "const": "operating_expense"
+      },
+      "decision_version": {
+        "type": "string",
+        "const": "flexible-investment-1-candidate"
+      },
+      "amount_per_month": {
+        "type": "number",
+        "minimum": 0
+      },
+      "duration_months": {
+        "type": "integer",
+        "minimum": 1,
+        "maximum": 60
+      }
+    },
+    "required": [
+      "name",
+      "id",
+      "stable_investment_key",
+      "start_month",
+      "provenance",
+      "type",
+      "decision_version",
+      "amount_per_month",
+      "duration_months"
     ],
     "additionalProperties": false
   },
@@ -8345,6 +10282,10 @@
       {
         "type": "string",
         "const": "simulated"
+      },
+      {
+        "type": "string",
+        "const": "profile_source"
       }
     ]
   },
@@ -8378,6 +10319,10 @@
             {
               "type": "string",
               "const": "simulated"
+            },
+            {
+              "type": "string",
+              "const": "profile_source"
             }
           ]
         },
@@ -8388,6 +10333,49 @@
         "unit": {
           "type": "string",
           "minLength": 1
+        },
+        "profile_ref": {
+          "type": "object",
+          "properties": {
+            "profile_id": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+            },
+            "revision": {
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "maximum": 9007199254740991
+            },
+            "mapping_version": {
+              "type": "string",
+              "const": "company-mapping-2-draft"
+            },
+            "pointers": {
+              "minItems": 1,
+              "type": "array",
+              "items": {
+                "type": "string",
+                "format": "starts_with",
+                "pattern": "^\\/.*"
+              }
+            },
+            "source_ids": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          },
+          "required": [
+            "profile_id",
+            "revision",
+            "mapping_version",
+            "pointers",
+            "source_ids"
+          ],
+          "additionalProperties": false
         }
       },
       "required": [
@@ -8423,6 +10411,10 @@
           {
             "type": "string",
             "const": "simulated"
+          },
+          {
+            "type": "string",
+            "const": "profile_source"
           }
         ]
       },
@@ -8433,12 +10425,241 @@
       "unit": {
         "type": "string",
         "minLength": 1
+      },
+      "profile_ref": {
+        "type": "object",
+        "properties": {
+          "profile_id": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "revision": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "maximum": 9007199254740991
+          },
+          "mapping_version": {
+            "type": "string",
+            "const": "company-mapping-2-draft"
+          },
+          "pointers": {
+            "minItems": 1,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "starts_with",
+              "pattern": "^\\/.*"
+            }
+          },
+          "source_ids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        "required": [
+          "profile_id",
+          "revision",
+          "mapping_version",
+          "pointers",
+          "source_ids"
+        ],
+        "additionalProperties": false
       }
     },
     "required": [
       "kind",
       "source",
       "unit"
+    ],
+    "additionalProperties": false
+  },
+  "PurchaseAsset": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "properties": {
+      "name": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 100
+      },
+      "id": {
+        "type": "string",
+        "minLength": 1
+      },
+      "stable_investment_key": {
+        "type": "string",
+        "minLength": 1
+      },
+      "start_month": {
+        "type": "integer",
+        "minimum": 1,
+        "maximum": 60
+      },
+      "provenance": {
+        "type": "object",
+        "propertyNames": {
+          "type": "string"
+        },
+        "additionalProperties": {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "const": "synthetic_historical"
+                },
+                {
+                  "type": "string",
+                  "const": "user_input"
+                },
+                {
+                  "type": "string",
+                  "const": "derived"
+                },
+                {
+                  "type": "string",
+                  "const": "assumed"
+                },
+                {
+                  "type": "string",
+                  "const": "simulated"
+                },
+                {
+                  "type": "string",
+                  "const": "profile_source"
+                }
+              ]
+            },
+            "source": {
+              "type": "string",
+              "minLength": 1
+            },
+            "unit": {
+              "type": "string",
+              "minLength": 1
+            },
+            "profile_ref": {
+              "type": "object",
+              "properties": {
+                "profile_id": {
+                  "type": "string",
+                  "format": "uuid",
+                  "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                },
+                "revision": {
+                  "type": "integer",
+                  "exclusiveMinimum": 0,
+                  "maximum": 9007199254740991
+                },
+                "mapping_version": {
+                  "type": "string",
+                  "const": "company-mapping-2-draft"
+                },
+                "pointers": {
+                  "minItems": 1,
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "format": "starts_with",
+                    "pattern": "^\\/.*"
+                  }
+                },
+                "source_ids": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                }
+              },
+              "required": [
+                "profile_id",
+                "revision",
+                "mapping_version",
+                "pointers",
+                "source_ids"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "kind",
+            "source",
+            "unit"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "type": {
+        "type": "string",
+        "const": "purchase_asset"
+      },
+      "decision_version": {
+        "type": "string",
+        "const": "flexible-investment-1-candidate"
+      },
+      "purchase_cost": {
+        "type": "number",
+        "minimum": 0
+      },
+      "in_service_delay_months": {
+        "type": "integer",
+        "minimum": 0,
+        "maximum": 9007199254740991
+      },
+      "useful_life_months": {
+        "type": "integer",
+        "minimum": 1,
+        "maximum": 600
+      },
+      "monthly_operating_cost": {
+        "type": "number",
+        "minimum": 0
+      },
+      "funding": {
+        "type": "object",
+        "properties": {
+          "debt_fraction": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "annual_interest_rate": {
+            "type": "number",
+            "minimum": 0
+          },
+          "term_months": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "maximum": 9007199254740991
+          }
+        },
+        "required": [
+          "debt_fraction",
+          "annual_interest_rate",
+          "term_months"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "required": [
+      "name",
+      "id",
+      "stable_investment_key",
+      "start_month",
+      "provenance",
+      "type",
+      "decision_version",
+      "purchase_cost",
+      "in_service_delay_months",
+      "useful_life_months",
+      "monthly_operating_cost",
+      "funding"
     ],
     "additionalProperties": false
   },
@@ -8508,6 +10729,11 @@
     "$schema": "https://json-schema.org/draft/2020-12/schema",
     "type": "object",
     "properties": {
+      "name": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 100
+      },
       "id": {
         "type": "string",
         "minLength": 1
@@ -8550,6 +10776,10 @@
                 {
                   "type": "string",
                   "const": "simulated"
+                },
+                {
+                  "type": "string",
+                  "const": "profile_source"
                 }
               ]
             },
@@ -8560,6 +10790,49 @@
             "unit": {
               "type": "string",
               "minLength": 1
+            },
+            "profile_ref": {
+              "type": "object",
+              "properties": {
+                "profile_id": {
+                  "type": "string",
+                  "format": "uuid",
+                  "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                },
+                "revision": {
+                  "type": "integer",
+                  "exclusiveMinimum": 0,
+                  "maximum": 9007199254740991
+                },
+                "mapping_version": {
+                  "type": "string",
+                  "const": "company-mapping-2-draft"
+                },
+                "pointers": {
+                  "minItems": 1,
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "format": "starts_with",
+                    "pattern": "^\\/.*"
+                  }
+                },
+                "source_ids": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                }
+              },
+              "required": [
+                "profile_id",
+                "revision",
+                "mapping_version",
+                "pointers",
+                "source_ids"
+              ],
+              "additionalProperties": false
             }
           },
           "required": [
@@ -8695,6 +10968,11 @@
             {
               "type": "object",
               "properties": {
+                "name": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 100
+                },
                 "id": {
                   "type": "string",
                   "minLength": 1
@@ -8737,6 +11015,10 @@
                           {
                             "type": "string",
                             "const": "simulated"
+                          },
+                          {
+                            "type": "string",
+                            "const": "profile_source"
                           }
                         ]
                       },
@@ -8747,6 +11029,49 @@
                       "unit": {
                         "type": "string",
                         "minLength": 1
+                      },
+                      "profile_ref": {
+                        "type": "object",
+                        "properties": {
+                          "profile_id": {
+                            "type": "string",
+                            "format": "uuid",
+                            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                          },
+                          "revision": {
+                            "type": "integer",
+                            "exclusiveMinimum": 0,
+                            "maximum": 9007199254740991
+                          },
+                          "mapping_version": {
+                            "type": "string",
+                            "const": "company-mapping-2-draft"
+                          },
+                          "pointers": {
+                            "minItems": 1,
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "format": "starts_with",
+                              "pattern": "^\\/.*"
+                            }
+                          },
+                          "source_ids": {
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "minLength": 1
+                            }
+                          }
+                        },
+                        "required": [
+                          "profile_id",
+                          "revision",
+                          "mapping_version",
+                          "pointers",
+                          "source_ids"
+                        ],
+                        "additionalProperties": false
                       }
                     },
                     "required": [
@@ -8817,6 +11142,11 @@
             {
               "type": "object",
               "properties": {
+                "name": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 100
+                },
                 "id": {
                   "type": "string",
                   "minLength": 1
@@ -8859,6 +11189,10 @@
                           {
                             "type": "string",
                             "const": "simulated"
+                          },
+                          {
+                            "type": "string",
+                            "const": "profile_source"
                           }
                         ]
                       },
@@ -8869,6 +11203,49 @@
                       "unit": {
                         "type": "string",
                         "minLength": 1
+                      },
+                      "profile_ref": {
+                        "type": "object",
+                        "properties": {
+                          "profile_id": {
+                            "type": "string",
+                            "format": "uuid",
+                            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                          },
+                          "revision": {
+                            "type": "integer",
+                            "exclusiveMinimum": 0,
+                            "maximum": 9007199254740991
+                          },
+                          "mapping_version": {
+                            "type": "string",
+                            "const": "company-mapping-2-draft"
+                          },
+                          "pointers": {
+                            "minItems": 1,
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "format": "starts_with",
+                              "pattern": "^\\/.*"
+                            }
+                          },
+                          "source_ids": {
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "minLength": 1
+                            }
+                          }
+                        },
+                        "required": [
+                          "profile_id",
+                          "revision",
+                          "mapping_version",
+                          "pointers",
+                          "source_ids"
+                        ],
+                        "additionalProperties": false
                       }
                     },
                     "required": [
@@ -8924,6 +11301,11 @@
             {
               "type": "object",
               "properties": {
+                "name": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 100
+                },
                 "id": {
                   "type": "string",
                   "minLength": 1
@@ -8966,6 +11348,10 @@
                           {
                             "type": "string",
                             "const": "simulated"
+                          },
+                          {
+                            "type": "string",
+                            "const": "profile_source"
                           }
                         ]
                       },
@@ -8976,6 +11362,49 @@
                       "unit": {
                         "type": "string",
                         "minLength": 1
+                      },
+                      "profile_ref": {
+                        "type": "object",
+                        "properties": {
+                          "profile_id": {
+                            "type": "string",
+                            "format": "uuid",
+                            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                          },
+                          "revision": {
+                            "type": "integer",
+                            "exclusiveMinimum": 0,
+                            "maximum": 9007199254740991
+                          },
+                          "mapping_version": {
+                            "type": "string",
+                            "const": "company-mapping-2-draft"
+                          },
+                          "pointers": {
+                            "minItems": 1,
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "format": "starts_with",
+                              "pattern": "^\\/.*"
+                            }
+                          },
+                          "source_ids": {
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "minLength": 1
+                            }
+                          }
+                        },
+                        "required": [
+                          "profile_id",
+                          "revision",
+                          "mapping_version",
+                          "pointers",
+                          "source_ids"
+                        ],
+                        "additionalProperties": false
                       }
                     },
                     "required": [
@@ -9019,6 +11448,339 @@
                 "extra_spend_per_month",
                 "lead_to_job_lag_months",
                 "incremental_cost_per_booked_job"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 100
+                },
+                "id": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "stable_investment_key": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "start_month": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 60
+                },
+                "provenance": {
+                  "type": "object",
+                  "propertyNames": {
+                    "type": "string"
+                  },
+                  "additionalProperties": {
+                    "type": "object",
+                    "properties": {
+                      "kind": {
+                        "anyOf": [
+                          {
+                            "type": "string",
+                            "const": "synthetic_historical"
+                          },
+                          {
+                            "type": "string",
+                            "const": "user_input"
+                          },
+                          {
+                            "type": "string",
+                            "const": "derived"
+                          },
+                          {
+                            "type": "string",
+                            "const": "assumed"
+                          },
+                          {
+                            "type": "string",
+                            "const": "simulated"
+                          },
+                          {
+                            "type": "string",
+                            "const": "profile_source"
+                          }
+                        ]
+                      },
+                      "source": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "unit": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "profile_ref": {
+                        "type": "object",
+                        "properties": {
+                          "profile_id": {
+                            "type": "string",
+                            "format": "uuid",
+                            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                          },
+                          "revision": {
+                            "type": "integer",
+                            "exclusiveMinimum": 0,
+                            "maximum": 9007199254740991
+                          },
+                          "mapping_version": {
+                            "type": "string",
+                            "const": "company-mapping-2-draft"
+                          },
+                          "pointers": {
+                            "minItems": 1,
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "format": "starts_with",
+                              "pattern": "^\\/.*"
+                            }
+                          },
+                          "source_ids": {
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "minLength": 1
+                            }
+                          }
+                        },
+                        "required": [
+                          "profile_id",
+                          "revision",
+                          "mapping_version",
+                          "pointers",
+                          "source_ids"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "required": [
+                      "kind",
+                      "source",
+                      "unit"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "type": {
+                  "type": "string",
+                  "const": "operating_expense"
+                },
+                "decision_version": {
+                  "type": "string",
+                  "const": "flexible-investment-1-candidate"
+                },
+                "amount_per_month": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "duration_months": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 60
+                }
+              },
+              "required": [
+                "name",
+                "id",
+                "stable_investment_key",
+                "start_month",
+                "provenance",
+                "type",
+                "decision_version",
+                "amount_per_month",
+                "duration_months"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 100
+                },
+                "id": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "stable_investment_key": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "start_month": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 60
+                },
+                "provenance": {
+                  "type": "object",
+                  "propertyNames": {
+                    "type": "string"
+                  },
+                  "additionalProperties": {
+                    "type": "object",
+                    "properties": {
+                      "kind": {
+                        "anyOf": [
+                          {
+                            "type": "string",
+                            "const": "synthetic_historical"
+                          },
+                          {
+                            "type": "string",
+                            "const": "user_input"
+                          },
+                          {
+                            "type": "string",
+                            "const": "derived"
+                          },
+                          {
+                            "type": "string",
+                            "const": "assumed"
+                          },
+                          {
+                            "type": "string",
+                            "const": "simulated"
+                          },
+                          {
+                            "type": "string",
+                            "const": "profile_source"
+                          }
+                        ]
+                      },
+                      "source": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "unit": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "profile_ref": {
+                        "type": "object",
+                        "properties": {
+                          "profile_id": {
+                            "type": "string",
+                            "format": "uuid",
+                            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                          },
+                          "revision": {
+                            "type": "integer",
+                            "exclusiveMinimum": 0,
+                            "maximum": 9007199254740991
+                          },
+                          "mapping_version": {
+                            "type": "string",
+                            "const": "company-mapping-2-draft"
+                          },
+                          "pointers": {
+                            "minItems": 1,
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "format": "starts_with",
+                              "pattern": "^\\/.*"
+                            }
+                          },
+                          "source_ids": {
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "minLength": 1
+                            }
+                          }
+                        },
+                        "required": [
+                          "profile_id",
+                          "revision",
+                          "mapping_version",
+                          "pointers",
+                          "source_ids"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "required": [
+                      "kind",
+                      "source",
+                      "unit"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "type": {
+                  "type": "string",
+                  "const": "purchase_asset"
+                },
+                "decision_version": {
+                  "type": "string",
+                  "const": "flexible-investment-1-candidate"
+                },
+                "purchase_cost": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "in_service_delay_months": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 9007199254740991
+                },
+                "useful_life_months": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 600
+                },
+                "monthly_operating_cost": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "funding": {
+                  "type": "object",
+                  "properties": {
+                    "debt_fraction": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 1
+                    },
+                    "annual_interest_rate": {
+                      "type": "number",
+                      "minimum": 0
+                    },
+                    "term_months": {
+                      "type": "integer",
+                      "exclusiveMinimum": 0,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "debt_fraction",
+                    "annual_interest_rate",
+                    "term_months"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "required": [
+                "name",
+                "id",
+                "stable_investment_key",
+                "start_month",
+                "provenance",
+                "type",
+                "decision_version",
+                "purchase_cost",
+                "in_service_delay_months",
+                "useful_life_months",
+                "monthly_operating_cost",
+                "funding"
               ],
               "additionalProperties": false
             }
@@ -9274,6 +12036,10 @@
                   "minimum": 0
                 },
                 "recruitment": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "custom_operating_expenses": {
                   "type": "number",
                   "minimum": 0
                 },
@@ -9577,6 +12343,18 @@
                     "anyOf": [
                       {
                         "type": "string",
+                        "const": "asset_purchase"
+                      },
+                      {
+                        "type": "string",
+                        "const": "asset_in_service"
+                      },
+                      {
+                        "type": "string",
+                        "const": "operating_expense"
+                      },
+                      {
+                        "type": "string",
                         "const": "truck_purchase"
                       },
                       {
@@ -9658,6 +12436,10 @@
                       {
                         "type": "string",
                         "const": "simulated"
+                      },
+                      {
+                        "type": "string",
+                        "const": "profile_source"
                       }
                     ]
                   }
@@ -10142,6 +12924,10 @@
                     {
                       "type": "string",
                       "const": "simulated"
+                    },
+                    {
+                      "type": "string",
+                      "const": "profile_source"
                     }
                   ]
                 },
@@ -10152,6 +12938,49 @@
                 "unit": {
                   "type": "string",
                   "minLength": 1
+                },
+                "profile_ref": {
+                  "type": "object",
+                  "properties": {
+                    "profile_id": {
+                      "type": "string",
+                      "format": "uuid",
+                      "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                    },
+                    "revision": {
+                      "type": "integer",
+                      "exclusiveMinimum": 0,
+                      "maximum": 9007199254740991
+                    },
+                    "mapping_version": {
+                      "type": "string",
+                      "const": "company-mapping-2-draft"
+                    },
+                    "pointers": {
+                      "minItems": 1,
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "format": "starts_with",
+                        "pattern": "^\\/.*"
+                      }
+                    },
+                    "source_ids": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "minLength": 1
+                      }
+                    }
+                  },
+                  "required": [
+                    "profile_id",
+                    "revision",
+                    "mapping_version",
+                    "pointers",
+                    "source_ids"
+                  ],
+                  "additionalProperties": false
                 }
               },
               "required": [
@@ -10416,6 +13245,10 @@
                         "minimum": 0
                       },
                       "recruitment": {
+                        "type": "number",
+                        "minimum": 0
+                      },
+                      "custom_operating_expenses": {
                         "type": "number",
                         "minimum": 0
                       },
@@ -10719,6 +13552,18 @@
                           "anyOf": [
                             {
                               "type": "string",
+                              "const": "asset_purchase"
+                            },
+                            {
+                              "type": "string",
+                              "const": "asset_in_service"
+                            },
+                            {
+                              "type": "string",
+                              "const": "operating_expense"
+                            },
+                            {
+                              "type": "string",
                               "const": "truck_purchase"
                             },
                             {
@@ -10800,6 +13645,10 @@
                             {
                               "type": "string",
                               "const": "simulated"
+                            },
+                            {
+                              "type": "string",
+                              "const": "profile_source"
                             }
                           ]
                         }

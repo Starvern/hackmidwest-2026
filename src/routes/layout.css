@@ -51,6 +51,10 @@ h2{font-size:17px;font-weight:550;letter-spacing:-.5px;margin:0}
 .field-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px 10px;margin-top:15px}
 .field-grid label{font-size:9px;line-height:1.5}
 .field-grid input{display:block;width:100%;border:1px solid #dce4d8;border-radius:4px;padding:8px;margin-top:5px;font-size:12px;color:#294d3d;background:#fcfdfb}
+.full-label input{display:block;width:100%;border:1px solid #dce4d8;border-radius:4px;padding:8px;margin-top:5px;font-size:12px;color:#294d3d;background:#fcfdfb}
+.decision .full-label{margin-top:14px}
+.decision-actions button{border:1px solid #cfdbcc;border-radius:5px;padding:9px 7px;background:#f4f8f1;color:#294d3d;font-size:11px;text-align:left}
+.decision-actions button:hover{background:#e7efdf}
 .primary{display:flex;justify-content:space-between;width:100%;background:#204e3c;color:white;border:0;border-radius:5px;padding:12px 14px;font-size:12px;margin-top:8px}
 .primary:hover{background:#163e2d}
 .results{display:grid;gap:20px;min-width:0}
@@ -143,3 +147,25 @@ main{min-width:0}
 
 
 .statement{border-top:1px solid #e4eae0;margin-top:18px;padding-top:16px}.statement>summary{font-size:11px;color:#5b7453}
+
+/* Keep planning controls and the default reading path comfortable at laptop widths. */
+.full-label,.field-grid label,.editor-note,.muted{font-size:12px;color:#607366}
+.full-label select,.decision summary,.metric-tabs button,.primary{font-size:12px}
+input.plan-name{display:block;width:100%;border:1px solid #dae2d7;border-radius:5px;padding:10px;margin-top:8px;color:#304c40}
+.plan-buttons{display:flex;gap:6px;flex-wrap:wrap;margin:12px 0 18px}
+.plan-buttons button,.add-action>button,.chart-mode button{font-size:12px;border:1px solid #d7e0d4;border-radius:5px;padding:9px;background:#fff;color:#365342}
+button:disabled{cursor:default}
+.text-button{font-size:12px;border:0;background:none;color:#905b3b;text-decoration:underline;padding:12px 0 0}
+.add-action{border-top:1px solid #e0e6dd;padding-top:16px;display:grid;gap:10px}
+.empty-plan{padding:12px;background:#f3f6ef;font-size:12px;line-height:1.6}
+.chart-mode{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}.chart-mode button.active{background:#204e3c;color:#fff;border-color:#204e3c}
+.plan-explanation{background:#eaf0e5;border:1px solid #d7e2cf;border-radius:9px;padding:22px}
+.plan-explanation h3{font-size:19px;font-weight:550;margin:0}.plan-explanation p{font-size:13px;line-height:1.7}
+.explanation-numbers{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;margin:20px 0}
+.explanation-numbers span{display:block;font-size:11px;color:#667961;margin-bottom:8px}.explanation-numbers strong{font-size:23px;font-weight:500;letter-spacing:-.6px}
+.plan-explanation .explanation-note{font-size:12px;color:#52694d;margin-bottom:0}
+.inspector-summary{font-size:14px;color:#365342}.inspector details[open]>.inspector-summary{margin-bottom:24px}
+.cards{grid-template-columns:repeat(auto-fit,minmax(185px,1fr))}.outcome h3{font-size:23px;white-space:normal;overflow-wrap:anywhere}
+.card-label,.delta,.scenario-name{font-size:11px}.outcome dl div{font-size:11px;flex-wrap:wrap}.outcome dd{text-align:left}
+@media(max-width:800px){.explanation-numbers{grid-template-columns:1fr;gap:14px}.explanation-numbers div{display:flex;justify-content:space-between;gap:12px;align-items:center}.explanation-numbers span{margin:0}.cards{grid-template-columns:1fr}}
+.item-name{display:block;width:100%;margin-top:8px;border:1px solid #dae2d7;border-radius:5px;padding:10px;color:#304c40}

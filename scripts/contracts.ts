@@ -1,6 +1,7 @@
 import { readFileSync, writeFileSync } from 'node:fs';
 import { z } from 'zod';
 import * as runtime from '../src/lib/server/schemas.ts';
+import * as intake from '../src/lib/server/intake/schemas.ts';
 
 const check = process.argv.includes('--check');
 const entries = Object.entries(runtime).filter(([name, value]) => name.endsWith('Schema') && value instanceof z.ZodType)
@@ -19,3 +20,9 @@ for (const [name, filename] of [
   ['MonteCarloRequest', 'monte-carlo-request'], ['SimulationResult', 'simulation-result'], ['ModelMetadata', 'model-metadata'],
 ] as const) artifact(`contracts/${filename}.schema.json`, JSON.stringify(all[name], null, 2) + '\n');
 console.log(check ? 'Contract artifacts match authoritative schemas' : 'Generated contract artifacts');
+const intakeEntries = Object.entries(intake).filter(([name, value]) => name.endsWith('Schema') && value instanceof z.ZodType);
+artifact('contracts/intake.ts', `/** Generated intake types. Validation/review rules live in the authoritative runtime. */\nimport type { z } from 'zod';\nimport type * as Runtime from '../src/lib/server/intake/schemas.ts';\n\n${intakeEntries.map(([name]) => `export type ${name.slice(0, -6)} = z.infer<typeof Runtime.${name}>;`).join('\n')}\n`);
+// JSON Schema does not encode superRefine rules; consumers must use runtime validation.
+artifact('contracts/company-profile.schema.json', JSON.stringify(z.toJSONSchema(intake.ProfilePayloadSchema, { target: 'draft-2020-12' }), null, 2) + '\n');
+artifact('contracts/company-binding.schema.json', JSON.stringify(z.toJSONSchema(intake.CompanyBindingSchema, { target: 'draft-2020-12' }), null, 2) + '\n');
+artifact('contracts/profile-simulation.schema.json', JSON.stringify(z.toJSONSchema(intake.ProfileSimulationInputSchema, { target: 'draft-2020-12' }), null, 2) + '\n');
