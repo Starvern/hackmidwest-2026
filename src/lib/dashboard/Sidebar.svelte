@@ -24,7 +24,7 @@
 </script>
 
 <aside class="sidebar" aria-label="Workspace navigation">
-  <a class="sidebar-brand" href="/" aria-label="Sapling home"><img src="/brand/sapling-logo.png" alt="Sapling" /></a>
+  <a class="sidebar-brand" href="/" data-sveltekit-reload aria-label="Sapling home"><img src="/brand/sapling-logo.png" alt="Sapling" /></a>
   <nav aria-label="Workspace sections">
     {#each links as link}<a href={link.href} aria-current={isCurrent(link.href) ? 'location' : undefined} onclick={() => reveal(link.href)}>{link.label}</a>{/each}
   </nav>

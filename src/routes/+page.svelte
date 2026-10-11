@@ -8,15 +8,17 @@
   import example from '../../contracts/example-request.json';
   import PlanExplanation from '../lib/dashboard/PlanExplanation.svelte';
   import Sidebar from '../lib/dashboard/Sidebar.svelte';
+  import { createGrowthPlans } from '../lib/dashboard/growth-example.ts';
   import { createPlanningRequest, addPlan, addAction, editPlanAction } from '../lib/dashboard/plans.ts';
   import RiskPanel from '../lib/dashboard/RiskPanel.svelte';
   import ResultsExplanation from '../lib/dashboard/ResultsExplanation.svelte';
   import Timeline from '../lib/dashboard/Timeline.svelte';
   import { metrics, metricValue, formatValue, paybackLabel, decisionFields, fieldValue } from '../lib/dashboard/model.ts';
   const profileMode = $derived(page.url.searchParams.has('profile'));
+  const growthExample = $derived(!profileMode && page.url.searchParams.get('example') === 'growth');
   let binding = $state<CompanyBinding | null>(null);
   let latestRevision = $state<number | null>(null);
-  let request = $state<DeterministicRequest>(page.url.searchParams.has('profile') ? createPlanningRequest() : createPlanningRequest(example.company_id, example.reserve_floor_usd, example.exit_multiple));
+  let request = $state<DeterministicRequest>(!page.url.searchParams.has('profile') && page.url.searchParams.get('example') === 'growth' ? createGrowthPlans() : page.url.searchParams.has('profile') ? createPlanningRequest() : createPlanningRequest(example.company_id, example.reserve_floor_usd, example.exit_multiple));
   let company = $state<CompanyInput | null>(null);
   let metadata = $state<ModelMetadata | null>(null);
   let result = $state<SimulationResult | null>(null);
@@ -78,7 +80,7 @@
         company = record.compiled.company; binding = record.compiled.binding; metadata = model;
         latestRevision = profiles.find(p => p.profile_id === id)?.revision ?? binding.revision;
         request.company_id = company.id; request.reserve_floor_usd = company.global_assumptions.liquidity_floor; request.exit_multiple = company.global_assumptions.valuation_multiple;
-      } else [company, metadata] = await Promise.all([get<CompanyInput>('/api/v1/company/demo'), get<ModelMetadata>('/api/v1/model/metadata')]);
+      } else [company, metadata] = await Promise.all([get<CompanyInput>(growthExample ? '/api/v1/company/growth' : '/api/v1/company/demo'), get<ModelMetadata>('/api/v1/model/metadata')]);
       await run();
     } catch (cause) { error = cause instanceof Error ? cause.message : 'Could not load company.'; pending = false; }
   }
@@ -93,6 +95,7 @@
     <header class="workspace-header"><div class="wordmark"><img class="sapling-wordmark" src="/brand/sapling-logo.png" alt="Sapling" /><span class="divider">/</span><span class="workspace-name">Investment workspace</span></div><a href={profileMode && binding ? `/intake?profile=${binding.profile_id}&revision=${binding.revision}` : '/intake'} class="synthetic" title="View this company in Businesses"><span aria-hidden="true">● </span>{company?.name ?? 'Loading company…'}</a></header>
     {#if profileMode && binding && latestRevision !== binding.revision}<p class="editor-note">Viewing confirmed revision {binding.revision}. A newer revision {latestRevision} exists. <a href="/intake">Review the latest draft</a>.</p>{/if}
     <section class="intro"><div><p class="eyebrow">OPERATING DECISIONS, OVER TIME</p><h1>Plant the next move.</h1><p class="subtitle">See what your investments change—and when they matter.</p></div><div class="company-tag"><span class="company-icon">⌁</span><div><strong>{company?.name ?? 'Loading company…'}</strong><small>HVAC services · USD · Five-year forecast</small></div></div></section>
+    {#if growthExample}<p class="editor-note">Synthetic growth example: 600 requested jobs per month, but four trucks can serve only 240. Compare adding trucks and technicians with spending on marketing before increasing capacity. Both plans are editable.</p>{/if}
     <div class="notice"><span>↗</span><p>Plan comparison <span>Five-year forecasts based on your inputs and assumptions.</span></p><span class="status">{pending ? 'Computing…' : stale ? 'Results need updating' : result ? 'Results current' : 'Ready to load'}</span></div>
     {#if error}<div class="error" role="alert"><strong>We couldn’t complete that request.</strong><p>{error}</p><button onclick={() => company ? run() : initialize()} disabled={pending}>Retry</button></div>{/if}
     <div class="main-grid">
@@ -145,7 +148,7 @@
         </details></section>
         {#if result?.warnings.length}<section class="panel warnings"><h2>Things to watch</h2><ul>{#each [...new Set(result.warnings.map(warning => warning.message))] as message}<li>{message}<small> · Applies to: {Array.from(new Set(result.warnings.filter(w => w.message === message && w.scenario_id).map(w => result!.scenarios[w.scenario_id!]?.metadata.name).filter(Boolean))).join(", ")}</small></li>{/each}</ul></section>{/if}
       </div>
-    <div id="risk">{#if profileMode}<section class="panel"><h2>Risk analysis is not available for this business yet</h2><p>This comparison uses one set of assumptions. It does not estimate the likelihood of different outcomes.</p></section>{:else}<RiskPanel {request} enabled={metadata?.readiness.monte_carlo ?? false} {month} {scenarioId} {metric} />{/if}</div>
+    <div id="risk">{#if profileMode || growthExample}<section class="panel"><h2>Risk analysis is not available for this business yet</h2><p>This comparison uses one set of assumptions. It does not estimate the likelihood of different outcomes.</p></section>{:else}<RiskPanel {request} enabled={metadata?.readiness.monte_carlo ?? false} {month} {scenarioId} {metric} />{/if}</div>
     <section class="panel assumptions" id="assumptions"><details><summary><div><p class="eyebrow">CONTEXT MATTERS</p><h2>Assumptions</h2></div><span>View details</span></summary><p>{profileMode ? 'This run uses the selected confirmed business revision, including its reviewed estimates. Results are modeled outcomes.' : metadata?.data_notice}</p><ul>{#each metadata?.limitations ?? [] as limitation}<li>{limitation}</li>{/each}</ul><p>Month 0 shows starting balances. An unavailable value is not zero. Payback compares the plan’s extra cash flow with doing nothing new, before financing; a later cash shortfall can reverse that recovery.</p><details><summary>Technical records</summary><pre>{JSON.stringify({ assumptions: result?.assumptions ?? company?.global_assumptions, provenance: company?.provenance }, null, 2)}</pre><p class="muted">Schema {metadata?.schema_version ?? '—'} · Model {metadata?.model_version ?? '—'} · Revision {metadata?.contract_revision ?? '—'} · Run {result?.run_id ?? 'not run'}</p><p class="fingerprint">Input fingerprint: {result?.input_fingerprint ?? 'not run'}</p></details></details></section>
     <footer><span>Sapling / A clearer view of what comes next.</span><span>{profileMode ? 'Confirmed facts and reviewed estimates. Modeled outcomes.' : 'Synthetic inputs. Modeled outcomes.'}</span></footer>
     <div class="sr-only" aria-live="polite">{pending ? 'Simulation running' : error ? 'Request failed' : stale ? 'Inputs changed; results are stale' : result ? 'Simulation complete' : ''}</div>

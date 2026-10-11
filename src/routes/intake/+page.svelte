@@ -115,6 +115,7 @@
   {#if error}<p class="error" role="alert">{error}</p>{/if}
   {#if importNote}<p role="status">{importNote}</p>{/if}
   <section id="businesses" class="panel"><h2>Saved businesses</h2><p class="note">Saved on this computer for this browser. Keep your browser cookies to return to your businesses. Use sample data for this demo.</p>{#each profiles as item}<button class="saved" disabled={busy} onclick={() => load(item.profile_id, item.revision)}>{item.name ?? 'Unnamed business'} · revision {item.revision} · {item.status}</button>{/each}
+    <div class="example-businesses"><h3>Example businesses</h3><p class="note">Synthetic businesses with editable plans. Explore spare capacity or a business turning away customers.</p><a class="saved" href="/" data-sveltekit-reload>Illustrative HVAC · spare capacity</a><a class="saved" href="/?example=growth" data-sveltekit-reload>Prairie Growth HVAC · unmet demand</a></div>
     <details open={!record}><summary>Start a business profile</summary><form onsubmit={e => { e.preventDefault(); void create(); }}><div class="grid"><label>Business name<input required bind:value={name} /></label><label>Books through<input type="date" required bind:value={date} /></label><label>Source of the opening facts<input required bind:value={sourceTitle} placeholder="e.g. year-end accounts and owner statement" /></label></div><p class="note">The initial model supports USD HVAC, December 31 opening balances, the previous January–December history, and a January forecast. Other facts may be saved as drafts.</p><button class="primary" disabled={busy}>Create draft</button></form></details>
   </section>
   <section id="import" class="panel"><h2>Import a company workbook</h2><p>Use the template below. Your workbook becomes a new draft for you to inspect and review.</p><a href={workbookUrl} download="company-intake-v2.xlsx">Download the blank workbook</a><p class="note">Values only · .xlsx · up to 1 MB. Formulas, macros and external links are unsupported. Use YYYY-MM-DD or Excel dates. Leave unknown values blank; enter 0 when the value is zero.</p><label>Completed intake workbook<input type="file" accept=".xlsx" disabled={busy} onchange={e => { workbook = e.currentTarget.files?.[0] ?? null; importNote = ''; }} /></label><button disabled={busy || !workbook} onclick={importFile}>Import as a new draft</button></section>
@@ -157,6 +158,9 @@ header>p:last-child{font-size:15px;line-height:1.7;max-width:650px;margin:0;colo
 label{line-height:1.5}
 button{min-height:40px;font-size:13px}
 .saved{display:inline-block;text-align:left;line-height:1.5;padding:12px 14px}
+.example-businesses{margin:24px 0;padding:18px;background:#f3f5f0;border-radius:8px}
+.example-businesses a{margin:4px 8px 4px 0;border:1px solid #cbd8c7;border-radius:6px;color:#173d37;text-decoration:none;background:white}
+.example-businesses a:hover{background:#e9eee3}
 .status{position:static;align-items:center;white-space:normal;border-radius:8px;gap:12px;margin:24px 0;font-size:13px}
 nav{min-height:64px;padding-bottom:16px;border-bottom:1px solid #dbe2da}
 @media(max-width:900px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
