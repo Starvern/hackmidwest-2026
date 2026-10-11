@@ -1,20 +1,51 @@
-# Sapling
+<p align="center">
+  <img src="static/brand/sapling-logo.png" alt="Sapling" width="440" />
+</p>
 
-Operational and financial scenario modeling for a synthetic HVAC business,
-built on the existing SvelteKit + TypeScript app.
+<p align="center"><strong>Plant the next move.</strong></p>
 
-The [specification](docs/OperatorOS_Implementation_Spec.md) defines product and
-financial behavior. The user-directed [stack amendment](docs/STACK_DECISION.md)
-supersedes its Python/React stack requirements for Person 3.
+<p align="center">
+  Explore how business investments affect operations, cash flow, and long-term value.
+</p>
 
-## Setup and checks
+---
 
-Use Node 24 or newer (the tests execute TypeScript directly) and npm 11:
+Sapling helps business owners compare investment plans before committing. Model hiring, marketing, vehicles, equipment, and expenses over five years, then explore the tradeoffs through financial timelines and Monte Carlo risk simulations.
+
+- **Build plans** and compare them with doing nothing new.
+- **Follow the impact** on capacity, revenue, cash, debt, and estimated owner value.
+- **Explore uncertainty** with a 100-path risk preview or a 2,000-path simulation for supported example businesses.
+- **Import company workbooks** and review their inputs before creating a forecast.
+
+Built for **Hack Midwest 2026** with SvelteKit, TypeScript, and Zod.
+
+## Run locally
+
+Use Node.js 24+ and npm 11.
 
 ```sh
 npm ci
 npm run dev
 ```
+
+Open [localhost:5173](http://localhost:5173).
+
+To run the built demo with example-business risk simulations enabled:
+
+```sh
+# macOS / Linux
+OPERATOROS_MC_REVIEW=1 npm run demo
+```
+
+```powershell
+# Windows PowerShell
+$env:OPERATOROS_MC_REVIEW = '1'
+npm run demo
+```
+
+The built demo runs at [localhost:4182](http://localhost:4182). See the [demo runbook](docs/DEMO_RUNBOOK.md) for company-import setup on macOS/Linux. Durable company intake is not supported on Windows. Plan edits reset on page reload.
+
+## Development
 
 ```sh
 npm test
@@ -22,62 +53,6 @@ npm run check
 npm run build
 ```
 
-UI and API share the SvelteKit server, normally `http://localhost:5173`.
-GET `/api/v1/health` returns:
+See the [project specification](docs/OperatorOS_Implementation_Spec.md) and [stack decisions](docs/STACK_DECISION.md) for implementation details.
 
-```json
-{"status":"ok","simulation_ready":true}
-```
-
-Health reports HTTP availability separately from shared acceptance. Company, metadata and the real deterministic simulation endpoint are available. Shared Gates A/B are accepted; deterministic readiness is true. Monte Carlo remains unavailable. API routes
-live under `src/routes/api/v1/`; runtime schemas use Zod; the engine interface was accepted at Checkpoint 1.
-There is no separate Python API to install or run.
-
-## Person 3 workflow
-
-Follow [our ownership guide](docs/PERSON_3_CONTRACTS_API_FRONTEND.md) and
-[checkpoint agenda](docs/PERSON_3_CHECKPOINT.md). Current shared types use accepted interface checkpoint-1-candidate-1. Dashboard development waits for deterministic Gates A/B;
-Monte Carlo integration waits for Gate C. No financial defaults or forecasts
-are introduced by the infrastructure setup.
-
-## Shared contracts
-
-Authoritative runtime definitions are in `src/lib/server/schemas.ts`; generated
-types are in `contracts/contracts.ts`. Engine signatures and the exact candidate
-revision are documented in [the schema handoff](docs/PERSON_3_SCHEMA_HANDOFF.md).
-
-```sh
-npm run contracts:generate
-npm run contracts:check
-npm run contracts:types
-npm run fixture:contract
-node scripts/validate_fixture.ts
-```
-
-`npm test` includes artifact/type checks and contract/API tests. Validate both
-the Zod schema and Person 2's reconciliation checks before fixture integration.
-The example request is illustrative input. The complete engine-generated response is contracts/example-result.json; npm test checks its reproducibility.
-
-## API adapters
-
-GET `/api/v1/company/demo` returns the validated synthetic company. GET
-`/api/v1/model/metadata` returns versions, decision/metric definitions, units and
-explicit engine readiness. API errors use the shared structured JSON contract.
-POST `/api/v1/simulate/deterministic` runs the accepted-shape request through the real engine. See [the deterministic review](docs/PERSON_3_DETERMINISTIC_REVIEW.md) for acceptance status and [the API handoff](docs/PERSON_3_API_HANDOFF.md) for behavior and limits.
-
-With a local server on port 4173 (`npm run dev -- --host 127.0.0.1 --port 4173`),
-run `npm run test:api:live`. Set `OPERATOROS_API_BASE_URL` for a different port.
-
-## Dashboard
-
-The Svelte dashboard at `/` runs the real deterministic API and provides editable
-truck/hire/marketing templates, six timeline metrics, month inspection, comparisons
-and disclosed assumptions. See [dashboard handoff](docs/PERSON_3_DASHBOARD_HANDOFF.md)
-for verified behavior and remaining design/Gate D review. Monte Carlo is not run.
-
-## Monte Carlo configuration candidate
-
-The separate MC manifest has executable candidate validation, generated types/schemas
-and MC-only fingerprints. See [MC contract handoff](docs/PERSON_3_MC_CONTRACT_HANDOFF.md)
-for review status and interfaces. `npm test` checks these artifacts alongside the frozen
-deterministic reference. This does not enable Monte Carlo or claim Gate C acceptance.
+*Forecasts depend on the inputs and assumptions entered. Example risk results use synthetic assumptions and are exploratory estimates, not guaranteed outcomes.*
