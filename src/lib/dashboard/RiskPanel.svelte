@@ -62,7 +62,13 @@
       <div class="risk-summary">
         <article><h4>Could cash fall below the reserve?</h4><strong>{probabilityLabel(selected.path_risks.probability_cash_below_reserve_any_month)}</strong><p>of eligible modeled outcomes fall below {formatValue(submitted?.reserve_floor_usd)} at least once in the next five years.</p><small>{eligibilityLabel(selected.path_risks.probability_cash_below_reserve_any_month)}</small></article>
         <article><h4>Could it finish worse than doing nothing?</h4><strong>{probabilityLabel(selected.path_risks.probability_negative_exit_equity_delta)}</strong><p>of eligible outcomes have a lower modeled owner value at year five than their matching baseline.</p><small>{eligibilityLabel(selected.path_risks.probability_negative_exit_equity_delta)}</small></article>
-        <article><h4>Could the investment earn its money back?</h4><strong>{probabilityLabel(selected.payback.probability_within_horizon)}</strong><p>of eligible outcomes first recover the investment within five years. Recovery can reverse; this uses project cash flow before financing.</p><small>{eligibilityLabel(selected.payback.probability_within_horizon)}</small></article>
+        <article><h4>Could the investment earn its money back?</h4>
+          {#if selected.payback.probability_within_horizon.unavailable_reason === 'not_applicable'}
+            <strong>Not applicable</strong><p>This plan has no qualifying investment outlay to earn back. Cash risk and owner value are still simulated.</p><small>{selected.payback.not_applicable_count} paths with no applicable investment payback</small>
+          {:else}
+            <strong>{probabilityLabel(selected.payback.probability_within_horizon)}</strong><p>of eligible outcomes first recover the investment within five years. Recovery can reverse; this uses project cash flow before financing.</p><small>{eligibilityLabel(selected.payback.probability_within_horizon)}</small>
+          {/if}
+        </article>
       </div>
       <div class="value-range"><h4>What could the owner’s stake be worth in year five?</h4><p><strong>{formatValue(selected.terminal_distributions.exit_equity_value.p10)} – {formatValue(selected.terminal_distributions.exit_equity_value.p90)}</strong></p><p>The 10th–90th percentile range across eligible modeled outcomes, with a median of {formatValue(selected.terminal_distributions.exit_equity_value.p50)}. Outcomes can fall outside this range.</p><small>{eligibilityLabel(selected.terminal_distributions.exit_equity_value)}</small></div>
     {:else}<p class="availability">These results do not include the selected plan. Run a new comparison to evaluate it.</p>{/if}
