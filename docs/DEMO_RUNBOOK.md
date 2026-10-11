@@ -1,6 +1,6 @@
 # Local deterministic showcase rehearsal
 
-Runtime: `luke d72f765`, including Sapling branding and concise results. Selected package integrated from `will d3948d0` at `outputs/showcase-demo`. Rehearsal host: Luke's current macOS checkout, Node v24.4.0. This is a verified presentation-host candidate; final host still needs team agreement. The selected workbook describes a fictional business.
+Current screenshot rehearsal: `luke bea8415`, including Sapling branding, polished layout, blank customizable Plan A/B defaults and concise results with an explicit opening-cash distinction. Selected package integrated from `will d3948d0` at `outputs/showcase-demo`. Rehearsal host: Luke's current macOS checkout, Node v24.4.0. This is a verified presentation-host candidate; final host still needs team agreement. The selected workbook describes a fictional business. [Presenter fallback and checked-in screenshots](DEMO_FALLBACK.md) record exact plans, displayed checkpoints and restart behavior.
 
 ## Selected package rehearsal completed
 
@@ -52,4 +52,4 @@ The built app on port 4182 reopened the same persisted confirmed snapshot and ra
 
 ## Remaining handoff
 
-P2's selected workbook/plans are integrated and the exact browser rehearsal is complete. P1: independently verify the selected displayed financial values. P2: independently check operating results and help with browser acceptance. P3: address review findings and capture final presentation fallback evidence after acceptance. The current Mac is available as the supported host candidate; final presentation-host decision and submission target/submitter are still pending. No new company risk parameters or full company Monte Carlo aggregate are claimed.
+P2's selected workbook/plans are integrated and the implementation-owner browser rehearsal is complete. P1's financial package and reported-display reconciliation are recorded in issue #2; that is distinct from independent browser observation. The fallback screenshot set now provides selected-workbook display evidence for P1/P2 review. P2 owns the reported fictional-risk-simulator failures; integrate their final fix before checking risk controls. Independent combined browser acceptance, projector rehearsal, final presentation-host decision, submission target/submitter and joint release decision remain open. No new company risk parameters or full company Monte Carlo aggregate are claimed.
