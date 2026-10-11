@@ -1,4 +1,6 @@
 /** Local single-process candidate. Principals come from the server, never request actor IDs. */
+import { ProfileMCStoredRecordingSchema, type ProfileMCStoredRecording } from '../monte-carlo/recording-contracts.ts';
+import { validateRecordedProfileMonteCarlo } from '../monte-carlo/profile-context.ts';
 import { DatabaseSync } from 'node:sqlite';
 import { randomUUID, randomBytes, createHash } from 'node:crypto';
 import { constants, openSync, closeSync, fchmodSync, lstatSync } from 'node:fs';
@@ -45,6 +47,9 @@ function estimatePointers(input: unknown, pointer = ''): string[] {
   return Object.entries(input).flatMap(([key, value]) => estimatePointers(value, `${pointer}/${key}`));
 }
 
+export const PROFILE_RECORDING_LIMITS = Object.freeze({ recordsPerOwner: 8, bodyBytes: 2 * 1024 * 1024, retentionMs: 30 * 86400000 });
+type Recording = ProfileMCStoredRecording;
+
 export class ProfileStore {
   private db: DatabaseSync;
   constructor(filename: string) {
@@ -57,6 +62,7 @@ export class ProfileStore {
     }
     this.db = new DatabaseSync(filename);
     this.db.exec('PRAGMA journal_mode=DELETE; PRAGMA secure_delete=ON; CREATE TABLE IF NOT EXISTS profiles (id TEXT PRIMARY KEY, owner TEXT NOT NULL, body TEXT NOT NULL)');
+    this.db.exec('PRAGMA foreign_keys=ON; CREATE TABLE IF NOT EXISTS mc_recordings (id TEXT PRIMARY KEY, owner TEXT NOT NULL, profile_id TEXT NOT NULL REFERENCES profiles(id) ON DELETE CASCADE, expires INTEGER NOT NULL, digest TEXT NOT NULL, body TEXT NOT NULL); CREATE INDEX IF NOT EXISTS mc_recordings_owner_expiry ON mc_recordings(owner, expires)');
     this.db.exec('CREATE TABLE IF NOT EXISTS sessions (digest TEXT PRIMARY KEY, owner TEXT NOT NULL, expires INTEGER NOT NULL)');
   }
   close() { this.db.close(); }
@@ -205,6 +211,64 @@ export class ProfileStore {
     const result = simulate_deterministic(snapshot.company, envelope.request);
     return { simulation_version: envelope.simulation_version, company: snapshot.binding, result };
   }
+  /** Internal trusted adapter only. HTTP callers cannot assert a successful job. */
+  saveMonteCarloRecording(owner: string, inputValue: unknown, value: unknown): Recording {
+    this.principal(owner);
+    this.db.exec('BEGIN IMMEDIATE');
+    try {
+      const input = ProfileSimulationInputSchema.parse(inputValue);
+      const recording = validateRecordedProfileMonteCarlo(this, owner, input, value);
+      const id = z.uuid().parse(recording.result.run_id), now = Date.now();
+      this.db.prepare('DELETE FROM mc_recordings WHERE expires <= ?').run(now);
+      const existing = this.db.prepare('SELECT owner, digest, body FROM mc_recordings WHERE id = ?').get(id);
+      if (existing) {
+        const saved = this.decodeRecording(existing);
+        if (existing.owner !== owner || sha256Canonical(saved.input) !== sha256Canonical(input) || sha256Canonical(saved.recording) !== sha256Canonical(recording)) throw new Error('Recording identity conflict');
+        this.db.exec('COMMIT'); return saved;
+      }
+      const count = this.db.prepare('SELECT COUNT(*) AS count FROM mc_recordings WHERE owner = ?').get(owner)!;
+      if (Number(count.count) >= PROFILE_RECORDING_LIMITS.recordsPerOwner) throw new Error('Recording limit reached');
+      const saved: Recording = { recording_version: 'profile-mc-recording-1-candidate', recording_id: id,
+        recorded_at: new Date(now).toISOString(), expires_at: new Date(now + PROFILE_RECORDING_LIMITS.retentionMs).toISOString(), input, recording };
+      const body = JSON.stringify(saved);
+      if (Buffer.byteLength(body) > PROFILE_RECORDING_LIMITS.bodyBytes) throw new Error('Recording exceeds storage limit');
+      this.db.prepare('INSERT INTO mc_recordings VALUES (?, ?, ?, ?, ?, ?)').run(id, owner, input.company.profile_id,
+        now + PROFILE_RECORDING_LIMITS.retentionMs, sha256Canonical(saved), body);
+      this.db.exec('COMMIT'); return structuredClone(saved);
+    } catch (error) { this.db.exec('ROLLBACK'); throw error; }
+  }
+  private decodeRecording(row: Record<string, unknown>): Recording {
+    const saved: unknown = JSON.parse(String(row.body));
+    if (sha256Canonical(saved) !== row.digest) throw new Error('Stored recording mismatch');
+    return ProfileMCStoredRecordingSchema.parse(saved);
+  }
+  /** Requires the caller's current plan; stale output cannot become the current forecast. */
+  readMonteCarloRecording(owner: string, id: string, expectedInput: unknown): Recording {
+    this.principal(owner); z.uuid().parse(id);
+    const row = this.db.prepare('SELECT digest, body FROM mc_recordings WHERE id = ? AND owner = ? AND expires > ?').get(id, owner, Date.now());
+    if (!row) throw new Error('Recording not found or expired');
+    const saved = this.decodeRecording(row);
+    if (saved.recording_id !== id) throw new Error('Stored recording mismatch');
+    validateRecordedProfileMonteCarlo(this, owner, saved.input, saved.recording);
+    validateRecordedProfileMonteCarlo(this, owner, expectedInput, saved.recording);
+    return saved;
+  }
+  listMonteCarloRecordings(owner: string, bindingValue: unknown) {
+    this.principal(owner);
+    const binding = CompanyBindingSchema.parse(bindingValue); this.resolve(owner, binding);
+    return this.db.prepare('SELECT digest, body FROM mc_recordings WHERE owner = ? AND profile_id = ? AND expires > ? ORDER BY expires DESC, id').all(owner, binding.profile_id, Date.now()).flatMap(row => {
+      const saved = this.decodeRecording(row);
+      if (sha256Canonical(saved.recording.context.company) !== sha256Canonical(binding)) return [];
+      validateRecordedProfileMonteCarlo(this, owner, saved.input, saved.recording);
+      return [{ recording_id: saved.recording_id, recorded_at: saved.recorded_at, expires_at: saved.expires_at, context: saved.recording.context }];
+    });
+  }
+  deleteMonteCarloRecording(owner: string, id: string) {
+    this.principal(owner); z.uuid().parse(id);
+    const deleted = this.db.prepare('DELETE FROM mc_recordings WHERE id = ? AND owner = ?').run(id, owner);
+    if (!deleted.changes) throw new Error('Recording not found or expired');
+  }
+  pruneMonteCarloRecordings() { this.db.prepare('DELETE FROM mc_recordings WHERE expires <= ?').run(Date.now()); }
   delete(owner: string, id: string) {
     this.load(owner, id);
     this.db.prepare('DELETE FROM profiles WHERE id = ? AND owner = ?').run(id, owner);
