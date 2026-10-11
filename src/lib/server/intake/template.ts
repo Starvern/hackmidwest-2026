@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { ProfilePayloadSchema, PROFILE_VERSION, HistoryRowSchema, LoanRowSchema, AssetRowSchema, ExpenseRowSchema, DateSchema } from './schemas.ts';
 
-function envelopes(schema: z.ZodObject, period: unknown) {
+export function envelopes(schema: z.ZodObject, period: unknown) {
   return Object.fromEntries(Object.entries(schema.shape).filter(([key]) => !['row_id', 'period'].includes(key)).map(([key, child]) => {
     if (child instanceof z.ZodObject && 'unit' in child.shape) return [key, { value: null, state: 'unknown', unit: child.shape.unit.value, period, source_ids: [], raw: null, derivation: null, review: null }];
     if (key === 'seasonality') return [key, Array.from({ length: 12 }, () => ({ value: null, state: 'unknown', unit: 'dimensionless', period, source_ids: [], raw: null, derivation: null, review: null }))];

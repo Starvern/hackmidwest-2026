@@ -105,12 +105,12 @@ export class ProfileStore {
     document.revisions.push(revision);
     return revision;
   }
-  create(owner: string, input: unknown) {
+  create(owner: string, input: unknown, importedEstimates: string[] = []) {
     this.principal(owner);
     if (this.list(owner).length >= 20) throw new Error('Profile limit reached');
     const profile = unreviewed(input), profile_id = randomUUID();
     const document: Document = { profile_id, head: 0, revisions: [] };
-    this.append(document, profile, estimatePointers(input));
+    this.append(document, profile, [...estimatePointers(input), ...importedEstimates]);
     this.db.prepare('INSERT INTO profiles VALUES (?, ?, ?)').run(profile_id, owner, JSON.stringify(document));
     return structuredClone(document);
   }

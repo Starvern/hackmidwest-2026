@@ -6,6 +6,8 @@ import { ProfileStore } from './store.ts';
 import { intakeTemplate } from './template.ts';
 import { assessIntake } from './eligibility.ts';
 import { ProfilePayloadSchema, ProfileSimulationInputSchema } from './schemas.ts';
+import { importWorkbook } from './import.ts';
+import { ImportFailure } from './xlsx.ts';
 
 const cookie = 'operatoros_intake_session';
 const revision = z.number().int().min(1).max(200);
@@ -15,8 +17,7 @@ class RequestFailure extends Error {
   status: number;
   constructor(status: number, message: string) { super(message); this.status = status; }
 }
-async function input(request: Request) {
-  if (!request.headers.get('content-type')?.startsWith('application/json')) throw new RequestFailure(415, 'Use JSON for this request.');
+async function bytes(request: Request) {
   const reader = request.body?.getReader();
   if (!reader) throw new RequestFailure(400, 'Request body is missing.');
   const chunks: Uint8Array[] = []; let length = 0;
@@ -26,8 +27,12 @@ async function input(request: Request) {
     if (length > 1024 * 1024) { await reader.cancel(); throw new RequestFailure(413, 'Intake requests are limited to 1 MB.'); }
     chunks.push(value);
   }
-  try { return JSON.parse(Buffer.concat(chunks).toString('utf8')); }
-  catch { throw new RequestFailure(400, 'Request body must be valid JSON.'); }
+  return Buffer.concat(chunks);
+}
+async function input(request: Request) {
+  if (!request.headers.get('content-type')?.startsWith('application/json')) throw new RequestFailure(415, 'Use JSON for this request.');
+  try { return JSON.parse((await bytes(request)).toString('utf8')); }
+  catch (e) { if (e instanceof RequestFailure) throw e; throw new RequestFailure(400, 'Request body must be valid JSON.'); }
 }
 type Event = Pick<RequestEvent, 'request' | 'url' | 'cookies'>;
 export function intakeApi(store: ProfileStore) {
@@ -47,7 +52,13 @@ export function intakeApi(store: ProfileStore) {
       }
       if (!owner) throw new RequestFailure(401, 'Start an intake session in this browser first.');
       let result: unknown;
-      if (parts[0] === 'template' && method === 'GET' && parts.length === 1) result = intakeTemplate(url.searchParams.get('books_through') ?? '');
+      if (parts[0] === 'import' && method === 'POST' && parts.length === 1) {
+        if (request.headers.get('content-type') !== 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') throw new RequestFailure(415, 'Upload the revision-2 .xlsx workbook.');
+        const imported = importWorkbook(await bytes(request));
+        const created = store.create(owner, imported.profile, imported.estimate_pointers);
+        result = { profile_id: created.profile_id, ...created.revisions[0], eligibility: assessIntake(created.revisions[0].profile), import_warnings: imported.warnings };
+      }
+      else if (parts[0] === 'template' && method === 'GET' && parts.length === 1) result = intakeTemplate(url.searchParams.get('books_through') ?? '');
       else if (parts[0] === 'simulate' && method === 'POST' && parts.length === 1) result = store.simulate(owner, ProfileSimulationInputSchema.parse(await input(request)));
       else if (parts[0] === 'profiles' && parts.length === 1 && method === 'GET') result = store.list(owner);
       else if (parts[0] === 'profiles' && parts.length === 1 && method === 'POST') {
@@ -66,7 +77,7 @@ export function intakeApi(store: ProfileStore) {
         } else if (parts.length === 3 && method === 'POST') {
           const body = await input(request);
           if (parts[2] === 'review') {
-            const parsed = z.strictObject({ revision, selections: z.array(z.strictObject({ pointer: z.string().max(200), state: z.enum(['confirmed', 'reviewed_estimate', 'not_applicable']), rationale: z.string().min(1).max(2000) })).min(1).max(500) }).parse(body);
+            const parsed = z.strictObject({ revision, selections: z.array(z.strictObject({ pointer: z.string().max(200), state: z.enum(['confirmed', 'reviewed_estimate', 'not_applicable']), rationale: z.string().min(1).max(2000) })).min(1).max(1500) }).parse(body);
             const record = store.review(owner, id, parsed.revision, parsed.selections);
             result = { profile_id: id, ...record, eligibility: assessIntake(record.profile) };
           } else if (parts[2] === 'preview') result = store.preview(owner, id, transition.parse(body).revision);
@@ -81,6 +92,7 @@ export function intakeApi(store: ProfileStore) {
       } else throw new RequestFailure(404, 'Intake endpoint not found.');
       return json(result, { headers: { 'cache-control': 'no-store' } });
     } catch (error) {
+      if (error instanceof ImportFailure) return apiError(422, 'WORKBOOK_IMPORT', `${error.issues[0]?.location}: ${error.message}`, error.issues.slice(0, 100).map(i => ({ path: i.location, message: i.message })));
       if (error instanceof RequestFailure) return apiError(error.status, 'INTAKE_REQUEST', error.message);
       if (error instanceof z.ZodError) return apiError(422, 'VALIDATION_ERROR', 'Check the intake fields.', error.issues.map(i => ({ path: '/' + i.path.map(String).join('/'), message: i.message })));
       if (error instanceof Error) {

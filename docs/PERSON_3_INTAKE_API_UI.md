@@ -1,5 +1,7 @@
 # Person 3 — local manual intake and bound workspace candidate
 
+Workbook import follow-up: see PERSON_3_WORKBOOK_IMPORT.md.
+
 Builds on compiler `adbb458`. This slice exposes the existing revision workflow
 through SvelteKit and a manual form. It is opt-in local review, not public release.
 

@@ -5,12 +5,13 @@ import { ProfileStore } from '../src/lib/server/intake/store.ts';
 import { intakeApi } from '../src/lib/server/intake/api.ts';
 import { intakeTemplate } from '../src/lib/server/intake/template.ts';
 import { fieldEntries } from '../src/lib/intake/form.ts';
+import { populatedWorkbook, blankWorkbook } from './intake-import-fixture.ts';
 import { eligibleFixture } from './intake-fixture.ts';
 
 function client(store: ProfileStore) {
   const cookies = new Map<string, string>(); let options: unknown;
   const handle = intakeApi(store);
-  return { cookies, get options() { return options; }, async call(path: string, method = 'GET', body?: unknown, origin = 'http://127.0.0.1:4175') {
+  return { cookies, async upload(bytes: Uint8Array, origin = 'http://127.0.0.1:4175') { const url=new URL('http://127.0.0.1:4175/api/v2/intake/import'); return handle({url,request:new Request(url,{method:'POST',headers:{origin,'content-type':'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'},body:Buffer.from(bytes)}),cookies:{get:(name:string)=>cookies.get(name)}} as unknown as RequestEvent); }, get options() { return options; }, async call(path: string, method = 'GET', body?: unknown, origin = 'http://127.0.0.1:4175') {
     const url = new URL('http://127.0.0.1:4175/api/v2/intake' + path);
     const request = new Request(url, { method, headers: { ...(method === 'GET' ? {} : { origin }), ...(body === undefined ? {} : { 'content-type': 'application/json' }) }, ...(body === undefined ? {} : { body: JSON.stringify(body) }) });
     return handle({ url, request, cookies: { get: (name: string) => cookies.get(name), set: (name: string, value: string, opts: unknown) => { cookies.set(name, value); options = opts; } } } as unknown as RequestEvent);
@@ -75,4 +76,17 @@ test('JSON request limit applies before payload parsing', async () => {
     const a = client(store); await a.call('/session','POST');
     assert.equal((await a.call('/profiles','POST',{ big: 'x'.repeat(1024 * 1024) })).status, 413);
   } finally { store.close(); }
+});
+
+test('workbook uploads create only session-owned unreviewed drafts; failures leave no partial profile',async()=>{
+ const store=new ProfileStore(':memory:');try{
+  const a=client(store),b=client(store);
+  assert.equal((await a.upload(blankWorkbook())).status,401);
+  await a.call('/session','POST');await b.call('/session','POST');
+  assert.equal((await a.upload(blankWorkbook(),'https://elsewhere.example')).status,403);
+  const response=await a.upload(populatedWorkbook());assert.equal(response.status,200);const draft=await response.json();
+  assert.equal(draft.status,'draft');assert.equal(draft.profile.opening.cash.review,null);assert.ok(draft.estimate_pointers.includes('/operations/demand_evidence'));
+  assert.equal((await b.call(`/profiles/${draft.profile_id}?revision=1`)).status,404);
+  const before=await (await a.call('/profiles')).json();assert.equal((await a.upload(new Uint8Array([1,2]))).status,422);assert.deepEqual(await (await a.call('/profiles')).json(),before);
+ }finally{store.close();}
 });
