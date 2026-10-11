@@ -10,15 +10,8 @@ button:disabled{opacity:.55;cursor:wait}
 a{color:inherit}
 button:focus-visible,a:focus-visible,summary:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #d88a4a;outline-offset:3px}
 .workspace{display:flex;min-height:100vh}
-.rail{width:72px;flex-shrink:0;background:#173d37;color:#c3d7ce;display:flex;align-items:center;flex-direction:column;gap:24px;padding:25px 12px;position:sticky;top:0;height:100vh}
-.rail a{text-decoration:none;font-size:25px;width:42px;height:42px;display:grid;place-items:center}
-.rail .brand{background:#f3f5f2;border-radius:10px;padding:5px}
-.brand img{display:block;width:32px;height:32px;object-fit:contain}
-.rail-label{font-size:8px;letter-spacing:1px;margin-top:-17px}
-.rail-active{background:#31594f;border-radius:9px}
-.rail-bottom{margin-top:auto;font-size:12px;border:1px solid #618073;border-radius:50%;padding:9px}
 main{width:100%;max-width:1600px;padding:0 38px;margin:auto}
-header{height:82px;border-bottom:1px solid #dbe2da;display:flex;align-items:center;justify-content:space-between}
+.workspace-header{min-height:82px;border-bottom:1px solid #dbe2da;display:flex;align-items:center;justify-content:space-between}
 .wordmark{display:flex;align-items:center;min-width:0}
 .sapling-wordmark{display:block;width:156px;height:52px;object-fit:contain}
 .divider{color:#aab7ad;margin:0 22px;font-weight:300}
@@ -115,8 +108,7 @@ footer{display:flex;justify-content:space-between;padding:7px 0 25px;font-size:1
 .outcome{padding:12px}
 .notice p span{display:none}
 }
-@media(max-width:800px){.rail{width:50px;padding:20px 4px}
-.rail a{width:34px}
+@media(max-width:800px){
 main{padding:0 16px}
 .workspace-name,.divider{display:none}
 .main-grid{grid-template-columns:1fr}
@@ -169,3 +161,36 @@ button:disabled{cursor:default}
 .card-label,.delta,.scenario-name{font-size:11px}.outcome dl div{font-size:11px;flex-wrap:wrap}.outcome dd{text-align:left}
 @media(max-width:800px){.explanation-numbers{grid-template-columns:1fr;gap:14px}.explanation-numbers div{display:flex;justify-content:space-between;gap:12px;align-items:center}.explanation-numbers span{margin:0}.cards{grid-template-columns:1fr}}
 .item-name{display:block;width:100%;margin-top:8px;border:1px solid #dae2d7;border-radius:5px;padding:10px;color:#304c40}
+
+[id]{scroll-margin-top:24px}
+@media(max-width:800px){.workspace{flex-direction:column}[id]{scroll-margin-top:76px}}
+
+/* Consistent navigation, controls and disclosure headings. */
+.result-details{margin-top:24px}
+.workspace-header{gap:20px;flex-wrap:wrap;padding:16px 0}
+.workspace-header>a{font-size:13px;font-weight:500;text-decoration:none}
+.workspace-header .synthetic{max-width:260px;line-height:1.5}
+.panel-head{align-items:flex-start}
+.small-tag{white-space:nowrap;line-height:1.5;padding:5px 8px}
+.metric-tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;border:0;background:#f3f6f1;padding:6px;border-radius:8px}
+.metric-tabs button{min-height:40px;font-size:12px;line-height:1.4;padding:8px 10px;text-align:center}
+.metric-tabs button.active{background:white;box-shadow:0 1px 4px #173d3714;color:#204e3c}
+.chart-mode{display:inline-flex;background:#f3f6f1;border-radius:8px;padding:4px;gap:4px}
+.chart-mode button{border:0;min-height:36px;padding:8px 12px}
+.plan-buttons{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.plan-buttons button{padding:9px 4px;white-space:nowrap;font-size:11px}
+.decision summary{padding:8px 0;line-height:1.5;min-height:40px}
+.decision summary strong{min-width:0;overflow-wrap:anywhere}
+.decision summary>span:last-child{white-space:nowrap}
+.inspector-summary{display:flex;align-items:center;justify-content:space-between;gap:16px;list-style:none;font-weight:600;line-height:1.5;padding:4px 0}
+.inspector-summary::after{content:'+';font-size:20px;font-weight:400;flex-shrink:0}
+details[open]>.inspector-summary::after{content:'−'}
+.assumptions>details>summary{min-height:36px}
+.table-wrap{border:1px solid #e5ebe2;border-radius:8px}
+table{font-size:12px}
+thead th{font-size:11px;white-space:normal;min-width:110px}
+th,td{padding:12px}
+.warnings small{display:block;margin-top:4px;color:#8a7555}
+@media(max-width:1100px){.main-grid{grid-template-columns:280px minmax(0,1fr)}.workspace-header{gap:12px}}
+@media(max-width:800px){.main-grid{grid-template-columns:1fr}.workspace-header{padding:14px 0}.sapling-wordmark{width:128px;height:44px}.workspace-header .synthetic{margin-left:auto;max-width:190px}.metric-tabs{grid-template-columns:repeat(3,minmax(0,1fr))}.metric-tabs button{font-size:11px}.panel-head{gap:12px}.chart-mode{display:flex}.chart-mode button{flex:1}.field-grid label{font-size:12px}}
+@media(max-width:420px){.workspace-header .synthetic{width:100%;max-width:none;margin-left:0}.workspace-header{gap:10px}.metric-tabs{grid-template-columns:repeat(2,minmax(0,1fr))}}

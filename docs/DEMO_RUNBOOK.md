@@ -16,15 +16,20 @@ This completes P3 selected-package integration and implementation-owner browser 
 
 ## Start the built app
 
+To update an existing teammate checkout, first preserve/commit local work. Fetch `origin`, then integrate `origin/luke` into the working branch (or use a clean checkout of `luke`). Pulling only `main`, `gavin` or `will` does not guarantee the latest P3 UI is present. Record `git log -1 --oneline` when reporting a problem.
+
+Stop the previous dev/preview process with Ctrl-C before starting. A running preview serves its previous build; pulling code alone does not refresh it. `npm run demo` always rebuilds and uses port 4182 with `--strictPort`, so an occupied port fails rather than silently opening a different server. Open the URL printed by this process. After the rebuild/restart, refresh the browser. Plan edits reset on refresh; recreate the selected settings. Do not delete profile storage or browser cookies as a cache fix.
+
 From the repository, with dependencies installed:
 
 ```sh
-npm run build
 mkdir -m 700 /tmp/operatoros-showcase
-OPERATOROS_INTAKE_REVIEW=1 OPERATOROS_INTAKE_DIRECTORY=/tmp/operatoros-showcase npm run preview -- --host 127.0.0.1 --port 4182 --strictPort
+OPERATOROS_INTAKE_REVIEW=1 OPERATOROS_INTAKE_DIRECTORY=/tmp/operatoros-showcase npm run demo
 ```
 
 If that directory already exists, reuse it only if it is your private rehearsal directory; the server enforces private storage permissions. Do not remove it to restart. Open `http://127.0.0.1:4182/intake` in the same browser throughout. Keep its cookies and the storage directory to reopen confirmed profiles. Stop the server with Ctrl-C. Restart with the same environment/directory/port. This is local preview, not a production deployment. Windows durable storage is unsupported; do not bind to an external interface.
+
+Quick visual version check: Sapling logo, “Plant the next move.” headline, labeled navigation including Import company, and a five-year explanation with one summary and 3–4 bullets. If these differ, report the full browser URL, checkout commit, startup command and terminal's printed port. A teammate's `127.0.0.1` points to their own machine, not Luke's running instance. Hosted links need a new deployment of the chosen commit; a local push/rebuild does not update an external deployment. Windows can review the example workspace, but cannot run durable company intake in this candidate.
 
 ## Present the flow
 
