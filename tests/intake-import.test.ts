@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { unzipSync, zipSync, strToU8 } from 'fflate';
 import { importWorkbook } from '../src/lib/server/intake/import.ts';
+import { ImportFailure } from '../src/lib/server/intake/xlsx.ts';
 import { readXlsx } from '../src/lib/server/intake/xlsx.ts';
 import { ProfileStore } from '../src/lib/server/intake/store.ts';
 import { fieldEntries } from '../src/lib/intake/form.ts';
@@ -71,4 +72,28 @@ test('loan, equipment and expense row groups map by stable ID without adding cos
  store.review('owner',id,1,[...fieldEntries(imported.profile).filter(e=>e.field.value!==null).map(e=>({pointer:e.pointer,state:imported.estimate_pointers.includes(e.pointer)?'reviewed_estimate' as const:'confirmed' as const,rationale:'Synthetic schedule review'})),...imported.profile.sources.map((_,i)=>({pointer:`/sources/${i}`,state:'confirmed' as const,rationale:'Synthetic source review'}))]);
  const preview=store.preview('owner',id,2),m=preview.baseline.months[1];if(m.is_opening_state)throw new Error('Expected forecast');assert.equal(m.financials.ebitda,43600);assert.equal(m.financials.depreciation,100);assert.equal(m.financials.debt_principal,100);assert.equal(m.financials.cash_end,19223.125);
  }finally{store.close();}
+});
+
+test('internal gaps reject supplied field, named-source and linked-detail records without crossing section boundaries', () => {
+  const base = populatedWorkbook();
+  const copyRow = (files: Record<string, Uint8Array>, sheet: number, from: number, to: number) => {
+    const name = `xl/worksheets/sheet${sheet}.xml`;
+    const xml = new TextDecoder().decode(files[name]);
+    const row = xml.match(new RegExp(`<x:row r="${from}"[^>]*>[\\s\\S]*?</x:row>`))?.[0];
+    assert.ok(row, 'Fixture row exists');
+    const copy = row.replace(`r="${from}"`, `r="${to}"`).replace(new RegExp(`r="([A-Z]+)${from}"`, 'g'), `r="$1${to}"`);
+    const existing = new RegExp(`<x:row r="${to}"[^>]*(?:/>|>[\\s\\S]*?</x:row>)`);
+    files[name] = strToU8(existing.test(xml) ? xml.replace(existing, copy) : xml.replace('</x:sheetData>', `${copy}</x:sheetData>`));
+  };
+  const fields = mutated(files => { for (const col of 'ABCDEFGHIJKLMNOPQRS') setCell(files, 1, `${col}11`, null); }, base);
+  assert.throws(() => importWorkbook(fields), e => e instanceof ImportFailure && e.issues[0].location === 'Business!A12' && /internal blank row/.test(e.message));
+  const sources = mutated(files => copyRow(files, 1, 28, 30), base);
+  assert.throws(() => importWorkbook(sources), e => e instanceof ImportFailure && e.issues[0].location === 'Business!A30' && /internal blank row/.test(e.message));
+  const details = mutated(files => copyRow(files, 7, 35, 37), base);
+  assert.throws(() => importWorkbook(details), e => e instanceof ImportFailure && e.issues[0].location === 'Operations!A37' && /internal blank row/.test(e.message));
+  const orphan = mutated(files => { copyRow(files, 7, 35, 36); setCell(files, 7, 'A36', null); }, base);
+  assert.throws(() => importWorkbook(orphan), e => e instanceof ImportFailure && e.issues[0].location === 'Operations!A36' && /leading key/.test(e.message));
+  // Normal blank table tails, notes and later sections remain independent.
+  assert.equal(importWorkbook(base).profile.sources.filter(s => s.source_id === 'source').length, 1);
+  assert.equal(importWorkbook(blankWorkbook()).profile.history.length, 0);
 });
